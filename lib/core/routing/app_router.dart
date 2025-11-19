@@ -1,8 +1,3 @@
-/// lib/core/routing/app_router.dart
-///
-/// Router minimal dengan nama-nama route yang dipakai app.
-/// Nanti tinggal mapping ke halaman beneran di switch-nya.
-
 import 'package:flutter/material.dart';
 
 class AppRoutes {

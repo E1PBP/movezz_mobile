@@ -46,3 +46,9 @@ app.*.map.json
 
 # Generated files
 generate_features.ps1
+.env
+
+# START Ruler Generated Files
+/.kilocode/rules/ruler_kilocode_instructions.md
+/.kilocode/rules/ruler_kilocode_instructions.md.bak
+# END Ruler Generated Files
