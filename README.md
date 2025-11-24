@@ -197,7 +197,6 @@ cp .env.example .env
 # lalu edit BACKEND_BASE_URL sesuai environment masing-masing
 ```
 
-> Catatan: Flutter **tidak otomatis membaca `.env`**, tetapi file ini dipakai sebagai referensi bersama (bisa dikaitkan dengan script run/build yang meneruskan nilai ke `--dart-define`).
 
 ---
 
@@ -294,19 +293,17 @@ flutter run -d chrome \
   --dart-define=BACKEND_BASE_URL=http://localhost:8000
 ```
 
-> Sesuaikan URL dengan alamat backend Django kamu (misal staging/server PWS).
+> Sesuaikan URL dengan alamat backend Django kamu.
 
 ---
 
 ## Tech Stack
 
 - **Frontend:**
-
   - [Flutter](https://flutter.dev/)
   - [Dart](https://dart.dev/)
 
 - **Backend (terpisah):**
-
   - [Django 5](https://www.djangoproject.com/)
   - PostgreSQL
   - Cloudinary (media storage)
