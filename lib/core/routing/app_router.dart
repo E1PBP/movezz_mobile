@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:movezz_mobile/features/auth/presentation/pages/auth_page.dart';
 class AppRoutes {
   AppRoutes._();
 
   static const String splash = '/';
   static const String login = '/login';
-  static const String home = '/home';
+  static const String feeds = '/feeds';
   static const String profile = '/profile';
 }
 
-/// Fungsi factory untuk onGenerateRoute di MaterialApp.
-/// Sekarang masih pakai Scaffold placeholder supaya tetap compile.
-/// Ganti isi masing-masing case ke Page yang sebenarnya.
+
 Route<dynamic> appRouteFactory(RouteSettings settings) {
   switch (settings.name) {
     case AppRoutes.splash:
@@ -23,13 +21,13 @@ Route<dynamic> appRouteFactory(RouteSettings settings) {
     case AppRoutes.login:
       return _buildRoute(
         settings,
-        const _SimpleScaffold(title: 'Login'),
+        const AuthPage(),
       );
 
-    case AppRoutes.home:
+    case AppRoutes.feeds:
       return _buildRoute(
         settings,
-        const _SimpleScaffold(title: 'Home'),
+        const _SimpleScaffold(title: 'feeds'),
       );
 
     case AppRoutes.profile:
@@ -56,8 +54,6 @@ PageRoute _buildRoute(RouteSettings settings, Widget child) {
   );
 }
 
-/// Placeholder Scaffold supaya router tetap jalan
-/// walaupun halaman aslinya belum diimplementasi.
 class _SimpleScaffold extends StatelessWidget {
   final String title;
   final Widget? body;

@@ -1,7 +1,3 @@
-/// lib/core/utils/extensions.dart
-///
-/// Kumpulan extension kecil yang sering dipakai.
-
 import 'package:flutter/material.dart';
 
 extension StringExt on String {
