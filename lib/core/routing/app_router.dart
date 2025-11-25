@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movezz_mobile/features/auth/presentation/pages/auth_page.dart';
+import 'package:movezz_mobile/features/auth/presentation/pages/onboarding_concentric.dart';
 class AppRoutes {
   AppRoutes._();
 
@@ -15,7 +16,7 @@ Route<dynamic> appRouteFactory(RouteSettings settings) {
     case AppRoutes.splash:
       return _buildRoute(
         settings,
-        const _SimpleScaffold(title: 'Splash'),
+        const ConcentricAnimationOnboarding(),
       );
 
     case AppRoutes.login:

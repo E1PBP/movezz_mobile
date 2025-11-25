@@ -1,9 +1,4 @@
-﻿/// The new AuthUser model based on your Django backend response.
-/// Django returns only: username, status, message
-/// No ID, no token, no email.
-/// So the structure is simplified accordingly.
-
-class AuthUser {
+﻿class AuthUser {
   final String username;
   final bool isLoggedIn;
 

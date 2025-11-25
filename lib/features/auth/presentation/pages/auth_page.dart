@@ -62,9 +62,9 @@ class _AuthPageState extends State<AuthPage> {
                 AppConfig.appName,
                 style: primaryTextStyle(
                   color: AppColors.primary,
-                  size: 28,
-                  weight: FontWeight.w800,
-                  fontFamily: AppConfig.robotoFont,
+                  size: 36,
+                  weight: FontWeight.w900,
+                  fontFamily: 'Montserrat',
                 ),
               ),
             ],
