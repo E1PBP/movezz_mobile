@@ -48,8 +48,6 @@ class MyApp extends StatelessWidget {
       title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-
       onGenerateRoute: appRouteFactory,
       initialRoute: AppRoutes.splash,
     );

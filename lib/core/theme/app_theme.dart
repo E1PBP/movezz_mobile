@@ -89,35 +89,5 @@ class AppTheme {
       ),
     );
   }
-
-  /// Tema dark.
-  static ThemeData get dark {
-    final base = ThemeData(
-      useMaterial3: true,
-      colorSchemeSeed: AppColors.primary,
-      brightness: Brightness.dark,
-    );
-
-    return base.copyWith(
-      scaffoldBackgroundColor: AppColors.backgroundDark,
-      cardColor: AppColors.cardBackgroundDark,
-      primaryColor: AppColors.primary,
-      appBarTheme: base.appBarTheme.copyWith(
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: AppColors.primaryBlack,
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: Colors.white,
-          minimumSize: const Size.fromHeight(56),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConfig.commonRadius),
-          ),
-          elevation: 0,
-        ),
-      ),
-    );
-  }
+  
 }
