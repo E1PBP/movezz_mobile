@@ -3,7 +3,7 @@
 ![Status](https://img.shields.io/badge/status-in--development-yellow)
 ![Build](https://img.shields.io/badge/build-unstable-red)
 ![Flutter](https://img.shields.io/badge/flutter-blue)
-![Dart](https://img.shields.io/badge/dart-2.x-blue)
+![Dart](https://img.shields.io/badge/dart-3.x-blue)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 Repositori ini berisi **aplikasi mobile (Flutter)** untuk proyek **Movezz**, sebuah aplikasi sosial media untuk para pecinta olahraga yang terhubung dengan backend Django Movezz.
@@ -30,7 +30,7 @@ Repositori ini berisi **aplikasi mobile (Flutter)** untuk proyek **Movezz**, seb
 - Menjelajah **profil** pengguna lain,
 - Berkomunikasi via **messaging**,
 - Mengikuti atau membuat **broadcast event** olahraga,
-- Jual beli perlengkapan olahraga di **marketplace**.  
+- Jual beli perlengkapan olahraga di **marketplace**.
 
 Repositori ini berfokus pada **client Flutter** (Android, iOS, Web, Desktop) yang berkomunikasi dengan backend Django Movezz menggunakan **session-based auth (cookie)**.
 
@@ -42,6 +42,7 @@ Struktur fitur di Flutter dibuat agar mirip dengan modularisasi di backend Djang
 
 ### 1. Feeds
 
+PIC: Muhamad Hakim Nizami     
 Folder: `lib/features/feeds`
 
 Fitur:
@@ -53,6 +54,7 @@ Fitur:
 
 ### 2. Profile
 
+PIC: Nadin Ananda     
 Folder: `lib/features/profile`
 
 Fitur:
@@ -63,6 +65,7 @@ Fitur:
 
 ### 3. Messaging
 
+PIC: Heraldo Arman    
 Folder: `lib/features/messages`
 
 Fitur:
@@ -73,6 +76,7 @@ Fitur:
 
 ### 4. Marketplace
 
+PIC: Amberley Vidya Putri   
 Folder: `lib/features/marketplace`
 
 Fitur:
@@ -83,6 +87,7 @@ Fitur:
 
 ### 5. Broadcast
 
+PIC: Roberto Eugenio Sugiarto   
 Folder: `lib/features/broadcast`
 
 Fitur:
@@ -93,16 +98,12 @@ Fitur:
 
 ### 6. Authentication
 
+PIC: all    
 Folder: `lib/features/auth`
 
 Fitur:
 
-- Struktur dasar untuk autentikasi user:
-  - `auth_remote_data_source.dart`
-  - `auth_repository.dart`
-  - `auth_controller.dart`
-  - `auth_page.dart`
-- Menggunakan **session cookie** dari backend Django melalui `CookieRequest`.
+- Autentikasi menggunakan **session cookie** dari backend Django melalui `CookieRequest`.
 
 ---
 
@@ -152,12 +153,12 @@ lib/
 
 **Pola umum per fitur:**
 
-* `data/models` → representasi JSON dari backend (DTO / model),
-* `data/datasources` → call HTTP ke backend (via `CookieRequest`),
-* `data/repositories` → abstraksi data untuk layer UI,
-* `presentation/controllers` → state management (ChangeNotifier, dsb.),
-* `presentation/pages` → screen / halaman,
-* `presentation/widgets` → komponen UI kecil.
+- `data/models` → representasi JSON dari backend (DTO / model),
+- `data/datasources` → call HTTP ke backend (via `CookieRequest`),
+- `data/repositories` → abstraksi data untuk layer UI,
+- `presentation/controllers` → state management (ChangeNotifier, dsb.),
+- `presentation/pages` → screen / halaman,
+- `presentation/widgets` → komponen UI kecil.
 
 ---
 
@@ -165,8 +166,8 @@ lib/
 
 Di root proyek terdapat:
 
-* `.env` – konfigurasi environment lokal (untuk tim),
-* `.env.example` – contoh template variabel environment.
+- `.env` – konfigurasi environment lokal (untuk tim),
+- `.env.example` – contoh template variabel environment.
 
 Pada sisi Flutter, base URL backend dibaca melalui **`Env.backendBaseUrl`**:
 
@@ -180,8 +181,8 @@ static const String backendBaseUrl = String.fromEnvironment(
 
 Artinya:
 
-* Default mengarah ke `http://10.0.2.2:8000` (akses localhost dari Android emulator),
-* Bisa dioverride dengan `--dart-define`.
+- Default mengarah ke `http://10.0.2.2:8000` (akses localhost dari Android emulator),
+- Bisa dioverride dengan `--dart-define`.
 
 ### Contoh isi `.env.example`
 
@@ -196,7 +197,6 @@ cp .env.example .env
 # lalu edit BACKEND_BASE_URL sesuai environment masing-masing
 ```
 
-> Catatan: Flutter **tidak otomatis membaca `.env`**, tetapi file ini dipakai sebagai referensi bersama (bisa dikaitkan dengan script run/build yang meneruskan nilai ke `--dart-define`).
 
 ---
 
@@ -206,10 +206,10 @@ File: `lib/core/network/cookie_request.dart`
 
 Aplikasi ini menggunakan library `CookieRequest` (adaptasi dari `pbp_django_auth`) untuk:
 
-* Login/logout ke endpoint Django,
-* Menyimpan cookie `sessionid` di `SharedPreferences`,
-* Mengirim header `Cookie` pada request berikutnya,
-* Menentukan status `loggedIn` dan menyimpan `jsonData` terakhir.
+- Login/logout ke endpoint Django,
+- Menyimpan cookie `sessionid` di `SharedPreferences`,
+- Mengirim header `Cookie` pada request berikutnya,
+- Menentukan status `loggedIn` dan menyimpan `jsonData` terakhir.
 
 Cara pakai di data source:
 
@@ -245,7 +245,7 @@ cd movezz_mobile
 
 ### 2. Pastikan Backend Django Berjalan
 
-Jalankan backend Movezz (repositori Django): 
+Jalankan backend Movezz (repositori Django):
 
 ```bash
 git clone https://github.com/E1PBP/movezz.git
@@ -293,45 +293,44 @@ flutter run -d chrome \
   --dart-define=BACKEND_BASE_URL=http://localhost:8000
 ```
 
-> Sesuaikan URL dengan alamat backend Django kamu (misal staging/server PWS).
+> Sesuaikan URL dengan alamat backend Django kamu.
 
 ---
 
 ## Tech Stack
 
-* **Frontend:**
+- **Frontend:**
+  - [Flutter](https://flutter.dev/)
+  - [Dart](https://dart.dev/)
 
-  * [Flutter](https://flutter.dev/)
-  * [Dart](https://dart.dev/)
+- **Backend (terpisah):**
+  - [Django 5](https://www.djangoproject.com/)
+  - PostgreSQL
+  - Cloudinary (media storage)
 
-* **Backend (terpisah):** 
-
-  * [Django 5](https://www.djangoproject.com/)
-  * PostgreSQL
-  * Cloudinary (media storage)
-
-* **Tools:**
-
-  * Provider (state management dasar)
-  * SharedPreferences (persistent storage sederhana)
+- **Tools:**
+  - Provider (state management dasar)
+  - SharedPreferences (persistent storage sederhana)
+  - http 
+  - goRoutes 
+  - pbp_django_auth
 
 ---
 
 ## Link Terkait (Backend & Desain)
 
-> Link di bawah ini merujuk ke proyek backend & desain Movezz. 
+> Link di bawah ini merujuk ke proyek backend & desain Movezz.
 
-* **Repository Backend Django:**
+- **Repository Backend Django:**
   `https://github.com/E1PBP/movezz`
 
-* **PWS (Deployment Backend):**
+- **PWS (Deployment Backend):**
   `https://muhamad-hakim41-movezz.pbp.cs.ui.ac.id/`
 
-* **Figma Design:**
+- **Figma Design:**
   `https://www.figma.com/design/x4q0GDfJB0dQ2ZXl8uuXDZ/Design-Movezz`
 
-* **DB Diagram:**
+- **DB Diagram:**
   `https://dbdiagram.io/d/movezz-2-68e696cad2b621e422e8abc6`
 
 ---
-

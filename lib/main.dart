@@ -2,25 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/config/app_config.dart';
-// import 'core/network/cookie_request.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
+
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
+import 'features/auth/data/datasources/auth_remote_data_source.dart';
+import 'features/auth/data/repositories/auth_repository.dart';
+import 'features/auth/presentation/controllers/auth_controller.dart';
+
 void main() async {
-  // Pastikan binding Flutter siap sebelum panggil async (SharedPreferences, dll.)
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Satu instance CookieRequest untuk seluruh aplikasi
+  // CookieRequest global untuk session Django (login/logout)
   final cookieRequest = CookieRequest();
   await cookieRequest.init();
 
   runApp(
-    // Provider global, nanti bisa diambil dari mana saja:
-    // context.read<CookieRequest>()
     MultiProvider(
       providers: [
+        // Provider untuk CookieRequest
         Provider<CookieRequest>.value(value: cookieRequest),
+
+        // Provider untuk AuthController (harus pakai ChangeNotifierProvider!)
+        ChangeNotifierProvider<AuthController>(
+          create: (context) {
+            final cookie = context.read<CookieRequest>();
+            final remote = AuthRemoteDataSource(cookie);
+            final repo = AuthRepositoryImpl(remote);
+            return AuthController(repo);
+          },
+        ),
       ],
       child: const MyApp(),
     ),
@@ -35,14 +47,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
-
-      // Tema global
       theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-
-      // Routing pakai factory yang sudah kamu buat di core/routing/app_router.dart
       onGenerateRoute: appRouteFactory,
-      initialRoute: AppRoutes.login, // ganti kalau mau mulai dari splash/home
+      initialRoute: AppRoutes.splash,
     );
   }
 }
