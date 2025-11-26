@@ -42,7 +42,7 @@ Struktur fitur di Flutter dibuat agar mirip dengan modularisasi di backend Djang
 
 ### 1. Feeds
 
-PIC: Muhamad Hakim Nizami
+PIC: Muhamad Hakim Nizami     
 Folder: `lib/features/feeds`
 
 Fitur:
@@ -54,7 +54,7 @@ Fitur:
 
 ### 2. Profile
 
-PIC: Nadin Ananda
+PIC: Nadin Ananda     
 Folder: `lib/features/profile`
 
 Fitur:
@@ -65,7 +65,7 @@ Fitur:
 
 ### 3. Messaging
 
-PIC: Heraldo Arman
+PIC: Heraldo Arman    
 Folder: `lib/features/messages`
 
 Fitur:
@@ -76,7 +76,7 @@ Fitur:
 
 ### 4. Marketplace
 
-PIC: Amberley Vidya Putri
+PIC: Amberley Vidya Putri   
 Folder: `lib/features/marketplace`
 
 Fitur:
@@ -87,7 +87,7 @@ Fitur:
 
 ### 5. Broadcast
 
-PIC: Roberto Eugenio Sugiarto
+PIC: Roberto Eugenio Sugiarto   
 Folder: `lib/features/broadcast`
 
 Fitur:
@@ -98,7 +98,7 @@ Fitur:
 
 ### 6. Authentication
 
-PIC: all
+PIC: all    
 Folder: `lib/features/auth`
 
 Fitur:

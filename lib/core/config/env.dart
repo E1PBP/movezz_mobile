@@ -1,7 +1,3 @@
-/// lib/core/config/env.dart
-///
-/// Kelas Env menyimpan konfigurasi dasar aplikasi,
-/// terutama base URL backend Django.
 class Env {
   /// Base URL backend Django.
   ///

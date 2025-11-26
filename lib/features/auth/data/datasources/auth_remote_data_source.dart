@@ -1,7 +1,53 @@
-﻿class AuthRemoteDataSource {
-  // TODO: inject your HTTP client / CookieRequest here
+﻿import 'dart:convert';
 
-  AuthRemoteDataSource();
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 
-  // TODO: add methods to call backend endpoints
+import 'package:movezz_mobile/core/config/env.dart';
+import '../models/auth_model.dart';
+
+class AuthRemoteDataSource {
+  final CookieRequest cookieRequest;
+
+  AuthRemoteDataSource(this.cookieRequest);
+
+  Future<AuthUser> login({
+    required String username,
+    required String password,
+  }) async {
+    final response = await cookieRequest.login(Env.api('/auth/api/login/'), {
+      'username': username,
+      'password': password,
+    });
+
+    if (!cookieRequest.loggedIn) {
+      throw Exception(response['message'] ?? "Login failed");
+    }
+
+    return AuthUser.fromLoginJson(response);
+  }
+
+Future<AuthUser> register({
+  required String username,
+  required String email,  // ignored (backend doesn't accept)
+  required String password,
+  String? phone,          // ignored
+}) async {
+  final body = jsonEncode({
+    'username': username,
+    'password1': password,
+    'password2': password,
+  });
+
+  final response = await cookieRequest.postJson(
+    Env.api('/auth/api/register/'),
+    body,
+  ) as Map<String, dynamic>;
+
+  if (!(response['status'] == true || response['status'] == 'success')) {
+    throw Exception(response['message'] ?? "Registration failed");
+  }
+
+  return AuthUser.fromRegisterJson(response);
+}
+
 }
