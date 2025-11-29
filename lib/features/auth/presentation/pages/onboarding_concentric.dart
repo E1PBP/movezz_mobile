@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:concentric_transition/concentric_transition.dart';
 import 'package:movezz_mobile/core/routing/app_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import 'package:nb_utils/nb_utils.dart';
+
 
 class PageData {
   final String? title;
@@ -68,9 +70,9 @@ class ConcentricAnimationOnboarding extends StatelessWidget {
         scaleFactor: 2,
         itemCount: onboardingPages.length,
         onFinish: () {
-          
+          setValue('hasSeenOnboarding', true); 
           Navigator.of(context).pushReplacementNamed(AppRoutes.login);
-        },
+      },
         itemBuilder: (index) {
           final page = onboardingPages[index];
           return SafeArea(child: _Page(page: page));

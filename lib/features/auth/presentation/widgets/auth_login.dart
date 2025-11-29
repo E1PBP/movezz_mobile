@@ -55,7 +55,7 @@ class _AuthLoginState extends State<AuthLogin> {
       final message =
           authController.error ??
           'Login failed. Please check your username and password.';
-      context.showSnackBar(message);
+      context.showSnackBar(message, isError: true);
     }
   }
 

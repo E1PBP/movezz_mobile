@@ -2,7 +2,7 @@
   final String username;
   final bool isLoggedIn;
 
-  /// Message returned by backend (optional)
+
   final String? message;
 
   AuthUser({
@@ -11,7 +11,6 @@
     this.message,
   });
 
-  /// Factory for login endpoint response
   factory AuthUser.fromLoginJson(Map<String, dynamic> json) {
     return AuthUser(
       username: json['username']?.toString() ?? '',

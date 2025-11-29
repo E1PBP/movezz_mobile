@@ -52,4 +52,15 @@ class AuthRemoteDataSource {
 
     return AuthUser.fromRegisterJson(response);
   }
+
+  Future<bool> logout() async {
+
+    final response = await cookieRequest.logout(Env.api('/auth/api/logout/'));
+
+    if (response['status'] == true || response['status'] == 'success') {
+      return true;
+    } else {
+      throw Exception(response['message'] ?? "Logout failed");
+    }
+  }
 }

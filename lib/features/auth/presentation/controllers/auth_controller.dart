@@ -58,4 +58,24 @@ class AuthController extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> logout() async {
+    try {
+      isLoading = true;
+      notifyListeners();
+
+      await _repository.logout();
+      currentUser = null;
+      error = null;
+      
+      isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      isLoading = false;
+      error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
 }

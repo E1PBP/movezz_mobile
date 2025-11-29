@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../theme/app_theme.dart';
+
+
+
 
 extension StringExt on String {
   /// "halo dunia" -> "Halo dunia"
@@ -15,10 +19,38 @@ extension StringExt on String {
 }
 
 extension BuildContextExt on BuildContext {
-  /// Cepat buat SnackBar
-  void showSnackBar(String message) {
+    /// Menampilkan SnackBar dengan styling modern
+  /// [isError] = true akan membuat background merah, false (default) warna primary
+  void showSnackBar(String message, {bool isError = false}) {
+    ScaffoldMessenger.of(this).clearSnackBars(); // Hapus snackbar antrian sebelumnya
+    
     ScaffoldMessenger.of(this).showSnackBar(
-      SnackBar(content: Text(message)),
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              isError ? Icons.error_outline : Icons.check_circle_outline,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: isError ? Colors.redAccent : AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.all(16), 
+        duration: const Duration(seconds: 3),
+      ),
     );
   }
 

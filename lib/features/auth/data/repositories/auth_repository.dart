@@ -9,6 +9,7 @@ abstract class AuthRepository {
     String password, {
     String? phone,
   });
+  Future<bool> logout();
 }
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -34,5 +35,10 @@ class AuthRepositoryImpl implements AuthRepository {
       password: password,
       phone: phone,
     );
+  }
+
+  @override
+  Future<bool> logout() {
+    return remote.logout();
   }
 }
