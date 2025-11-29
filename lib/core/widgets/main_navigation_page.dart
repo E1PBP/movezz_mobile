@@ -6,12 +6,15 @@ import '../../features/feeds/presentation/pages/feeds_page.dart';
 import '../../features/broadcast/presentation/pages/broadcast_page.dart';
 import '../../features/marketplace/presentation/pages/marketplace_page.dart';
 import '../../features/messages/presentation/pages/messages_page.dart';
+import '../../features/messages/presentation/widgets/new_chat_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 
 import '../theme/app_theme.dart';
 import '../config/app_config.dart';
 
 import 'package:movezz_mobile/features/profile/presentation/pages/settings_page.dart';
+
+
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
 
@@ -61,13 +64,15 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
       case 3:
         return [
           actionIcon(Icons.add_box_outlined, 'New Message', () {
-            toast('New Chat clicked!');
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NewChatPage()),
+            );
           }),
         ];
       case 4:
         return [
           actionIcon(Icons.settings_outlined, 'Settings', () {
-
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const SettingsPage()),

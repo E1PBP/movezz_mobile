@@ -10,16 +10,17 @@ import 'package:nb_utils/nb_utils.dart';
 import 'features/auth/data/datasources/auth_remote_data_source.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/auth/presentation/controllers/auth_controller.dart';
+import 'features/messages/data/datasources/messages_remote_data_source.dart';
+import 'features/messages/data/repositories/messages_repository.dart';
+import 'features/messages/presentation/controllers/messages_controller.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Mengunci orientasi layar ke portrait saja
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await initialize();
-
-  // CookieRequest global untuk session Django (login/logout)
+  
   final cookieRequest = CookieRequest();
   await cookieRequest.init();
 
@@ -48,6 +49,14 @@ void main() async {
             final remote = AuthRemoteDataSource(cookie);
             final repo = AuthRepositoryImpl(remote);
             return AuthController(repo);
+          },
+        ),
+        ChangeNotifierProvider<MessagesController>(
+          create: (context) {
+            final cookie = context.read<CookieRequest>();
+            final remote = MessagesRemoteDataSource(cookie);
+            final repo = MessagesRepository(remote);
+            return MessagesController(repo);
           },
         ),
       ],

@@ -34,7 +34,7 @@ class AppColors {
 class AppTheme {
   AppTheme._();
 
-  /// Tema utama (light).
+  /// Tema utama aplikasi - Light Theme
   static ThemeData get light {
     final base = ThemeData(
       useMaterial3: true,
