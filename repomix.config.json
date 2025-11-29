@@ -1,63 +1,74 @@
 {
-	"$schema": "https://repomix.com/schemas/latest/schema.json",
+  "$schema": "https://repomix.com/schemas/latest/schema.json",
 
-	"output": {
-		"filePath": "repomix-output.md",
-		"style": "markdown",
-		"parsableStyle": false,
-		"compress": false,
-		"fileSummary": true,
-		"directoryStructure": true,
-		"files": true,
-		"removeComments": false,
-		"removeEmptyLines": false,
-		"topFilesLength": 5,
-		"showLineNumbers": false,
-		"truncateBase64": false,
-		"copyToClipboard": false,
-		"includeEmptyDirectories": false,
-		"git": {
-			"sortByChanges": true,
-			"sortByChangesMaxCommits": 100,
-			"includeDiffs": false,
-			"includeLogs": false,
-			"includeLogsCount": 50
-		}
-	},
-	"include": ["**/*"],
-	"ignore": {
-		"useGitignore": true,
-		"useDefaultPatterns": true,
+  "output": {
+    "filePath": "repomix-output.md",
+    "style": "markdown",
+    "parsableStyle": false,
+    "compress": false,
+    "fileSummary": true,
+    "directoryStructure": true,
+    "files": true,
+    "removeComments": false,
+    "removeEmptyLines": false,
+    "topFilesLength": 5,
+    "showLineNumbers": false,
+    "truncateBase64": false,
+    "copyToClipboard": false,
+    "includeEmptyDirectories": false,
+    "git": {
+      "sortByChanges": true,
+      "sortByChangesMaxCommits": 100,
+      "includeDiffs": false,
+      "includeLogs": false,
+      "includeLogsCount": 50
+    }
+  },
+  "include": ["**/*"],
+  "ignore": {
+    "useGitignore": true,
+    "useDefaultPatterns": true,
 
-		"customPatterns": [
-			".vscode/**",
-			"**/*.log",
-			"repomix.config.json",
-			"repomix-output.md",
-			"coverage/**",
-            ".dart_tool/**",
-            "android/**",
-            "ios/**",
-            "build/**",
-            "linux/**",
-            "macos/**",
-            "windows/**",
-            "web/**",
-            "test/**",
-            "LICENSE",
-            "pubspec.lock",
-            ".git/**",
-            ".github/**",
-            ".gemini/**",
-            ".kilocode/**",
-            "CONTRIBUTING.md",
-            ".metadata"
-		]
-	},
-	"security": {
-		"enableSecurityCheck": true
-	},
-	"tokenCount": {
-		"encoding": "o200k_base"
-	}
+    "customPatterns": [
+      ".vscode/**",
+      "**/*.log",
+      "repomix.config.json",
+      "repomix-output.md",
+      "coverage/**",
+      ".dart_tool/**",
+      "build/**",
+
+      "android/**",
+      "ios/**",
+      "linux/**",
+      "macos/**",
+      "windows/**",
+      "web/**",
+
+      "**/*.g.dart",
+      "**/*.freezed.dart",
+      "lib/generated_plugin_registrant.dart",
+
+      "assets/**",
+      "**/*.png",
+      "**/*.jpg",
+      "**/*.ttf",
+
+      "test/**",
+      "LICENSE",
+      "pubspec.lock",
+      ".git/**",
+      ".github/**",
+      ".gemini/**",
+      ".kilocode/**",
+      "CONTRIBUTING.md",
+      ".metadata"
+    ]
+  },
+  "security": {
+    "enableSecurityCheck": true
+  },
+  "tokenCount": {
+    "encoding": "o200k_base"
+  }
 }
