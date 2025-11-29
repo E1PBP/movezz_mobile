@@ -123,7 +123,6 @@ lib/
       app_theme.dart      # Tema global (light/dark)
     utils/
       extensions.dart     # Extension helper (String, BuildContext, DateTime, dll.)
-      validators.dart     # Validator form sederhana (required, email, min length)
     widgets/
       app_button.dart     # Button standar aplikasi
       app_text_field.dart # TextField standar aplikasi
