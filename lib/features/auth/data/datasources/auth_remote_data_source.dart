@@ -20,34 +20,36 @@ class AuthRemoteDataSource {
     });
 
     if (!cookieRequest.loggedIn) {
-      throw Exception(response['message'] ?? "Login failed");
+      String msg = "Login failed";
+      if (response is Map && response.containsKey('message')) {
+        msg = response['message'];
+      }
+      throw Exception(msg);
     }
 
     return AuthUser.fromLoginJson(response);
   }
 
-Future<AuthUser> register({
-  required String username,
-  required String email,  // ignored (backend doesn't accept)
-  required String password,
-  String? phone,          // ignored
-}) async {
-  final body = jsonEncode({
-    'username': username,
-    'password1': password,
-    'password2': password,
-  });
+  Future<AuthUser> register({
+    required String username,
+    required String email,
+    required String password,
+    String? phone,
+  }) async {
+    final body = jsonEncode({
+      'username': username,
+      'password1': password,
+      'password2': password,
+    });
 
-  final response = await cookieRequest.postJson(
-    Env.api('/auth/api/register/'),
-    body,
-  ) as Map<String, dynamic>;
+    final response =
+        await cookieRequest.postJson(Env.api('/auth/api/register/'), body)
+            as Map<String, dynamic>;
 
-  if (!(response['status'] == true || response['status'] == 'success')) {
-    throw Exception(response['message'] ?? "Registration failed");
+    if (!(response['status'] == true || response['status'] == 'success')) {
+      throw Exception(response['message'] ?? "Registration failed");
+    }
+
+    return AuthUser.fromRegisterJson(response);
   }
-
-  return AuthUser.fromRegisterJson(response);
-}
-
 }
