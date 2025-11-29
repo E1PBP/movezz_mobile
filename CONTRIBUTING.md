@@ -147,7 +147,6 @@ flutter test
 Jika kamu menambahkan fitur penting, usahakan juga menambah:
 
 * **Widget test** untuk halaman utama yang kamu sentuh, atau
-* **Unit test** untuk fungsi util / validator.
 
 Contoh:
 

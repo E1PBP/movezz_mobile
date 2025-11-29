@@ -29,7 +29,6 @@ When generating code, prefer:
   - `lib/core/theme/app_theme.dart`
 - **Utilities** live in:
   - `lib/core/utils/extensions.dart`
-  - `lib/core/utils/validators.dart`
 - **Shared UI components** live in:
   - `lib/core/widgets/app_button.dart`
   - `lib/core/widgets/app_text_field.dart`
