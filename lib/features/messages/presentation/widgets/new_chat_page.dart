@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart' hide AppTextField, AppButton;
 import 'package:provider/provider.dart';
 
-import '../../../../core/widgets/app_button.dart';
 import '../../../../core/widgets/app_text_field.dart';
 import '../controllers/messages_controller.dart';
 import 'chat_detail_page.dart';
@@ -19,9 +18,14 @@ class _NewChatPageState extends State<NewChatPage> {
   List<Map<String, dynamic>> _searchResults = [];
   bool _isSearching = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _performSearch();
+  }
+
   void _performSearch() async {
     final query = _searchController.text.trim();
-    if (query.isEmpty) return;
 
     setState(() => _isSearching = true);
     
@@ -41,7 +45,6 @@ class _NewChatPageState extends State<NewChatPage> {
     setState(() => _isSearching = false);
 
     if (convoId != null && mounted) {
-      // Redirect ke Chat Detail
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -70,16 +73,11 @@ class _NewChatPageState extends State<NewChatPage> {
               hintText: "Search user by name...",
               prefixIcon: const Icon(Icons.search),
               onChanged: (val) {
-               
+                _performSearch();
               },
             ),
           ),
-          AppButton(
-            text: "Search",
-            onTap: _performSearch,
-            width: context.width() - 32,
-          ),
-          20.height,
+          16.height,
           
           if (_isSearching)
             const CircularProgressIndicator(),
@@ -105,6 +103,13 @@ class _NewChatPageState extends State<NewChatPage> {
                     onTap: () => _onUserTap(user),
                   );
                 },
+              ),
+            ),
+
+          if (!_isSearching && _searchResults.isEmpty)
+            const Expanded(
+              child: Center(
+                child: Text("No users found"),
               ),
             ),
         ],

@@ -73,7 +73,7 @@ class MessagesRemoteDataSource {
   }
 
   Future<List<Map<String, dynamic>>> searchUsers(String query) async {
-    if (query.isEmpty) return [];
+    // if (query.isEmpty) return [];
     final url = Env.api('/messages/api/users/search/?q=$query');
     final response = await cookieRequest.get(url);
 

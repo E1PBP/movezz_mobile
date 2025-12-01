@@ -15,6 +15,7 @@ class ChatDetailPage extends StatefulWidget {
   final String conversationId;
   final String otherUserName;
   final String? otherUserAvatar;
+  final String? otherUserDisplayName;
 
   const ChatDetailPage({
     super.key,
@@ -22,6 +23,7 @@ class ChatDetailPage extends StatefulWidget {
     required this.conversationId,
     required this.otherUserName,
     this.otherUserAvatar,
+    this.otherUserDisplayName,
   });
 
   @override
@@ -119,11 +121,11 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.otherUserName,
+                    widget.otherUserDisplayName ?? widget.otherUserName,
                     style: boldTextStyle(color: Colors.white, size: 16),
                   ),
                   Text(
-                    "Online",
+                    "@" +widget.otherUserName,
                     style: secondaryTextStyle(color: Colors.white70, size: 12),
                   ),
                 ],

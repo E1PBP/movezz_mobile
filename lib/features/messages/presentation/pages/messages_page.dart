@@ -103,8 +103,9 @@ class _MessagesPageState extends State<MessagesPage> {
                         builder: (context) => ChatDetailPage(
                           conversation: convo,
                           conversationId: convo.id,
-                          otherUserName: convo.otherUserDisplayName,
+                          otherUserName: convo.otherUserUsername,
                           otherUserAvatar: convo.otherUserAvatar,
+                          otherUserDisplayName: convo.otherUserDisplayName,
                         ),
                       ),
                     ).then((_) {
