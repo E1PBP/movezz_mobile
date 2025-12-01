@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/messages_model.dart';
+import '/core/utils/format.dart';
 
 class ChatBubble extends StatelessWidget {
   final MessageModel message;
@@ -75,7 +76,7 @@ class ChatBubble extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                             child: Image.network(
                               message.imageUrl!,
-                              width: 200, // Batasi lebar agar rapi
+                              width: 200,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
                                   const Icon(
@@ -107,9 +108,9 @@ class ChatBubble extends StatelessWidget {
                         ),
                       4.height,
                       Text(
-                        message.createdAt.length > 11
-                            ? message.createdAt.substring(11, 16)
-                            : message.createdAt,
+                        FormatUtils.formatMessageDateTimeChat(
+                          message.createdAt,
+                        ),
                         style: secondaryTextStyle(
                           size: 10,
                           color: isMe ? Colors.white70 : Colors.grey,
