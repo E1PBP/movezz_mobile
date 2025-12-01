@@ -23,10 +23,17 @@ class MessagesRemoteDataSource {
     return [];
   }
 
-  Future<List<MessageModel>> getMessages(String conversationId) async {
-    final url = Env.api(
-      '/messages/api/conversations/$conversationId/messages/',
-    );
+  Future<List<MessageModel>> getMessages(
+    String conversationId, {
+    String? beforeId,
+  }) async {
+    String path = '/messages/api/conversations/$conversationId/messages/';
+
+    if (beforeId != null) {
+      path += '?before_id=$beforeId';
+    }
+
+    final url = Env.api(path);
     final response = await cookieRequest.get(url);
 
     if (response['messages'] != null) {
@@ -72,13 +79,15 @@ class MessagesRemoteDataSource {
     }
   }
 
-  Future<List<Map<String, dynamic>>> searchUsers(String query) async {
+  Future<List<ChatUserModel>> searchUsers(String query) async {
     // if (query.isEmpty) return [];
     final url = Env.api('/messages/api/users/search/?q=$query');
     final response = await cookieRequest.get(url);
 
     if (response['users'] != null) {
-      return List<Map<String, dynamic>>.from(response['users']);
+      final list = response['users'] as List;
+      // Map JSON ke ChatUserModel
+      return list.map((e) => ChatUserModel.fromJson(e)).toList();
     }
     return [];
   }
