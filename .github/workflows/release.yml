@@ -49,7 +49,6 @@ jobs:
           echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
           echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
           echo "storeFile=upload-keystore.jks" >> android/key.properties
-        working-directory: android
 
       - name: Build APK (Release)
         env:
@@ -74,7 +73,7 @@ jobs:
           tag: ${{ steps.release_info.outputs.tag }}
           name: "Release ${{ steps.version.outputs.version }}"
           body: |
-            ## 🚀 New Build
+            ## New Build
             **Version**: `${{ steps.version.outputs.version }}`
             **Built at**: ${{ steps.release_info.outputs.date }}
             **Commit**: ${{ github.sha }}
