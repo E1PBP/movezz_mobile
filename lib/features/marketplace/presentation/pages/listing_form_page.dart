@@ -4,7 +4,7 @@ import '../../data/models/marketplace_model.dart';
 
 class ListingFormPage extends StatefulWidget {
   final MarketplaceModel? initial;
-  final void Function({
+  final Future<void> Function({
     required String title,
     required int price,
     required String location,
@@ -72,17 +72,16 @@ class _ListingFormPageState extends State<ListingFormPage> {
       _isSubmitting = true;
     });
 
-    try {
+        try {
       if (widget.onSubmit != null) {
-        await Future.sync(() {
-          widget.onSubmit!.call(
-            title: title,
-            price: price,
-            location: location,
-            imageUrl: imageUrl,
-            condition: condition,
-          );
-        });
+        // Mode pakai callback async
+        await widget.onSubmit!.call(
+          title: title,
+          price: price,
+          location: location,
+          imageUrl: imageUrl,
+          condition: condition,
+        );
         if (mounted) Navigator.pop(context);
       } else {
         if (mounted) {
@@ -122,7 +121,7 @@ class _ListingFormPageState extends State<ListingFormPage> {
                 _buildTextField(
                   controller: _titleController,
                   label: 'Title',
-                  hint: 'Ex: Soccer shoes size 42',
+                  hint: 'Ex: Soccer Shoes',
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Title cannot be empty';
@@ -151,7 +150,7 @@ class _ListingFormPageState extends State<ListingFormPage> {
                 _buildTextField(
                   controller: _locationController,
                   label: 'Location',
-                  hint: 'Ex: South Jakarta',
+                  hint: 'Ex: Depok',
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return 'Location cannot be empty';
@@ -221,7 +220,7 @@ class _ListingFormPageState extends State<ListingFormPage> {
     return DropdownButtonFormField<Condition>(
       value: _selectedCondition,
       decoration: const InputDecoration(
-        labelText: 'Kondisi',
+        labelText: 'Condition',
         border: OutlineInputBorder(),
       ),
       items: Condition.values.map((c) {

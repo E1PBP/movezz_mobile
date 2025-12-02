@@ -23,4 +23,27 @@ class MarketplaceRepository {
       rethrow;
     }
   }
+
+  Future<String> createListing({
+    required String title,
+    required int price,
+    required String location,
+    required String imageUrl,
+    required Condition condition,
+    String? description,
+  }) async {
+    try {
+      final id = await remote.createListing(
+        title: title,
+        price: price,
+        location: location,
+        imageUrl: imageUrl,
+        condition: condition,
+        description: description,
+      );
+      return id;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

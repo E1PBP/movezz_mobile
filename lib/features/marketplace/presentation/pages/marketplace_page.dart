@@ -7,6 +7,7 @@ import '../controllers/marketplace_controller.dart';
 import '../../data/models/marketplace_model.dart';
 import '../widgets/marketplace_widget.dart';
 import 'listing_detail_page.dart';
+import 'listing_form_page.dart';
 
 class MarketplacePage extends StatefulWidget {
   const MarketplacePage({super.key});
@@ -45,6 +46,48 @@ class _MarketplacePageState extends State<MarketplacePage> {
     super.dispose();
   }
 
+  Future<void> _openCreateListingForm() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ListingFormPage(
+          onSubmit: ({
+            required String title,
+            required int price,
+            required String location,
+            required String imageUrl,
+            required Condition condition,
+          }) async {
+            try {
+              await _controller.createListing(
+                title: title,
+                price: price,
+                location: location,
+                imageUrl: imageUrl,
+                condition: condition,
+              );
+
+              if (!mounted) return;
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Listing berhasil dibuat'),
+                ),
+              );
+            } catch (e) {
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Gagal membuat listing: $e'),
+                ),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,6 +95,10 @@ class _MarketplacePageState extends State<MarketplacePage> {
       body: RefreshIndicator(
         onRefresh: _controller.refreshListings,
         child: _buildBody(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openCreateListingForm,
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -109,25 +156,9 @@ class _MarketplacePageState extends State<MarketplacePage> {
       onItemTap: (item) {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => ListingDetailPage(listing: item),
-          ),
+          MaterialPageRoute(builder: (_) => ListingDetailPage(listing: item)),
         );
       },
-    );
-  }
-
-  Widget _buildThumbnail(String imageUrl) {
-    if (imageUrl.isEmpty) {
-      return const Icon(Icons.image_not_supported);
-    }
-
-    return Image.network(
-      imageUrl,
-      width: 56,
-      height: 56,
-      fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
     );
   }
 }

@@ -8,14 +8,12 @@ class MarketplaceController extends ChangeNotifier {
 
   MarketplaceController(this.repository);
 
-  // state fields
   bool _isLoading = false;
   String? _errorMessage;
   List<MarketplaceModel> _listings = [];
 
   MarketplaceModel? _selectedListing;
 
-  // getter
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   List<MarketplaceModel> get listings => _listings;
@@ -75,5 +73,40 @@ class MarketplaceController extends ChangeNotifier {
 
   void clearSelectedListing() {
     _setSelectedListing(null);
+  }
+
+  Future<String> createListing({
+    required String title,
+    required int price,
+    required String location,
+    required String imageUrl,
+    required Condition condition,
+    String? description,
+  }) async {
+    _setError(null);
+
+    _setLoading(true);
+
+    try {
+      final id = await repository.createListing(
+        title: title,
+        price: price,
+        location: location,
+        imageUrl: imageUrl,
+        condition: condition,
+        description: description,
+      );
+
+      final data = await repository.fetchListings();
+      _setListings(data);
+
+      return id;
+    } catch (e) {
+      final msg = e.toString();
+      _setError(msg);
+      throw Exception(msg);
+    } finally {
+      _setLoading(false);
+    }
   }
 }
