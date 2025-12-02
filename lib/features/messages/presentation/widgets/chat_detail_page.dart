@@ -278,20 +278,24 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             decoration: const BoxDecoration(color: Colors.white),
             child: SafeArea(
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  InkWell(
-                    onTap: _pickImage,
-                    borderRadius: BorderRadius.circular(25),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.image_outlined,
-                        color: Colors.grey.shade700,
-                        size: 24,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: InkWell(
+                      onTap: _pickImage,
+                      borderRadius: BorderRadius.circular(25),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.image_outlined,
+                          color: Colors.grey.shade700,
+                          size: 24,
+                        ),
                       ),
                     ),
                   ),
@@ -305,7 +309,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                       ),
                       child: TextField(
                         controller: _messageController,
-                        maxLines: null,
+                        minLines: 1,
+                        maxLines: 5,
                         keyboardType: TextInputType.multiline,
                         decoration: InputDecoration(
                           hintText: "Type a message...",
@@ -321,41 +326,45 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     ),
                   ),
                   8.width,
-                  Consumer<MessagesController>(
-                    builder: (context, controller, _) {
-                      return InkWell(
-                        onTap: controller.isSending ? null : _handleSend,
-                        borderRadius: BorderRadius.circular(50),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: controller.isSending
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Icon(
-                                  Icons.send_rounded,
-                                  color: Colors.white,
-                                  size: 20,
+
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Consumer<MessagesController>(
+                      builder: (context, controller, _) {
+                        return InkWell(
+                          onTap: controller.isSending ? null : _handleSend,
+                          borderRadius: BorderRadius.circular(50),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
                                 ),
-                        ),
-                      );
-                    },
+                              ],
+                            ),
+                            child: controller.isSending
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.send_rounded,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
