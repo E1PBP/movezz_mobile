@@ -3,19 +3,36 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:movezz_mobile/core/config/env.dart';
 import '../models/marketplace_model.dart';
+import 'package:flutter/foundation.dart';
 
 class MarketplaceRemoteDataSource {
   final CookieRequest cookieRequest;
 
   MarketplaceRemoteDataSource(this.cookieRequest);
 
-  Future<List<MarketplaceModel>> getListings({String? searchQuery}) async {
+  Future<List<MarketplaceModel>> getListings({
+    String? searchQuery,
+    Condition? condition,
+  }) async {
     final baseUri = Uri.parse(Env.api('/marketplace/api/listings/'));
 
-    final uri = (searchQuery != null && searchQuery.trim().isNotEmpty)
-        ? baseUri.replace(queryParameters: {'q': searchQuery.trim()})
-        : baseUri;
+    final Map<String, String> params = {};
 
+    if (searchQuery != null && searchQuery.trim().isNotEmpty) {
+      params['q'] = searchQuery.trim();
+    }
+
+    if (condition != null) {
+      final conditionStr = conditionValues.reverse[condition];
+      if (conditionStr != null) {
+        params['condition'] = conditionStr;
+      }
+    }
+
+    final uri = params.isEmpty
+        ? baseUri
+        : baseUri.replace(queryParameters: params);
+        debugPrint('GET listings: $uri');
     final response = await cookieRequest.get(uri.toString());
 
     if (response is List) {

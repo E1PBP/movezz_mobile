@@ -14,12 +14,14 @@ class MarketplaceController extends ChangeNotifier {
 
   MarketplaceModel? _selectedListing;
   String _searchQuery = '';
+  Condition? _conditionFilter;
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   List<MarketplaceModel> get listings => _listings;
   MarketplaceModel? get selectedListing => _selectedListing;
   String get searchQuery => _searchQuery;
+  Condition? get conditionFilter => _conditionFilter;
 
   void _setLoading(bool value) {
     _isLoading = value;
@@ -41,20 +43,25 @@ class MarketplaceController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadListings({String? searchQuery}) async {
+  Future<void> loadListings({String? searchQuery, Condition? condition}) async {
     _setLoading(true);
     _setError(null);
 
     if (searchQuery != null) {
       _searchQuery = searchQuery;
     }
+    _conditionFilter = condition;
 
     try {
       final effectiveQuery = _searchQuery.trim().isEmpty
           ? null
           : _searchQuery.trim();
 
-      final data = await repository.fetchListings(searchQuery: effectiveQuery);
+      final data = await repository.fetchListings(
+        searchQuery: effectiveQuery,
+        conditionFilter: _conditionFilter,
+      );
+
       _setListings(data);
     } catch (e) {
       _setError(e.toString());
@@ -64,7 +71,7 @@ class MarketplaceController extends ChangeNotifier {
   }
 
   Future<void> refreshListings() async {
-    await loadListings(searchQuery: _searchQuery);
+    await loadListings(searchQuery: _searchQuery, condition: _conditionFilter);
   }
 
   Future<void> loadListingDetail(String id) async {
@@ -107,10 +114,13 @@ class MarketplaceController extends ChangeNotifier {
         description: description,
       );
 
-      final effectiveQuery =
-          _searchQuery.trim().isEmpty ? null : _searchQuery.trim();
+      final effectiveQuery = _searchQuery.trim().isEmpty
+          ? null
+          : _searchQuery.trim();
+
       final data = await repository.fetchListings(
         searchQuery: effectiveQuery,
+        conditionFilter: _conditionFilter,
       );
       _setListings(data);
 
@@ -147,10 +157,13 @@ class MarketplaceController extends ChangeNotifier {
         description: description,
       );
 
-      final effectiveQuery =
-          _searchQuery.trim().isEmpty ? null : _searchQuery.trim();
+      final effectiveQuery = _searchQuery.trim().isEmpty
+          ? null
+          : _searchQuery.trim();
+
       final data = await repository.fetchListings(
         searchQuery: effectiveQuery,
+        conditionFilter: _conditionFilter,
       );
       _setListings(data);
     } catch (e) {
@@ -173,10 +186,13 @@ class MarketplaceController extends ChangeNotifier {
         _setSelectedListing(null);
       }
 
-      final effectiveQuery =
-          _searchQuery.trim().isEmpty ? null : _searchQuery.trim();
+      final effectiveQuery = _searchQuery.trim().isEmpty
+          ? null
+          : _searchQuery.trim();
+
       final data = await repository.fetchListings(
         searchQuery: effectiveQuery,
+        conditionFilter: _conditionFilter,
       );
       _setListings(data);
     } catch (e) {

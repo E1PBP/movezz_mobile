@@ -17,6 +17,7 @@ class MarketplacePage extends StatefulWidget {
 
 class _MarketplacePageState extends State<MarketplacePage> {
   final TextEditingController _searchController = TextEditingController();
+  Condition? _selectedCondition;
 
   @override
   void initState() {
@@ -34,42 +35,43 @@ class _MarketplacePageState extends State<MarketplacePage> {
   }
 
   Future<void> _openEditListingForm(MarketplaceModel listing) async {
-  final fields = listing.fields;
+    final fields = listing.fields;
 
-  await Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => ListingFormPage(
-        initialTitle: fields.title,
-        initialPrice: fields.price,
-        initialLocation: fields.location,
-        initialImageUrl: fields.imageUrl,
-        initialCondition: fields.condition,
-        onSubmit: ({
-          required String title,
-          required int price,
-          required String location,
-          required String imageUrl,
-          required Condition condition,
-        }) async {
-          await context.read<MarketplaceController>().updateListing(
-                id: listing.pk, 
-                title: title,
-                price: price,
-                location: location,
-                imageUrl: imageUrl,
-                condition: condition,
-              );
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ListingFormPage(
+          initialTitle: fields.title,
+          initialPrice: fields.price,
+          initialLocation: fields.location,
+          initialImageUrl: fields.imageUrl,
+          initialCondition: fields.condition,
+          onSubmit:
+              ({
+                required String title,
+                required int price,
+                required String location,
+                required String imageUrl,
+                required Condition condition,
+              }) async {
+                await context.read<MarketplaceController>().updateListing(
+                  id: listing.pk,
+                  title: title,
+                  price: price,
+                  location: location,
+                  imageUrl: imageUrl,
+                  condition: condition,
+                );
 
-          if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Listing successfully updated')),
-          );
-        },
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Listing successfully updated')),
+                );
+              },
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Future<void> _confirmDeleteListing(MarketplaceModel listing) async {
     final shouldDelete =
@@ -140,6 +142,16 @@ class _MarketplacePageState extends State<MarketplacePage> {
     );
   }
 
+  String _conditionMenuLabel(Condition? c) {
+    if (c == null) return 'All';
+    switch (c) {
+      case Condition.BRAND_NEW:
+        return 'Brand New';
+      case Condition.USED:
+        return 'Used';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
@@ -155,24 +167,107 @@ class _MarketplacePageState extends State<MarketplacePage> {
           body: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
-                child: TextField(
-                  controller: _searchController,
-                  textInputAction: TextInputAction.search,
-                  decoration: InputDecoration(
-                    hintText: 'Search listings...',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        textInputAction: TextInputAction.search,
+                        decoration: InputDecoration(
+                          hintText: 'Search listings...',
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          isDense: true,
+                        ),
+                        onSubmitted: (value) {
+                          controller.loadListings(
+                            searchQuery: value,
+                            condition: _selectedCondition,
+                          );
+                        },
+                      ),
                     ),
-                    isDense: true,
-                  ),
-                  onSubmitted: (value) {
-                    controller.loadListings(searchQuery: value);
-                  },
+                    const SizedBox(width: 8),
+
+                    PopupMenuButton<String>(
+                      tooltip: 'Filter condition',
+                      onSelected: (value) {
+                        if (value == 'ALL') {
+                          setState(() {
+                            _selectedCondition = null;
+                            _searchController.clear();
+                          });
+
+                          controller.loadListings(
+                            searchQuery: '',
+                            condition: null,
+                          );
+                        } else {
+                          Condition newCondition;
+                          if (value == 'BRAND_NEW') {
+                            newCondition = Condition.BRAND_NEW;
+                          } else {
+                            newCondition = Condition.USED;
+                          }
+
+                          setState(() {
+                            _selectedCondition = newCondition;
+                          });
+
+                          controller.loadListings(
+                            searchQuery: _searchController.text,
+                            condition: _selectedCondition,
+                          );
+                        }
+                      },
+                      itemBuilder: (ctx) => <PopupMenuEntry<String>>[
+                        const PopupMenuItem<String>(
+                          value: 'ALL',
+                          child: Text('All'),
+                        ),
+                        const PopupMenuItem<String>(
+                          value: 'BRAND_NEW',
+                          child: Text('Brand New'),
+                        ),
+                        const PopupMenuItem<String>(
+                          value: 'USED',
+                          child: Text('Used'),
+                        ),
+                      ],
+                      child: Container(
+                        height: 36,
+                        width: 36,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Stack(
+                          children: [
+                            const Center(child: Icon(Icons.tune, size: 18)),
+                            if (_selectedCondition != null)
+                              Positioned(
+                                right: 6,
+                                top: 6,
+                                child: Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.blue,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: controller.refreshListings,

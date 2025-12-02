@@ -6,13 +6,19 @@ class MarketplaceRepository {
 
   MarketplaceRepository(this.remote);
 
-  Future<List<MarketplaceModel>> fetchListings({String? searchQuery}) async {
-    try {
-      final listings = await remote.getListings(searchQuery: searchQuery);
-      return listings;
-    } catch (e) {
-      rethrow;
-    }
+  Future<List<MarketplaceModel>> fetchListings({
+    String? searchQuery,
+    Condition? conditionFilter,
+  }) async {
+      try {
+        final listings = await remote.getListings(
+          searchQuery: searchQuery,
+          condition: conditionFilter,
+        );
+        return listings;
+      } catch (e) {
+        rethrow;
+      }
   }
 
   Future<MarketplaceModel> fetchListingDetail(String id) async {
