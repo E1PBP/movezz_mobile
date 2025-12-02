@@ -12,23 +12,27 @@ class MarketplaceModel {
     Model model;
     String pk;
     Fields fields;
+    bool isMine;
 
     MarketplaceModel({
         required this.model,
         required this.pk,
         required this.fields,
+        required this.isMine,
     });
 
     factory MarketplaceModel.fromJson(Map<String, dynamic> json) => MarketplaceModel(
         model: modelValues.map[json["model"]]!,
         pk: json["pk"],
         fields: Fields.fromJson(json["fields"]),
+        isMine: (json["isMine"] as bool?) ?? false,
     );
 
     Map<String, dynamic> toJson() => {
         "model": modelValues.reverse[model],
         "pk": pk,
         "fields": fields.toJson(),
+        "isMine": isMine,
     };
 }
 

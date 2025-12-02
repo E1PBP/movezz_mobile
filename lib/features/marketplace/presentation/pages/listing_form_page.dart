@@ -1,22 +1,33 @@
 import 'package:flutter/material.dart';
-
-import '../../data/models/marketplace_model.dart';
+import '../../data/models/marketplace_model.dart'; 
 
 class ListingFormPage extends StatefulWidget {
-  final MarketplaceModel? initial;
   final Future<void> Function({
     required String title,
     required int price,
     required String location,
     required String imageUrl,
     required Condition condition,
-  })? onSubmit;
+  }) onSubmit;
+
+  // initial values (kalau edit)
+  final String? initialTitle;
+  final int? initialPrice;
+  final String? initialLocation;
+  final String? initialImageUrl;
+  final Condition? initialCondition;
 
   const ListingFormPage({
     super.key,
-    this.initial,
-    this.onSubmit,
+    required this.onSubmit,
+    this.initialTitle,
+    this.initialPrice,
+    this.initialLocation,
+    this.initialImageUrl,
+    this.initialCondition,
   });
+
+  bool get isEdit => initialTitle != null;
 
   @override
   State<ListingFormPage> createState() => _ListingFormPageState();
@@ -30,24 +41,25 @@ class _ListingFormPageState extends State<ListingFormPage> {
   late final TextEditingController _locationController;
   late final TextEditingController _imageUrlController;
 
-  Condition _selectedCondition = Condition.USED;
+  Condition? _selectedCondition;
   bool _isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
 
-    final initialFields = widget.initial?.fields;
+    _titleController = TextEditingController(text: widget.initialTitle ?? '');
+    _priceController = TextEditingController(
+      text: widget.initialPrice?.toString() ?? '',
+    );
+    _locationController = TextEditingController(
+      text: widget.initialLocation ?? '',
+    );
+    _imageUrlController = TextEditingController(
+      text: widget.initialImageUrl ?? '',
+    );
 
-    _titleController = TextEditingController(text: initialFields?.title ?? '');
-    _priceController =
-        TextEditingController(text: initialFields?.price.toString() ?? '');
-    _locationController =
-        TextEditingController(text: initialFields?.location ?? '');
-    _imageUrlController =
-        TextEditingController(text: initialFields?.imageUrl ?? '');
-
-    _selectedCondition = initialFields?.condition ?? Condition.USED;
+    _selectedCondition = widget.initialCondition ?? Condition.USED;
   }
 
   @override
@@ -61,180 +73,145 @@ class _ListingFormPageState extends State<ListingFormPage> {
 
   Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_selectedCondition == null) return;
 
     final title = _titleController.text.trim();
-    final price = int.parse(_priceController.text.trim());
     final location = _locationController.text.trim();
     final imageUrl = _imageUrlController.text.trim();
-    final condition = _selectedCondition;
+    final price = int.tryParse(_priceController.text.trim()) ?? 0;
 
-    setState(() {
-      _isSubmitting = true;
-    });
+    setState(() => _isSubmitting = true);
 
-        try {
-      if (widget.onSubmit != null) {   
-        await widget.onSubmit!.call(
-          title: title,
-          price: price,
-          location: location,
-          imageUrl: imageUrl,
-          condition: condition,
-        );
-        if (mounted) Navigator.pop(context);
-      } else {
-        if (mounted) {
-          Navigator.pop(context, {
-            'title': title,
-            'price': price,
-            'location': location,
-            'image_url': imageUrl,
-            'condition': conditionValues.reverse[condition],
-          });
-        }
-      }
+    try {
+      await widget.onSubmit(
+        title: title,
+        price: price,
+        location: location,
+        imageUrl: imageUrl,
+        condition: _selectedCondition!,
+      );
+
+      if (!mounted) return;
+      Navigator.pop(context); 
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     } finally {
       if (mounted) {
-        setState(() {
-          _isSubmitting = false;
-        });
+        setState(() => _isSubmitting = false);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final isEdit = widget.initial != null;
+    final isEdit = widget.isEdit;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEdit ? 'Edit Listing' : 'Add Listing'),
+        title: Text(isEdit ? 'Edit Listing' : 'Create Listing'),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                _buildTextField(
-                  controller: _titleController,
-                  label: 'Title',
-                  hint: 'Ex: Soccer Shoes',
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Title cannot be empty';
-                    }
-                    return null;
-                  },
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                controller: _titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                  border: OutlineInputBorder(),
                 ),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  controller: _priceController,
-                  label: 'Price',
-                  keyboardType: TextInputType.number,
-                  hint: 'Ex: 250000',
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Price cannot be empty';
-                    }
-                    final parsed = int.tryParse(value.trim());
-                    if (parsed == null || parsed <= 0) {
-                      return 'Enter a valid price';
-                    }
-                    return null;
-                  },
+                validator: (value) =>
+                    (value == null || value.trim().isEmpty)
+                        ? 'Title is required'
+                        : null,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _priceController,
+                decoration: const InputDecoration(
+                  labelText: 'Price',
+                  border: OutlineInputBorder(),
                 ),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  controller: _locationController,
-                  label: 'Location',
-                  hint: 'Ex: Depok',
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Location cannot be empty';
-                    }
-                    return null;
-                  },
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Price is required';
+                  }
+                  final p = int.tryParse(value.trim());
+                  if (p == null || p <= 0) {
+                    return 'Price must be a positive number';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _locationController,
+                decoration: const InputDecoration(
+                  labelText: 'Location',
+                  border: OutlineInputBorder(),
                 ),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  controller: _imageUrlController,
-                  label: 'Image URL (optional)',
-                  hint: 'https://example.com/image.jpg',
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return null;
-                    }
-                    if (!value.startsWith('http')) {
-                      return 'URL invalid';
-                    }
-                    return null;
-                  },
+                validator: (value) =>
+                    (value == null || value.trim().isEmpty)
+                        ? 'Location is required'
+                        : null,
+              ),
+              const SizedBox(height: 12),
+                TextFormField(
+                controller: _imageUrlController,
+                decoration: const InputDecoration(
+                  labelText: 'Image URL (optional)',
+                  border: OutlineInputBorder(),
                 ),
-                const SizedBox(height: 12),
-                _buildConditionDropdown(),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton(
-                    onPressed: _isSubmitting ? null : _handleSubmit,
-                    child: _isSubmitting
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(isEdit ? 'Save Changes' : 'Add Listing'),
+              ),
+              const SizedBox(height: 12),
+              InputDecorator(
+                decoration: const InputDecoration(
+                  labelText: 'Condition',
+                  border: OutlineInputBorder(),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<Condition>(
+                    value: _selectedCondition,
+                    items: Condition.values.map((c) {
+                      return DropdownMenuItem(
+                        value: c,
+                        child: Text(
+                          conditionValues.reverse[c]!, 
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedCondition = value;
+                      });
+                    },
                   ),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _isSubmitting ? null : _handleSubmit,
+                  child: _isSubmitting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(isEdit ? 'Save Changes' : 'Create'),
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    String? hint,
-    String? Function(String?)? validator,
-    TextInputType? keyboardType,
-  }) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        border: const OutlineInputBorder(),
-      ),
-      validator: validator,
-      keyboardType: keyboardType,
-    );
-  }
-
-  Widget _buildConditionDropdown() {
-    return DropdownButtonFormField<Condition>(
-      value: _selectedCondition,
-      decoration: const InputDecoration(
-        labelText: 'Condition',
-        border: OutlineInputBorder(),
-      ),
-      items: Condition.values.map((c) {
-        final text = c == Condition.BRAND_NEW ? 'New' : 'Used';
-        return DropdownMenuItem(
-          value: c,
-          child: Text(text),
-        );
-      }).toList(),
-      onChanged: (value) {
-        if (value == null) return;
-        setState(() {
-          _selectedCondition = value;
-        });
-      },
     );
   }
 }
