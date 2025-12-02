@@ -13,7 +13,9 @@ import 'features/auth/presentation/controllers/auth_controller.dart';
 import 'features/messages/data/datasources/messages_remote_data_source.dart';
 import 'features/messages/data/repositories/messages_repository.dart';
 import 'features/messages/presentation/controllers/messages_controller.dart';
-
+import 'features/marketplace/data/datasources/marketplace_remote_data_source.dart';
+import 'features/marketplace/data/repositories/marketplace_repository.dart';
+import 'features/marketplace/presentation/controllers/marketplace_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,6 +59,14 @@ void main() async {
             final remote = MessagesRemoteDataSource(cookie);
             final repo = MessagesRepository(remote);
             return MessagesController(repo);
+          },
+        ),
+        ChangeNotifierProvider<MarketplaceController>(
+          create: (context) {
+            final cookie = context.read<CookieRequest>();
+            final remote = MarketplaceRemoteDataSource(cookie);
+            final repo = MarketplaceRepository(remote);
+            return MarketplaceController(repo);
           },
         ),
       ],
