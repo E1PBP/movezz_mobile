@@ -9,6 +9,8 @@ class MarketplaceWidget extends StatelessWidget {
   final void Function(MarketplaceModel listing)? onEditTap;
   final void Function(MarketplaceModel listing)? onDeleteTap;
   final int? currentUserId;
+  final Set<String> wishlistIds;
+  final void Function(MarketplaceModel listing)? onWishlistTap;
 
   const MarketplaceWidget({
     super.key,
@@ -17,6 +19,8 @@ class MarketplaceWidget extends StatelessWidget {
     this.onEditTap,
     this.onDeleteTap,
     this.currentUserId,
+    this.wishlistIds = const {},
+    this.onWishlistTap,
   });
 
   @override
@@ -35,7 +39,8 @@ class MarketplaceWidget extends StatelessWidget {
         final item = listings[index];
         final ownerId = item.fields.owner;
         final isOwner = item.isMine;
-
+        final isWishlisted = wishlistIds.contains(item.pk);
+         
         return ListingCard(
           listing: item,
           onTap: () => onItemTap?.call(item),
@@ -44,6 +49,11 @@ class MarketplaceWidget extends StatelessWidget {
               : null,
           onDelete: (isOwner && onDeleteTap != null)
               ? () => onDeleteTap!.call(item)
+              : null,
+            
+          isWishlisted: isWishlisted,
+          onWishlistTap: onWishlistTap != null
+              ? () => onWishlistTap!(item)
               : null,
         );
       },

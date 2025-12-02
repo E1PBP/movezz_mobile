@@ -84,4 +84,31 @@ class MarketplaceRepository {
       rethrow;
     }
   }
+
+  Future<Set<String>> fetchWishlistIds() async {
+    try {
+      final ids = await remote.getWishlistIds();
+      return ids;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<bool> toggleWishlist(String listingId) async {
+    try {
+      final inWishlist = await remote.toggleWishlist(listingId);
+      return inWishlist;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<MarketplaceModel>> fetchWishlistListings() async {
+    try {
+      final listings = await remote.getWishlistListings();
+      return listings;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -6,6 +6,8 @@ class ListingCard extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final VoidCallback? onWishlistTap;
+  final bool isWishlisted;
 
   const ListingCard({
     super.key,
@@ -13,6 +15,8 @@ class ListingCard extends StatelessWidget {
     this.onTap,
     this.onEdit,
     this.onDelete,
+    this.onWishlistTap,
+    this.isWishlisted = false,
   });
 
   @override
@@ -30,24 +34,52 @@ class ListingCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Thumbnail / gambar
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: fields.imageUrl.isNotEmpty
-                    ? Image.network(
-                        fields.imageUrl,
-                        width: 72,
-                        height: 72,
-                        fit: BoxFit.cover,
-                      )
-                    : Container(
-                        width: 72,
-                        height: 72,
-                        color: Colors.grey.shade200,
-                        child: const Icon(Icons.image_not_supported),
+              SizedBox(
+                      width: 72,
+                      height: 72,
+                      child: Stack(
+                        children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: fields.imageUrl.isNotEmpty
+                            ? Image.network(
+                              fields.imageUrl,
+                              width: 72,
+                              height: 72,
+                              fit: BoxFit.cover,
+                            )
+                            : Container(
+                              width: 72,
+                              height: 72,
+                              color: Colors.grey.shade200,
+                              child: const Icon(Icons.image_not_supported),
+                            ),
+                        ),
+                        if (onWishlistTap != null)
+                          Positioned(
+                          right: 4,
+                          top: 4,
+                          child: GestureDetector(
+                            onTap: onWishlistTap,
+                            child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.8),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              isWishlisted ? Icons.favorite : Icons.favorite_border,
+                              size: 18,
+                              color: isWishlisted ? Colors.pink : Colors.grey.shade600,
+                            ),
+                            ),
+                          ),
+                          ),
+                        ],
                       ),
-              ),
+                      ),
 
-              const SizedBox(width: 12),
+                      const SizedBox(width: 12),
 
               // Info + action
               Expanded(

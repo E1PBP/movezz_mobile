@@ -175,4 +175,69 @@ class MarketplaceRemoteDataSource {
 
     throw Exception('Failed to delete listing: ${response.body}');
   }
+
+  Future<Set<String>> getWishlistIds() async {
+    final url = Env.api('/marketplace/api/wishlist/ids/');
+
+    final response = await cookieRequest.get(url);
+
+    if (response is List) {
+      return response.map((e) => e.toString()).toSet();
+    }
+
+    throw Exception('Invalid wishlist_ids response: $response');
+  }
+
+  Future<bool> toggleWishlist(String listingId) async {
+    final url = Env.api('/marketplace/api/wishlist/toggle/');
+
+    final headers = Map<String, String>.from(cookieRequest.headers);
+    headers['Content-Type'] = 'application/x-www-form-urlencoded';
+
+    final body = {
+      'listing_id': listingId,
+    };
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      if (response.body.isEmpty) {
+        throw Exception('Empty wishlist_toggle response');
+      }
+
+      final decoded = jsonDecode(response.body);
+
+      final status = decoded['status']?.toString().toLowerCase();
+
+      if (status == 'added') {
+        return true;
+      } else if (status == 'removed') {
+        return false;
+      }
+
+      throw Exception('Unknown wishlist_toggle status: $status');
+    } else if (response.statusCode == 302) {
+      throw Exception('Session expired. Please log in again.');
+    }
+
+    throw Exception(
+      'Failed to toggle wishlist (${response.statusCode}): ${response.body}',
+    );
+  }
+
+  Future<List<MarketplaceModel>> getWishlistListings() async {
+    final url = Env.api('/marketplace/api/wishlist/list/');
+
+    final response = await cookieRequest.get(url);
+
+    if (response is List) {
+      return response.map((item) => MarketplaceModel.fromJson(item)).toList();
+    }
+
+    throw Exception('Invalid wishlist_listings response: $response');
+  }
 }

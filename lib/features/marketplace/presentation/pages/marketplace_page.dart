@@ -6,6 +6,7 @@ import '../../data/models/marketplace_model.dart';
 import '../widgets/marketplace_widget.dart';
 import 'listing_detail_page.dart';
 import 'listing_form_page.dart';
+import 'wishlist_page.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class MarketplacePage extends StatefulWidget {
@@ -24,7 +25,9 @@ class _MarketplacePageState extends State<MarketplacePage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<MarketplaceController>().loadListings();
+      final controller = context.read<MarketplaceController>();
+      controller.loadListings();
+      controller.loadWishlistIds();
     });
   }
 
@@ -142,16 +145,6 @@ class _MarketplacePageState extends State<MarketplacePage> {
     );
   }
 
-  String _conditionMenuLabel(Condition? c) {
-    if (c == null) return 'All';
-    switch (c) {
-      case Condition.BRAND_NEW:
-        return 'Brand New';
-      case Condition.USED:
-        return 'Used';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
@@ -163,7 +156,22 @@ class _MarketplacePageState extends State<MarketplacePage> {
     return Consumer<MarketplaceController>(
       builder: (context, controller, child) {
         return Scaffold(
-          appBar: AppBar(title: const Text('Marketplace')),
+          appBar: AppBar(
+            title: const Text('Marketplace'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.favorite),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const WishlistPage(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
           body: Column(
             children: [
               Padding(
@@ -325,6 +333,10 @@ class _MarketplacePageState extends State<MarketplacePage> {
       onEditTap: _openEditListingForm,
       onDeleteTap: _confirmDeleteListing,
       currentUserId: currentUserId,
+      wishlistIds: controller.wishlistIds, 
+      onWishlistTap: (item) {
+        context.read<MarketplaceController>().toggleWishlist(item.pk);
+      }, 
     );
   }
 }

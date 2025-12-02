@@ -11,10 +11,13 @@ class MarketplaceController extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   List<MarketplaceModel> _listings = [];
+  List<MarketplaceModel> _wishlistListings = [];
 
   MarketplaceModel? _selectedListing;
   String _searchQuery = '';
   Condition? _conditionFilter;
+
+  Set<String> _wishlistIds = {};
 
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
@@ -22,6 +25,8 @@ class MarketplaceController extends ChangeNotifier {
   MarketplaceModel? get selectedListing => _selectedListing;
   String get searchQuery => _searchQuery;
   Condition? get conditionFilter => _conditionFilter;
+  Set<String> get wishlistIds => _wishlistIds;
+  List<MarketplaceModel> get wishlistListings => _wishlistListings;
 
   void _setLoading(bool value) {
     _isLoading = value;
@@ -40,6 +45,16 @@ class MarketplaceController extends ChangeNotifier {
 
   void _setSelectedListing(MarketplaceModel? listing) {
     _selectedListing = listing;
+    notifyListeners();
+  }
+
+  void _setWishlistIds(Set<String> ids) {
+    _wishlistIds = ids;
+    notifyListeners();
+  }
+  
+  void _setWishlistListings(List<MarketplaceModel> data) {
+    _wishlistListings = data;
     notifyListeners();
   }
 
@@ -199,6 +214,49 @@ class MarketplaceController extends ChangeNotifier {
       final msg = e.toString();
       _setError(msg);
       throw Exception(msg);
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<void> loadWishlistIds() async {
+    try {
+      final ids = await repository.fetchWishlistIds();
+      _setWishlistIds(ids);
+    } catch (e) {
+      debugPrint('Failed to load wishlist ids: $e');
+    }
+  }
+
+  Future<void> toggleWishlist(String listingId) async {
+    _setError(null);
+
+    try {
+      final inWishlist = await repository.toggleWishlist(listingId);
+
+      final updated = Set<String>.from(_wishlistIds);
+      if (inWishlist) {
+        updated.add(listingId);
+      } else {
+        updated.remove(listingId);
+      }
+      _setWishlistIds(updated);
+    } catch (e) {
+      final msg = e.toString();
+      _setError(msg);
+      throw Exception(msg);
+    }
+  }
+
+  Future<void> loadWishlistListings() async {
+    _setLoading(true);
+    _setError(null);
+
+    try {
+      final data = await repository.fetchWishlistListings();
+      _setWishlistListings(data);
+    } catch (e) {
+      _setError(e.toString());
     } finally {
       _setLoading(false);
     }
