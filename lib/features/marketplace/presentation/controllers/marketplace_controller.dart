@@ -108,5 +108,61 @@ class MarketplaceController extends ChangeNotifier {
     } finally {
       _setLoading(false);
     }
+  } 
+
+  Future<void> updateListing({
+    required String id,
+    required String title,
+    required int price,
+    required String location,
+    required String imageUrl,
+    required Condition condition,
+    String? description,
+  }) async {
+    _setError(null);
+    _setLoading(true);
+
+    try {
+      await repository.updateListing(
+        id: id,
+        title: title,
+        price: price,
+        location: location,
+        imageUrl: imageUrl,
+        condition: condition,
+        description: description,
+      );
+
+      final data = await repository.fetchListings();
+      _setListings(data);
+    } catch (e) {
+      final msg = e.toString();
+      _setError(msg);
+      throw Exception(msg);
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<void> deleteListing(String id) async {
+    _setError(null);
+    _setLoading(true);
+
+    try {
+      await repository.deleteListing(id);
+
+      if (_selectedListing != null && _selectedListing!.pk == id) {
+        _setSelectedListing(null);
+      }
+
+      final data = await repository.fetchListings();
+      _setListings(data);
+    } catch (e) {
+      final msg = e.toString();
+      _setError(msg);
+      throw Exception(msg);
+    } finally {
+      _setLoading(false);
+    }
   }
 }

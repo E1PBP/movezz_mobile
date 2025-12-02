@@ -1,8 +1,6 @@
 ﻿import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import '../../data/datasources/marketplace_remote_data_source.dart';
-import '../../data/repositories/marketplace_repository.dart';
+
 import '../controllers/marketplace_controller.dart';
 import '../../data/models/marketplace_model.dart';
 import '../widgets/marketplace_widget.dart';
@@ -17,31 +15,85 @@ class MarketplacePage extends StatefulWidget {
 }
 
 class _MarketplacePageState extends State<MarketplacePage> {
-  late final MarketplaceController _controller;
-
   @override
   void initState() {
     super.initState();
 
-WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MarketplaceController>().loadListings();
     });
   }
 
-  void _onControllerUpdated() {
-    if (mounted) {
-      setState(() {});
-    }
+  // === NEW: buka form edit ===
+  Future<void> _openEditListingForm(MarketplaceModel listing) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ListingFormPage(
+          onSubmit: ({
+            required String title,
+            required int price,
+            required String location,
+            required String imageUrl,
+            required Condition condition,
+          }) async {
+            await context.read<MarketplaceController>().updateListing(
+                  id: listing.pk,
+                  title: title,
+                  price: price,
+                  location: location,
+                  imageUrl: imageUrl,
+                  condition: condition,
+                );
+
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Listing successfully updated')),
+            );
+          },
+        ),
+      ),
+    );
   }
 
-  @override
-  void dispose() {
-    _controller.removeListener(_onControllerUpdated);
-    _controller.dispose();
-    super.dispose();
+  // === NEW: konfirmasi & delete ===
+  Future<void> _confirmDeleteListing(MarketplaceModel listing) async {
+    final shouldDelete = await showDialog<bool>(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: const Text('Delete listing'),
+              content: Text(
+                  'Are you sure you want to delete "${listing.fields.title}"?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (!shouldDelete) return;
+
+    await context.read<MarketplaceController>().deleteListing(listing.pk);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Listing deleted')),
+    );
   }
 
-Future<void> _openCreateListingForm() async {
+  Future<void> _openCreateListingForm() async {
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -64,7 +116,7 @@ Future<void> _openCreateListingForm() async {
 
             if (!mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Listing berhasil dibuat')),
+              const SnackBar(content: Text('Listing successfully created')),
             );
           },
         ),
@@ -74,7 +126,6 @@ Future<void> _openCreateListingForm() async {
 
 @override
   Widget build(BuildContext context) {
-    // Gunakan Consumer untuk mendengarkan perubahan state dari Controller
     return Consumer<MarketplaceController>(
       builder: (context, controller, child) {
         return Scaffold(
@@ -109,7 +160,7 @@ Widget _buildBody(MarketplaceController controller) {
             const SizedBox(height: 12),
             ElevatedButton(
               onPressed: controller.loadListings,
-              child: const Text('Coba lagi'),
+              child: const Text('Try again'),
             ),
           ],
         ),
@@ -117,7 +168,7 @@ Widget _buildBody(MarketplaceController controller) {
     }
 
     if (controller.listings.isEmpty) {
-      return const Center(child: Text('Belum ada listing yang tersedia.'));
+      return const Center(child: Text('No listings available.'));
     }
 
     return MarketplaceWidget(
@@ -128,6 +179,8 @@ Widget _buildBody(MarketplaceController controller) {
           MaterialPageRoute(builder: (_) => ListingDetailPage(listing: item)),
         );
       },
+      onEditTap: _openEditListingForm,
+      onDeleteTap: _confirmDeleteListing,
     );
   }
 }

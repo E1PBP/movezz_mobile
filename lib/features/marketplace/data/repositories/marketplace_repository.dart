@@ -46,4 +46,36 @@ class MarketplaceRepository {
       rethrow;
     }
   }
+
+  Future<void> updateListing({
+    required String id,
+    required String title,
+    required int price,
+    required String location,
+    required String imageUrl,
+    required Condition condition,
+    String? description,
+  }) async {
+    try {
+      await remote.updateListing(
+        id: id,
+        title: title,
+        price: price,
+        location: location,
+        imageUrl: imageUrl,
+        condition: condition,
+        description: description,
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteListing(String id) async {
+    try {
+      await remote.deleteListing(id);
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

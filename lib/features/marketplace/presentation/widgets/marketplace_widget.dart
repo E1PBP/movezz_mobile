@@ -6,11 +6,15 @@ import 'listing_card.dart';
 class MarketplaceWidget extends StatelessWidget {
   final List<MarketplaceModel> listings;
   final void Function(MarketplaceModel listing)? onItemTap;
+  final void Function(MarketplaceModel listing)? onEditTap;
+  final void Function(MarketplaceModel listing)? onDeleteTap;
 
   const MarketplaceWidget({
     super.key,
     required this.listings,
     this.onItemTap,
+    this.onEditTap,
+    this.onDeleteTap,
   });
 
   @override
@@ -31,6 +35,8 @@ class MarketplaceWidget extends StatelessWidget {
         return ListingCard(
           listing: item,
           onTap: () => onItemTap?.call(item),
+          onEdit: onEditTap != null ? () => onEditTap!.call(item) : null,
+          onDelete: onDeleteTap != null ? () => onDeleteTap!.call(item) : null,
         );
       },
     );

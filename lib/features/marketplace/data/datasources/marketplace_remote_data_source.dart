@@ -16,7 +16,7 @@ class MarketplaceRemoteDataSource {
     if (response is List) {
       return response.map((item) => MarketplaceModel.fromJson(item)).toList();
     } else {
-      throw Exception('Format respon tidak valid');
+      throw Exception('Invalid response format');
     }
   }
 
@@ -30,7 +30,7 @@ class MarketplaceRemoteDataSource {
       return MarketplaceModel.fromJson(response);
     }
 
-    throw Exception('Gagal memuat detail listing');
+    throw Exception('Failed to load listing detail');
   }
 
   Future<String> createListing({
@@ -52,7 +52,7 @@ class MarketplaceRemoteDataSource {
       'description': description ?? '',
     };
 
-    final headers = cookieRequest.headers;
+    final headers = Map<String, String>.from(cookieRequest.headers);
     headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
     final response = await http.post(
@@ -67,9 +67,90 @@ class MarketplaceRemoteDataSource {
         return decoded['id'].toString();
       }
     } else if (response.statusCode == 302) {
+      throw Exception('Session expired. Please log in again.');
+    }
+
+    throw Exception('Failed to create listing: ${response.body}');
+  }
+  Future<void> updateListing({
+    required String id,
+    required String title,
+    required int price,
+    required String location,
+    required String imageUrl,
+    required Condition condition,
+    String? description,
+  }) async {
+    final url = Env.api('/marketplace/listing/$id/edit-ajax/');
+
+    final Map<String, String> body = {
+      'title': title,
+      'price': price.toString(),
+      'location': location,
+      'image_url': imageUrl,
+      'condition': conditionValues.reverse[condition] ?? 'USED',
+      'description': description ?? '',
+    };
+
+    final headers = Map<String, String>.from(cookieRequest.headers);
+    headers['Content-Type'] = 'application/x-www-form-urlencoded';
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      if (response.body.isEmpty) {
+        return;
+      }
+
+      final decoded = jsonDecode(response.body);
+      final status = decoded['status']?.toString().toLowerCase();
+
+      if (status == 'updated' || status == 'ok' || status == 'success') {
+        return;
+      }
+
+      throw Exception('Failed to update listing: ${response.body}');
+    } else if (response.statusCode == 302) {
+      throw Exception('Session expired. Please log in again.');
+    }
+
+    throw Exception('Failed to update listing: ${response.body}');
+  }
+  
+  Future<void> deleteListing(String id) async {
+    final url = Env.api('/marketplace/listing/$id/delete-ajax/');
+
+    final headers = Map<String, String>.from(cookieRequest.headers);
+    headers['Content-Type'] = 'application/x-www-form-urlencoded';
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: headers,
+      body: const {}, 
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      if (response.body.isEmpty) {
+        return;
+      }
+
+      final decoded = jsonDecode(response.body);
+      final status = decoded['status']?.toString().toLowerCase();
+
+      if (status == 'deleted' || status == 'ok' || status == 'success') {
+        return;
+      }
+
+      throw Exception('Gagal menghapus listing: ${response.body}');
+    } else if (response.statusCode == 302) {
       throw Exception('Sesi habis. Silakan login kembali.');
     }
 
-    throw Exception('Gagal membuat listing: ${response.body}');
+    throw Exception('Failed to delete listing: ${response.body}');
   }
 }
+

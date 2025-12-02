@@ -73,8 +73,7 @@ class _ListingFormPageState extends State<ListingFormPage> {
     });
 
         try {
-      if (widget.onSubmit != null) {
-        // Mode pakai callback async
+      if (widget.onSubmit != null) {   
         await widget.onSubmit!.call(
           title: title,
           price: price,
