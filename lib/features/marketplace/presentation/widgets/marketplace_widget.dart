@@ -17,7 +17,7 @@ class MarketplaceWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (listings.isEmpty) {
       return const Center(
-        child: Text('Belum ada listing yang tersedia.'),
+        child: Text('No listings available.'),
       );
     }
 
