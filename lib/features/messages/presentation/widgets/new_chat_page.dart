@@ -73,7 +73,11 @@ class _NewChatPageState extends State<NewChatPage> {
             otherUserAvatar: user.avatarUrl,
           ),
         ),
-      );
+      ).then((_) {
+        if (mounted) {
+          context.read<MessagesController>().fetchConversations();
+        }
+      });
     } else {
       toast("Failed to start chat");
     }
@@ -207,7 +211,7 @@ class _NewChatPageState extends State<NewChatPage> {
                     backgroundColor: AppColors.primary.withOpacity(0.1),
                     child: avatarUrl == null
                         ? Text(
-                            (username as String)[0].toUpperCase(),
+                            username[0].toUpperCase(),
                             style: boldTextStyle(
                               color: AppColors.primary,
                               size: 18,

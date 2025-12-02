@@ -122,11 +122,11 @@ class MessagesController extends ChangeNotifier {
       if (newMessage != null) {
         activeMessages.add(newMessage);
 
-        final index = conversations.indexWhere((c) => c.id == conversationId);
-        if (index != -1) {
-          fetchConversations();
-        }
-
+        // final index = conversations.indexWhere((c) => c.id == conversationId);
+        // if (index != -1) {
+        //   fetchConversations();
+        // }
+        fetchConversations();
         isSending = false;
         notifyListeners();
         return true;
