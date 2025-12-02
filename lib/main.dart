@@ -14,29 +14,30 @@ import 'features/messages/data/datasources/messages_remote_data_source.dart';
 import 'features/messages/data/repositories/messages_repository.dart';
 import 'features/messages/presentation/controllers/messages_controller.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
   await initialize();
-  
+
   final cookieRequest = CookieRequest();
   await cookieRequest.init();
 
+  bool hasSeenOnboarding = getBoolAsync(
+    'hasSeenOnboarding',
+    defaultValue: false,
+  );
+
   String initialRoute;
-  if (cookieRequest.loggedIn) {
-    initialRoute = AppRoutes.feeds;
-  } else {
-    bool hasSeenOnboarding = getBoolAsync(
-      'hasSeenOnboarding',
-      defaultValue: false,
-    );
-    if (hasSeenOnboarding) {
-      initialRoute = AppRoutes.login;
+
+  if (hasSeenOnboarding) {
+    if (cookieRequest.loggedIn) {
+      initialRoute = AppRoutes.feeds;
     } else {
-      initialRoute = AppRoutes.splash;
+      initialRoute = AppRoutes.login;
     }
+  } else {
+    initialRoute = AppRoutes.splash;
   }
 
   runApp(
