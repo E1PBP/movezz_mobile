@@ -7,7 +7,6 @@ import '../widgets/marketplace_widget.dart';
 import 'listing_detail_page.dart';
 import 'listing_form_page.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:flutter/foundation.dart'; // untuk debugPrint
 
 class MarketplacePage extends StatefulWidget {
   const MarketplacePage({super.key});
@@ -17,6 +16,8 @@ class MarketplacePage extends StatefulWidget {
 }
 
 class _MarketplacePageState extends State<MarketplacePage> {
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -24,6 +25,12 @@ class _MarketplacePageState extends State<MarketplacePage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MarketplaceController>().loadListings();
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _openEditListingForm(MarketplaceModel listing) async {
@@ -46,7 +53,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
           required Condition condition,
         }) async {
           await context.read<MarketplaceController>().updateListing(
-                id: listing.pk, // ⬅️ pake pk
+                id: listing.pk, 
                 title: title,
                 price: price,
                 location: location,
@@ -137,7 +144,6 @@ class _MarketplacePageState extends State<MarketplacePage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
 
-    // sesuaikan key-nya kalau di login JSON namanya beda (misal 'user_id' atau 'pk')
     final int? currentUserId = request.jsonData['pk'] is int
         ? request.jsonData['pk'] as int
         : int.tryParse(request.jsonData['pk']?.toString() ?? '');
@@ -146,9 +152,34 @@ class _MarketplacePageState extends State<MarketplacePage> {
       builder: (context, controller, child) {
         return Scaffold(
           appBar: AppBar(title: const Text('Marketplace')),
-          body: RefreshIndicator(
-            onRefresh: controller.refreshListings,
-            child: _buildBody(controller, currentUserId),
+          body: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+                child: TextField(
+                  controller: _searchController,
+                  textInputAction: TextInputAction.search,
+                  decoration: InputDecoration(
+                    hintText: 'Search listings...',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    isDense: true,
+                  ),
+                  onSubmitted: (value) {
+                    controller.loadListings(searchQuery: value);
+                  },
+                ),
+              ),
+
+              Expanded(
+                child: RefreshIndicator(
+                  onRefresh: controller.refreshListings,
+                  child: _buildBody(controller, currentUserId),
+                ),
+              ),
+            ],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: _openCreateListingForm,

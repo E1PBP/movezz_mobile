@@ -9,9 +9,14 @@ class MarketplaceRemoteDataSource {
 
   MarketplaceRemoteDataSource(this.cookieRequest);
 
-  Future<List<MarketplaceModel>> getListings() async {
-    final url = Env.api('/marketplace/api/listings/');
-    final response = await cookieRequest.get(url);
+  Future<List<MarketplaceModel>> getListings({String? searchQuery}) async {
+    final baseUri = Uri.parse(Env.api('/marketplace/api/listings/'));
+
+    final uri = (searchQuery != null && searchQuery.trim().isNotEmpty)
+        ? baseUri.replace(queryParameters: {'q': searchQuery.trim()})
+        : baseUri;
+
+    final response = await cookieRequest.get(uri.toString());
 
     if (response is List) {
       return response.map((item) => MarketplaceModel.fromJson(item)).toList();
@@ -72,6 +77,7 @@ class MarketplaceRemoteDataSource {
 
     throw Exception('Failed to create listing: ${response.body}');
   }
+
   Future<void> updateListing({
     required String id,
     required String title,
@@ -120,7 +126,7 @@ class MarketplaceRemoteDataSource {
 
     throw Exception('Failed to update listing: ${response.body}');
   }
-  
+
   Future<void> deleteListing(String id) async {
     final url = Env.api('/marketplace/listing/$id/delete-ajax/');
 
@@ -130,7 +136,7 @@ class MarketplaceRemoteDataSource {
     final response = await http.post(
       Uri.parse(url),
       headers: headers,
-      body: const {}, 
+      body: const {},
     );
 
     if (response.statusCode == 200 || response.statusCode == 204) {
@@ -153,4 +159,3 @@ class MarketplaceRemoteDataSource {
     throw Exception('Failed to delete listing: ${response.body}');
   }
 }
-
