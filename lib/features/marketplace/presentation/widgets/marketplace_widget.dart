@@ -31,29 +31,33 @@ class MarketplaceWidget extends StatelessWidget {
       );
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(12),
+    return GridView.builder(
+      padding: const EdgeInsets.all(8),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+        childAspectRatio: 0.75,
+      ),
       itemCount: listings.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
-        final item = listings[index];
-        final ownerId = item.fields.owner;
-        final isOwner = item.isMine;
-        final isWishlisted = wishlistIds.contains(item.pk);
+        final listing = listings[index];
+        final isOwner = listing.isMine;
+        final isWishlisted = wishlistIds.contains(listing.pk);
          
         return ListingCard(
-          listing: item,
-          onTap: () => onItemTap?.call(item),
+          listing: listing,
+          onTap: () => onItemTap?.call(listing),
           onEdit: (isOwner && onEditTap != null)
-              ? () => onEditTap!.call(item)
+              ? () => onEditTap!.call(listing)
               : null,
           onDelete: (isOwner && onDeleteTap != null)
-              ? () => onDeleteTap!.call(item)
+              ? () => onDeleteTap!.call(listing)
               : null,
             
           isWishlisted: isWishlisted,
           onWishlistTap: onWishlistTap != null
-              ? () => onWishlistTap!(item)
+              ? () => onWishlistTap!(listing)
               : null,
         );
       },

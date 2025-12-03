@@ -27,70 +27,48 @@ class ListingCard extends StatelessWidget {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias,
+      color: Colors.white,
       child: InkWell(
         onTap: onTap,
         splashColor: theme.colorScheme.primary.withOpacity(0.08),
         highlightColor: Colors.transparent,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(
-              height: 140,
-              width: double.infinity,
+              height: 160, 
               child: Stack(
+                fit: StackFit.expand,
                 children: [
-                  Positioned.fill(
-                    child: fields.imageUrl.isNotEmpty
-                        ? Image.network(fields.imageUrl, fit: BoxFit.cover)
-                        : Container(
-                            color: Colors
-                                .grey
-                                .shade200,
-                            child: Icon(
-                              Icons.image_not_supported_outlined,
-                              size: 32,
-                              color: theme.colorScheme.onSurface.withOpacity(
-                                0.4,
-                              ),
+                  fields.imageUrl.isNotEmpty
+                      ? Image.network(
+                          fields.imageUrl,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          color: Colors.grey.shade200,
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            size: 32,
+                            color: theme.colorScheme.onSurface.withOpacity(
+                              0.4,
                             ),
                           ),
-                  ),
-                  Positioned.fill(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.black.withOpacity(0.12),
-                            Colors.transparent,
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.center,
                         ),
-                      ),
-                    ),
-                  ),
                   if (onWishlistTap != null)
                     Positioned(
                       right: 8,
                       top: 8,
-                      child: GestureDetector(
+                      child: InkWell(
                         onTap: onWishlistTap,
-                        behavior: HitTestBehavior.translucent,
+                        borderRadius: BorderRadius.circular(999),
                         child: Container(
-                          padding: const EdgeInsets.all(6),
+                          padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.surface.withOpacity(0.9),
+                            color: Colors.white.withOpacity(0.9),
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.12),
-                                blurRadius: 6,
-                                offset: const Offset(0, 3),
-                              ),
-                            ],
                           ),
                           child: Icon(
                             isWishlisted
@@ -108,83 +86,88 @@ class ListingCard extends StatelessWidget {
               ),
             ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            Container(
+              color: Colors.white, 
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    fields.title,
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 6),
-
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(
-                        Icons.location_on_outlined,
-                        size: 14,
-                        color: theme.colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                      const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          fields.location,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(
-                              0.75,
-                            ),
+                          fields.title,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
                       _ConditionBadge(condition: fields.condition),
                     ],
                   ),
+                  const SizedBox(height: 4),
 
-                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 13,
+                        color: theme.colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                      const SizedBox(width: 2),
+                      Expanded(
+                        child: Text(
+                          fields.location,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
 
-                  Text(
-                    'Rp ${fields.price}',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                      color: theme.colorScheme.primary,
-                    ),
+                  const SizedBox(height: 6),
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Rp ${fields.price}',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            color: theme.colorScheme.primary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (onEdit != null)
+                        _TinyIconButton(
+                          icon: Icons.edit_outlined,
+                          onTap: onEdit!,
+                          tooltip: 'Edit',
+                          color: theme.colorScheme.onSurface.withOpacity(0.8),
+                        ),
+                      if (onDelete != null)
+                        _TinyIconButton(
+                          icon: Icons.delete_outline,
+                          onTap: onDelete!,
+                          tooltip: 'Delete',
+                          color: theme.colorScheme.error,
+                        ),
+                    ],
                   ),
                 ],
               ),
             ),
-            
-            if (onEdit != null || onDelete != null)
-              Padding(
-                padding: const EdgeInsets.only(left: 4, right: 4, bottom: 4),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (onEdit != null)
-                      IconButton(
-                        icon: const Icon(Icons.edit_outlined),
-                        tooltip: 'Edit listing',
-                        onPressed: onEdit,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    if (onDelete != null)
-                      IconButton(
-                        icon: const Icon(Icons.delete_outline),
-                        tooltip: 'Delete listing',
-                        color: theme.colorScheme.error,
-                        onPressed: onDelete,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                  ],
-                ),
-              ),
           ],
         ),
       ),
@@ -205,15 +188,14 @@ class _ConditionBadge extends StatelessWidget {
     final String label = isBrandNew ? 'Brand New' : 'Used';
 
     final Color bg = isBrandNew
-        ? Colors.green.withOpacity(0.15)
-        : Colors.orange.withOpacity(0.15);
+        ? Colors.green.withOpacity(0.12)
+        : Colors.orange.withOpacity(0.12);
 
-    final Color fg = isBrandNew
-        ? Colors.green.shade700
-        : Colors.orange.shade700;
+    final Color fg =
+        isBrandNew ? Colors.green.shade700 : Colors.orange.shade700;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(999),
@@ -223,6 +205,39 @@ class _ConditionBadge extends StatelessWidget {
         style: theme.textTheme.labelSmall?.copyWith(
           color: fg,
           fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _TinyIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final String tooltip;
+  final Color? color;
+
+  const _TinyIconButton({
+    required this.icon,
+    required this.onTap,
+    required this.tooltip,
+    this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(999),
+        child: Padding(
+          padding: const EdgeInsets.all(2),
+          child: Icon(
+            icon,
+            size: 18,
+            color: color,
+          ),
         ),
       ),
     );
