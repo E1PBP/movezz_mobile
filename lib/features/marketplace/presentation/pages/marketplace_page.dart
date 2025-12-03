@@ -1,5 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 import '../controllers/marketplace_controller.dart';
 import '../../data/models/marketplace_model.dart';
@@ -7,7 +8,6 @@ import '../widgets/marketplace_widget.dart';
 import 'listing_detail_page.dart';
 import 'listing_form_page.dart';
 import 'wishlist_page.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class MarketplacePage extends StatefulWidget {
   const MarketplacePage({super.key});
@@ -49,15 +49,14 @@ class _MarketplacePageState extends State<MarketplacePage> {
           initialLocation: fields.location,
           initialImageUrl: fields.imageUrl,
           initialCondition: fields.condition,
-          onSubmit:
-              ({
-                required String title,
-                required int price,
-                required String location,
-                required String imageUrl,
-                required Condition condition,
-              }) async {
-                await context.read<MarketplaceController>().updateListing(
+          onSubmit: ({
+            required String title,
+            required int price,
+            required String location,
+            required String imageUrl,
+            required Condition condition,
+          }) async {
+            await context.read<MarketplaceController>().updateListing(
                   id: listing.pk,
                   title: title,
                   price: price,
@@ -66,19 +65,18 @@ class _MarketplacePageState extends State<MarketplacePage> {
                   condition: condition,
                 );
 
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Listing successfully updated')),
-                );
-              },
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Listing successfully updated')),
+            );
+          },
         ),
       ),
     );
   }
 
   Future<void> _confirmDeleteListing(MarketplaceModel listing) async {
-    final shouldDelete =
-        await showDialog<bool>(
+    final shouldDelete = await showDialog<bool>(
           context: context,
           builder: (ctx) {
             return AlertDialog(
@@ -119,15 +117,14 @@ class _MarketplacePageState extends State<MarketplacePage> {
       context,
       MaterialPageRoute(
         builder: (_) => ListingFormPage(
-          onSubmit:
-              ({
-                required String title,
-                required int price,
-                required String location,
-                required String imageUrl,
-                required Condition condition,
-              }) async {
-                await context.read<MarketplaceController>().createListing(
+          onSubmit: ({
+            required String title,
+            required int price,
+            required String location,
+            required String imageUrl,
+            required Condition condition,
+          }) async {
+            await context.read<MarketplaceController>().createListing(
                   title: title,
                   price: price,
                   location: location,
@@ -135,11 +132,11 @@ class _MarketplacePageState extends State<MarketplacePage> {
                   condition: condition,
                 );
 
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Listing successfully created')),
-                );
-              },
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Listing successfully created')),
+            );
+          },
         ),
       ),
     );
@@ -157,10 +154,18 @@ class _MarketplacePageState extends State<MarketplacePage> {
       builder: (context, controller, child) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Marketplace'),
+            title: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.storefront_outlined, size: 20),
+                const SizedBox(width: 8),
+                const Text('Marketplace'),
+              ],
+            ),
+            centerTitle: true,
             actions: [
               IconButton(
-                icon: const Icon(Icons.favorite),
+                icon: const Icon(Icons.favorite_outline),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -174,108 +179,27 @@ class _MarketplacePageState extends State<MarketplacePage> {
           ),
           body: Column(
             children: [
+              const SizedBox(height: 12),
+              _buildSearchAndFilterRow(controller),
+              const SizedBox(height: 8),
               Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        textInputAction: TextInputAction.search,
-                        decoration: InputDecoration(
-                          hintText: 'Search listings...',
-                          prefixIcon: const Icon(Icons.search),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          isDense: true,
-                        ),
-                        onSubmitted: (value) {
-                          controller.loadListings(
-                            searchQuery: value,
-                            condition: _selectedCondition,
-                          );
-                        },
-                      ),
+                    Text( 
+                      '${controller.listings.length} items',
+                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
-                    const SizedBox(width: 8),
-
-                    PopupMenuButton<String>(
-                      tooltip: 'Filter condition',
-                      onSelected: (value) {
-                        if (value == 'ALL') {
-                          setState(() {
-                            _selectedCondition = null;
-                            _searchController.clear();
-                          });
-
-                          controller.loadListings(
-                            searchQuery: '',
-                            condition: null,
-                          );
-                        } else {
-                          Condition newCondition;
-                          if (value == 'BRAND_NEW') {
-                            newCondition = Condition.BRAND_NEW;
-                          } else {
-                            newCondition = Condition.USED;
-                          }
-
-                          setState(() {
-                            _selectedCondition = newCondition;
-                          });
-
-                          controller.loadListings(
-                            searchQuery: _searchController.text,
-                            condition: _selectedCondition,
-                          );
-                        }
-                      },
-                      itemBuilder: (ctx) => <PopupMenuEntry<String>>[
-                        const PopupMenuItem<String>(
-                          value: 'ALL',
-                          child: Text('All'),
-                        ),
-                        const PopupMenuItem<String>(
-                          value: 'BRAND_NEW',
-                          child: Text('Brand New'),
-                        ),
-                        const PopupMenuItem<String>(
-                          value: 'USED',
-                          child: Text('Used'),
-                        ),
-                      ],
-                      child: Container(
-                        height: 36,
-                        width: 36,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                        child: Stack(
-                          children: [
-                            const Center(child: Icon(Icons.tune, size: 18)),
-                            if (_selectedCondition != null)
-                              Positioned(
-                                right: 6,
-                                top: 6,
-                                child: Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.blue,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
+                    Icon(
+                      Icons.sort,
+                      size: 20,
+                      color: Theme.of(context).iconTheme.color,
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: 4),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: controller.refreshListings,
@@ -290,6 +214,112 @@ class _MarketplacePageState extends State<MarketplacePage> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildSearchAndFilterRow(MarketplaceController controller) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              textInputAction: TextInputAction.search,
+              decoration: InputDecoration(
+                hintText: 'Search listings...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                isDense: true,
+              ),
+              onSubmitted: (value) {
+                controller.loadListings(
+                  searchQuery: value,
+                  condition: _selectedCondition,
+                );
+              },
+            ),
+          ),
+          const SizedBox(width: 8),
+
+          PopupMenuButton<String>(
+            tooltip: 'Filter condition',
+            color: Colors.grey.shade100,
+            onSelected: (value) {
+              if (value == 'ALL') {
+                setState(() {
+                  _selectedCondition = null;
+                  _searchController.clear();
+                });
+
+                controller.loadListings(
+                  searchQuery: '',
+                  condition: null,
+                );
+              } else {
+                Condition newCondition;
+                if (value == 'BRAND_NEW') {
+                  newCondition = Condition.BRAND_NEW;
+                } else {
+                  newCondition = Condition.USED;
+                }
+
+                setState(() {
+                  _selectedCondition = newCondition;
+                });
+
+                controller.loadListings(
+                  searchQuery: _searchController.text,
+                  condition: _selectedCondition,
+                );
+              }
+            },
+            itemBuilder: (ctx) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'ALL',
+                child: Text('All'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'BRAND_NEW',
+                child: Text('Brand New'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'USED',
+                child: Text('Used'),
+              ),
+            ],
+            child: Container(
+              height: 36,
+              width: 36,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Stack(
+                children: [
+                  const Center(child: Icon(Icons.tune, size: 18)),
+                  if (_selectedCondition != null)
+                    Positioned(
+                      right: 6,
+                      top: 6,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -327,16 +357,18 @@ class _MarketplacePageState extends State<MarketplacePage> {
       onItemTap: (item) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => ListingDetailPage(listing: item)),
+          MaterialPageRoute(
+            builder: (_) => ListingDetailPage(listing: item),
+          ),
         );
       },
       onEditTap: _openEditListingForm,
       onDeleteTap: _confirmDeleteListing,
       currentUserId: currentUserId,
-      wishlistIds: controller.wishlistIds, 
+      wishlistIds: controller.wishlistIds,
       onWishlistTap: (item) {
         context.read<MarketplaceController>().toggleWishlist(item.pk);
-      }, 
+      },
     );
   }
 }
