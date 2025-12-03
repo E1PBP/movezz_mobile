@@ -43,6 +43,7 @@ class Fields {
     Condition condition;
     String location;
     String imageUrl;
+    String description;
 
     Fields({
         required this.owner,
@@ -51,6 +52,7 @@ class Fields {
         required this.condition,
         required this.location,
         required this.imageUrl,
+        required this.description,
     });
 
     factory Fields.fromJson(Map<String, dynamic> json) => Fields(
@@ -60,6 +62,7 @@ class Fields {
         condition: conditionValues.map[json["condition"]]!,
         location: json["location"],
         imageUrl: json["image_url"],
+        description: json['description'] as String? ?? '',
     );
 
     Map<String, dynamic> toJson() => {
@@ -69,6 +72,7 @@ class Fields {
         "condition": conditionValues.reverse[condition],
         "location": location,
         "image_url": imageUrl,
+        "description": description,
     };
 }
 

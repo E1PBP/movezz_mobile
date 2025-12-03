@@ -39,12 +39,14 @@ class _WishlistPageState extends State<WishlistPage> {
           initialLocation: fields.location,
           initialImageUrl: fields.imageUrl,
           initialCondition: fields.condition,
+          initialDescription: fields.description,
           onSubmit: ({
             required String title,
             required int price,
             required String location,
             required String imageUrl,
             required Condition condition,
+            required String description,
           }) async {
             await context.read<MarketplaceController>().updateListing(
                   id: listing.pk,
@@ -53,6 +55,7 @@ class _WishlistPageState extends State<WishlistPage> {
                   location: location,
                   imageUrl: imageUrl,
                   condition: condition,
+                  description: description,
                 );
 
             if (!mounted) return;

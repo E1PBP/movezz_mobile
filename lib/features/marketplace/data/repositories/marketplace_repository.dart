@@ -36,7 +36,7 @@ class MarketplaceRepository {
     required String location,
     required String imageUrl,
     required Condition condition,
-    String? description,
+    required String description,
   }) async {
     try {
       final id = await remote.createListing(
@@ -60,7 +60,7 @@ class MarketplaceRepository {
     required String location,
     required String imageUrl,
     required Condition condition,
-    String? description,
+    required String description,
   }) async {
     try {
       await remote.updateListing(

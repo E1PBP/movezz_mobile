@@ -61,7 +61,7 @@ class MarketplaceRemoteDataSource {
     required String location,
     required String imageUrl,
     required Condition condition,
-    String? description,
+    required String description,
   }) async {
     final url = Env.api('/marketplace/api/listings/create-ajax/');
 
@@ -71,7 +71,7 @@ class MarketplaceRemoteDataSource {
       'location': location,
       'image_url': imageUrl,
       'condition': conditionValues.reverse[condition] ?? 'USED',
-      'description': description ?? '',
+      'description': description,
     };
 
     final headers = Map<String, String>.from(cookieRequest.headers);
@@ -102,7 +102,7 @@ class MarketplaceRemoteDataSource {
     required String location,
     required String imageUrl,
     required Condition condition,
-    String? description,
+    required String description,
   }) async {
     final url = Env.api('/marketplace/listing/$id/edit-ajax/');
 
@@ -112,7 +112,7 @@ class MarketplaceRemoteDataSource {
       'location': location,
       'image_url': imageUrl,
       'condition': conditionValues.reverse[condition] ?? 'USED',
-      'description': description ?? '',
+      'description': description,
     };
 
     final headers = Map<String, String>.from(cookieRequest.headers);

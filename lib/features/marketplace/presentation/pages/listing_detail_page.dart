@@ -4,39 +4,47 @@ import 'package:provider/provider.dart';
 import '../controllers/marketplace_controller.dart';
 import '../../data/models/marketplace_model.dart';
 
-class ListingDetailPage extends StatelessWidget {
+class ListingDetailPage extends StatefulWidget {
   final MarketplaceModel listing;
 
-  const ListingDetailPage({
-    super.key,
-    required this.listing,
-  });
+  const ListingDetailPage({super.key, required this.listing});
+
+  @override
+  State<ListingDetailPage> createState() => _ListingDetailPageState();
+}
+
+class _ListingDetailPageState extends State<ListingDetailPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<MarketplaceController>().loadListingDetail(widget.listing.pk);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final fields = listing.fields;
-    final theme = Theme.of(context);
-
-    // ambil state wishlist dari controller
     final controller = context.watch<MarketplaceController>();
+
+    final listing = controller.selectedListing ?? widget.listing;
+    final fields = listing.fields;
     final bool isWishlisted = controller.wishlistIds.contains(listing.pk);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Details",
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+        title: const Text("Details", maxLines: 1, overflow: TextOverflow.ellipsis),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildImageSection(context, fields.imageUrl),
+      body: controller.isLoading && controller.selectedListing == null
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildImageSection(context, fields.imageUrl),
             Padding(
               padding: const EdgeInsets.all(16),
-              child: _buildInfoSection(context),
+              child: _buildInfoSection(context, listing),
             ),
           ],
         ),
@@ -45,7 +53,6 @@ class ListingDetailPage extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
         child: Row(
           children: [
-            // WISHLIST button (pink + heart)
             Expanded(
               child: OutlinedButton.icon(
                 style: OutlinedButton.styleFrom(
@@ -53,9 +60,9 @@ class ListingDetailPage extends StatelessWidget {
                   side: BorderSide(color: Colors.pink.shade200),
                 ),
                 onPressed: () {
-                  context
-                      .read<MarketplaceController>()
-                      .toggleWishlist(listing.pk);
+                  context.read<MarketplaceController>().toggleWishlist(
+                    listing.pk,
+                  );
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -68,9 +75,7 @@ class ListingDetailPage extends StatelessWidget {
                   );
                 },
                 icon: Icon(
-                  isWishlisted
-                      ? Icons.favorite
-                      : Icons.favorite_border,
+                  isWishlisted ? Icons.favorite : Icons.favorite_border,
                   color: Colors.pink.shade400,
                 ),
                 label: const Text('Wishlist'),
@@ -85,8 +90,7 @@ class ListingDetailPage extends StatelessWidget {
                   // TODO: sambungkan ke fitur chat / contact owner kalau ada
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content:
-                          Text('Contact action not yet implemented.'),
+                      content: Text('Contact action not yet implemented.'),
                     ),
                   );
                 },
@@ -100,7 +104,6 @@ class ListingDetailPage extends StatelessWidget {
     );
   }
 
-  /// HEADER IMAGE: tanpa background/shadow di belakang
   Widget _buildImageSection(BuildContext context, String imageUrl) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
@@ -115,20 +118,14 @@ class ListingDetailPage extends StatelessWidget {
                   errorBuilder: (_, __, ___) => Container(
                     color: Colors.grey.shade200,
                     child: const Center(
-                      child: Icon(
-                        Icons.broken_image,
-                        size: 48,
-                      ),
+                      child: Icon(Icons.broken_image, size: 48),
                     ),
                   ),
                 )
               : Container(
                   color: Colors.grey.shade200,
                   child: const Center(
-                    child: Icon(
-                      Icons.image_not_supported,
-                      size: 48,
-                    ),
+                    child: Icon(Icons.image_not_supported, size: 48),
                   ),
                 ),
         ),
@@ -136,8 +133,7 @@ class ListingDetailPage extends StatelessWidget {
     );
   }
 
-  /// INFO SECTION: condition chip kecil, title, price, location, owner, desc
-  Widget _buildInfoSection(BuildContext context) {
+  Widget _buildInfoSection(BuildContext context, MarketplaceModel listing) {
     final f = listing.fields;
     final theme = Theme.of(context);
 
@@ -147,11 +143,7 @@ class ListingDetailPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Condition chip kecil di atas title
-        _ConditionChip(
-          label: conditionLabel,
-          isBrandNew: isBrandNew,
-        ),
+        _ConditionChip(label: conditionLabel, isBrandNew: isBrandNew),
         const SizedBox(height: 8),
 
         // Title
@@ -183,16 +175,13 @@ class ListingDetailPage extends StatelessWidget {
             ),
             const SizedBox(width: 4),
             Expanded(
-              child: Text(
-                f.location,
-                style: theme.textTheme.bodyMedium,
-              ),
+              child: Text(f.location, style: theme.textTheme.bodyMedium),
             ),
           ],
         ),
         const SizedBox(height: 12),
 
-        // Description
+       // Description
         Text(
           'Description',
           style: theme.textTheme.titleMedium?.copyWith(
@@ -201,7 +190,9 @@ class ListingDetailPage extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'No additional description available for this product.',
+          f.description.isNotEmpty 
+              ? f.description 
+              : 'No description provided.',
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
           ),
@@ -211,15 +202,11 @@ class ListingDetailPage extends StatelessWidget {
     );
   }
 }
-
 class _ConditionChip extends StatelessWidget {
   final String label;
   final bool isBrandNew;
 
-  const _ConditionChip({
-    required this.label,
-    required this.isBrandNew,
-  });
+  const _ConditionChip({required this.label, required this.isBrandNew});
 
   @override
   Widget build(BuildContext context) {
@@ -234,11 +221,7 @@ class _ConditionChip extends StatelessWidget {
     return Chip(
       label: Text(
         label,
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 12,
-          color: fg,
-        ),
+        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: fg),
       ),
       backgroundColor: bg,
       side: BorderSide(color: fg.withOpacity(0.6)),

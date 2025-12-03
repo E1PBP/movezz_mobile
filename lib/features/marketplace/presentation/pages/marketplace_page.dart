@@ -49,12 +49,14 @@ class _MarketplacePageState extends State<MarketplacePage> {
           initialLocation: fields.location,
           initialImageUrl: fields.imageUrl,
           initialCondition: fields.condition,
+          initialDescription: fields.description,
           onSubmit: ({
             required String title,
             required int price,
             required String location,
             required String imageUrl,
             required Condition condition,
+            required String description,
           }) async {
             await context.read<MarketplaceController>().updateListing(
                   id: listing.pk,
@@ -63,6 +65,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
                   location: location,
                   imageUrl: imageUrl,
                   condition: condition,
+                  description: description,
                 );
 
             if (!mounted) return;
@@ -123,6 +126,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
             required String location,
             required String imageUrl,
             required Condition condition,
+            required String description,
           }) async {
             await context.read<MarketplaceController>().createListing(
                   title: title,
@@ -130,6 +134,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
                   location: location,
                   imageUrl: imageUrl,
                   condition: condition,
+                  description: description,
                 );
 
             if (!mounted) return;

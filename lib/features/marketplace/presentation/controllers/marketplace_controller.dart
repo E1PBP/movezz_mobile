@@ -113,7 +113,7 @@ class MarketplaceController extends ChangeNotifier {
     required String location,
     required String imageUrl,
     required Condition condition,
-    String? description,
+    required String description,
   }) async {
     _setError(null);
 
@@ -156,7 +156,7 @@ class MarketplaceController extends ChangeNotifier {
     required String location,
     required String imageUrl,
     required Condition condition,
-    String? description,
+    required String description,
   }) async {
     _setError(null);
     _setLoading(true);
