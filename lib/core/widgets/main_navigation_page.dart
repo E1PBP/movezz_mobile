@@ -6,6 +6,7 @@ import 'package:nb_utils/nb_utils.dart';
 import '../../features/feeds/presentation/pages/feeds_page.dart';
 import '../../features/broadcast/presentation/pages/broadcast_page.dart';
 import '../../features/marketplace/presentation/pages/marketplace_page.dart';
+import '../../features/marketplace/presentation/pages/marketplace_landing_page.dart';
 import '../../features/messages/presentation/pages/messages_page.dart';
 import '../../features/messages/presentation/widgets/new_chat_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
@@ -29,7 +30,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   final List<Widget> _pages = [
     const FeedsPage(),
     const BroadcastPage(),
-    const MarketplacePage(),
+    const MarketplaceLandingPage(), 
     const MessagesPage(),
     const ProfilePage(),
   ];

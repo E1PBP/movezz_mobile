@@ -162,42 +162,32 @@ class _MarketplacePageState extends State<MarketplacePage> {
     return Consumer<MarketplaceController>(
       builder: (context, controller, child) {
         return Scaffold(
-          // appBar: AppBar(
-          //   title: Row(
-          //     mainAxisSize: MainAxisSize.min,
-          //     children: [
-          //       const Icon(Icons.storefront_outlined, size: 20),
-          //       const SizedBox(width: 8),
-          //       const Text('Marketplace'),
-          //     ],
-          //   ),
-          //   centerTitle: true,
-          //   actions: [
-          //     IconButton(
-          //       icon: const Icon(Icons.favorite_outline),
-          //       onPressed: () {
-          //         Navigator.push(
-          //           context,
-          //           MaterialPageRoute(
-          //             builder: (_) => const WishlistPage(),
-          //           ),
-          //         );
-          //       },
-          //     ),
-          //   ],
-          // ),
+          appBar: AppBar(
+            title: const Text(
+              "Listings",
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.favorite_outline),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const WishlistPage(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          
           body: Column(
             children: [
               _buildSearchAndFilterRow(controller),
               const SizedBox(height: 8),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 16),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //     ],
-              //   ),
-              // ),
               const SizedBox(height: 4),
               Expanded(
                 child: RefreshIndicator(
