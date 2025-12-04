@@ -43,20 +43,23 @@ class MarketplaceWidget extends StatelessWidget {
       itemBuilder: (context, index) {
         final listing = listings[index];
         final isOwner = listing.isMine;
-        final isWishlisted = wishlistIds.contains(listing.pk);
-         
+
+        final isWishlisted =
+            !isOwner && wishlistIds.contains(listing.pk);
+
         return ListingCard(
           listing: listing,
           onTap: () => onItemTap?.call(listing),
+
           onEdit: (isOwner && onEditTap != null)
               ? () => onEditTap!.call(listing)
               : null,
           onDelete: (isOwner && onDeleteTap != null)
               ? () => onDeleteTap!.call(listing)
               : null,
-            
+
           isWishlisted: isWishlisted,
-          onWishlistTap: onWishlistTap != null
+          onWishlistTap: (!isOwner && onWishlistTap != null)
               ? () => onWishlistTap!(listing)
               : null,
         );

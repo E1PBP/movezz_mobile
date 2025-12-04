@@ -7,7 +7,8 @@ import '../../data/models/marketplace_model.dart';
 import '../widgets/marketplace_widget.dart';
 import '../widgets/listing_card.dart';
 import 'listing_detail_page.dart';
-import 'marketplace_page.dart'; 
+import 'marketplace_page.dart';
+import 'my_listings_page.dart';  
 
 class MarketplaceLandingPage extends StatefulWidget {
   const MarketplaceLandingPage({super.key});
@@ -91,21 +92,20 @@ class _MarketplaceLandingPageState extends State<MarketplaceLandingPage> {
 
     final all = controller.listings;
 
-    final List<MarketplaceModel> listingsSection = all.length <= 10
-        ? all
-        : all.sublist(0, 10);
+    final List<MarketplaceModel> listingsSection =
+        all.length <= 10 ? all : all.sublist(0, 10);
 
-    // TODO: sale flag filter AAAA
-    final List<MarketplaceModel> saleSection = all;
+    final List<MarketplaceModel> myListingsSection =
+        all.where((listing) => listing.isMine).toList();
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 0), 
+          const SizedBox(height: 0),
           const _BannerSection(),
-          const SizedBox(height:5),
+          const SizedBox(height: 5),
 
           _SectionHeader(
             title: 'Listings',
@@ -137,20 +137,20 @@ class _MarketplaceLandingPageState extends State<MarketplaceLandingPage> {
           const SizedBox(height: 10),
 
           _SectionHeader(
-            title: 'Sale',
+            title: 'Manage Listings',
             actionText: 'Show all',
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const MarketplacePage()),
+                MaterialPageRoute(builder: (_) => const MyListingsPage()),
               );
             },
           ),
           const SizedBox(height: 0),
           SizedBox(
-            height: 480, 
+            height: 480,
             child: MarketplaceWidget(
-              listings: saleSection,
+              listings: myListingsSection,
               currentUserId: currentUserId,
               wishlistIds: controller.wishlistIds,
               onItemTap: (item) {
@@ -176,24 +176,27 @@ class _MarketplaceLandingPageState extends State<MarketplaceLandingPage> {
   }
 }
 
-/// banner, bisa diganti2 isinya
+// banner, bisa diganti2 isinya
 class _BannerSection extends StatelessWidget {
   const _BannerSection();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity, 
-      margin: EdgeInsets.zero, 
+      width: double.infinity,
+      margin: EdgeInsets.zero,
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 16, 
+        top: MediaQuery.of(context).padding.top + 16,
         bottom: 20,
         left: 16,
         right: 16,
       ),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color.fromARGB(255, 209, 56, 66), Color.fromARGB(255, 205, 139, 133)],
+          colors: [
+            Color.fromARGB(255, 209, 56, 66),
+            Color.fromARGB(255, 205, 139, 133),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

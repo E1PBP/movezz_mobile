@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart'; 
 
 import '../controllers/marketplace_controller.dart';
 import '../../data/models/marketplace_model.dart';
+import 'listing_form_page.dart'; 
 
 class ListingDetailPage extends StatefulWidget {
   final MarketplaceModel listing;
@@ -24,7 +26,6 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
 
   @override
   void dispose() {
-    // Clear selected listing when leaving the page
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<MarketplaceController>().clearSelectedListing();
@@ -34,85 +35,212 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final controller = context.watch<MarketplaceController>();
+Widget build(BuildContext context) {
+  final controller = context.watch<MarketplaceController>();
 
-    final listing = controller.selectedListing ?? widget.listing;
-    final fields = listing.fields;
-    final bool isWishlisted = controller.wishlistIds.contains(listing.pk);
+  final listing = controller.selectedListing ?? widget.listing;
+  final fields = listing.fields;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Details", maxLines: 1, overflow: TextOverflow.ellipsis),
-        centerTitle: true,
+  final bool isOwner = widget.listing.isMine || listing.isMine;
+  final bool isWishlisted = controller.wishlistIds.contains(listing.pk);
+
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text(
+        "Details",
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
-      body: controller.isLoading && controller.selectedListing == null
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildImageSection(context, fields.imageUrl),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: _buildInfoSection(context, listing),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-        child: Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color.fromARGB(255, 216, 27, 55),
-                  side: BorderSide(color: Colors.pink.shade200),
+      centerTitle: true,
+    ),
+    body: controller.isLoading && controller.selectedListing == null
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildImageSection(context, fields.imageUrl),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: _buildInfoSection(context, listing),
                 ),
-                onPressed: () {
-                  context.read<MarketplaceController>().toggleWishlist(
+              ],
+            ),
+          ),
+    bottomNavigationBar: Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      child: isOwner
+          ? _buildOwnerButtons(context, listing)
+          : _buildBuyerButtons(context, listing, isWishlisted),
+    ),
+  );
+}
+
+  Widget _buildOwnerButtons(BuildContext context, MarketplaceModel listing) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            onPressed: () => _openEditListingForm(context, listing),
+            icon: const Icon(Icons.edit),
+            label: const Text('Edit'),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red.shade600,
+            ),
+            onPressed: () => _confirmDeleteListing(context, listing),
+            icon: const Icon(Icons.delete_outline),
+            label: const Text('Delete'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBuyerButtons(
+    BuildContext context,
+    MarketplaceModel listing,
+    bool isWishlisted,
+  ) {
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color.fromARGB(255, 216, 27, 55),
+              side: BorderSide(color: Colors.pink.shade200),
+            ),
+            onPressed: () {
+              context.read<MarketplaceController>().toggleWishlist(
                     listing.pk,
                   );
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        isWishlisted
-                            ? 'Removed from wishlist'
-                            : 'Added to wishlist',
-                      ),
-                    ),
-                  );
-                },
-                icon: Icon(
-                  isWishlisted ? Icons.favorite : Icons.favorite_border,
-                  color: Colors.pink.shade400,
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    isWishlisted
+                        ? 'Removed from wishlist'
+                        : 'Added to wishlist',
+                  ),
                 ),
-                label: const Text('Wishlist'),
-              ),
+              );
+            },
+            icon: Icon(
+              isWishlisted ? Icons.favorite : Icons.favorite_border,
+              color: Colors.pink.shade400,
             ),
-            const SizedBox(width: 12),
+            label: const Text('Wishlist'),
+          ),
+        ),
+        const SizedBox(width: 12),
 
-            // CONTACT OWNER
-            Expanded(
-              child: FilledButton.icon(
-                onPressed: () {
-                  // TODO: sambungkan ke fitur chat / contact owner kalau ada
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Contact action not yet implemented.'),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.chat_bubble_outline),
-                label: const Text('Contact Owner'),
-              ),
-            ),
-          ],
+        Expanded(
+          child: FilledButton.icon(
+            onPressed: () {
+              // TODO: sambungin ke fitur chat
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Contact action not yet implemented.'),
+                ),
+              );
+            },
+            icon: const Icon(Icons.chat_bubble_outline),
+            label: const Text('Contact Owner'),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _openEditListingForm(
+    BuildContext context,
+    MarketplaceModel listing,
+  ) async {
+    final fields = listing.fields;
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ListingFormPage(
+          initialTitle: fields.title,
+          initialPrice: fields.price,
+          initialLocation: fields.location,
+          initialImageUrl: fields.imageUrl,
+          initialCondition: fields.condition,
+          initialDescription: fields.description,
+          onSubmit: ({
+            required String title,
+            required int price,
+            required String location,
+            required String imageUrl,
+            required Condition condition,
+            required String description,
+          }) async {
+            await context.read<MarketplaceController>().updateListing(
+                  id: listing.pk,
+                  title: title,
+                  price: price,
+                  location: location,
+                  imageUrl: imageUrl,
+                  condition: condition,
+                  description: description,
+                );
+
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Listing successfully updated')),
+            );
+          },
         ),
       ),
     );
+  }
+
+  Future<void> _confirmDeleteListing(
+    BuildContext context,
+    MarketplaceModel listing,
+  ) async {
+    final shouldDelete = await showDialog<bool>(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              backgroundColor: Colors.grey[100],
+              title: const Text('Delete listing'),
+              content: Text(
+                'Are you sure you want to delete "${listing.fields.title}"?',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: const Text(
+                    'Delete',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (!shouldDelete) return;
+
+    await context.read<MarketplaceController>().deleteListing(listing.pk);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Listing deleted')),
+    );
+
+    Navigator.pop(context); 
   }
 
   Widget _buildImageSection(BuildContext context, String imageUrl) {
@@ -192,7 +320,7 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
         ),
         const SizedBox(height: 12),
 
-       // Description
+        // Description
         Text(
           'Description',
           style: theme.textTheme.titleMedium?.copyWith(
@@ -201,8 +329,8 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
         ),
         const SizedBox(height: 8),
         Text(
-          f.description.isNotEmpty 
-              ? f.description 
+          f.description.isNotEmpty
+              ? f.description
               : 'No description provided.',
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.8),
@@ -213,6 +341,7 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
     );
   }
 }
+
 class _ConditionChip extends StatelessWidget {
   final String label;
   final bool isBrandNew;
@@ -237,7 +366,11 @@ class _ConditionChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: fg),
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+          color: fg,
+        ),
       ),
     );
   }
