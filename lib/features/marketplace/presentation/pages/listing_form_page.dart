@@ -9,7 +9,8 @@ class ListingFormPage extends StatefulWidget {
     required String imageUrl,
     required Condition condition,
     required String description,
-  }) onSubmit;
+  })
+  onSubmit;
 
   // initial values (kalau edit)
   final String? initialTitle;
@@ -29,6 +30,15 @@ class ListingFormPage extends StatefulWidget {
     this.initialCondition,
     this.initialDescription,
   });
+
+  String conditionLabel(Condition c) {
+    switch (c) {
+      case Condition.BRAND_NEW:
+        return 'Brand New';
+      case Condition.USED:
+        return 'Used';
+    }
+  }
 
   bool get isEdit => initialTitle != null;
 
@@ -51,14 +61,18 @@ class _ListingFormPageState extends State<ListingFormPage> {
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.initialTitle ?? '');
-    _priceController =
-        TextEditingController(text: widget.initialPrice?.toString() ?? '');
-    _locationController =
-        TextEditingController(text: widget.initialLocation ?? '');
-    _imageUrlController =
-        TextEditingController(text: widget.initialImageUrl ?? '');
-    _descriptionController =
-        TextEditingController(text: widget.initialDescription ?? '');
+    _priceController = TextEditingController(
+      text: widget.initialPrice?.toString() ?? '',
+    );
+    _locationController = TextEditingController(
+      text: widget.initialLocation ?? '',
+    );
+    _imageUrlController = TextEditingController(
+      text: widget.initialImageUrl ?? '',
+    );
+    _descriptionController = TextEditingController(
+      text: widget.initialDescription ?? '',
+    );
     _selectedCondition = widget.initialCondition ?? Condition.USED;
   }
 
@@ -93,9 +107,9 @@ class _ListingFormPageState extends State<ListingFormPage> {
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
       if (mounted) {
         setState(() => _isSubmitting = false);
@@ -108,9 +122,7 @@ class _ListingFormPageState extends State<ListingFormPage> {
     final isEdit = widget.isEdit;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isEdit ? 'Edit Listing' : 'Create Listing'),
-      ),
+      appBar: AppBar(title: Text(isEdit ? 'Edit Listing' : 'Create Listing')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -128,7 +140,7 @@ class _ListingFormPageState extends State<ListingFormPage> {
                     : null,
               ),
               const SizedBox(height: 12),
-              
+
               TextFormField(
                 controller: _priceController,
                 decoration: const InputDecoration(
@@ -148,7 +160,7 @@ class _ListingFormPageState extends State<ListingFormPage> {
                 },
               ),
               const SizedBox(height: 12),
-              
+
               TextFormField(
                 controller: _locationController,
                 decoration: const InputDecoration(
@@ -160,7 +172,7 @@ class _ListingFormPageState extends State<ListingFormPage> {
                     : null,
               ),
               const SizedBox(height: 12),
-              
+
               TextFormField(
                 controller: _imageUrlController,
                 decoration: const InputDecoration(
@@ -169,7 +181,7 @@ class _ListingFormPageState extends State<ListingFormPage> {
                 ),
               ),
               const SizedBox(height: 12),
-              
+
               InputDecorator(
                 decoration: const InputDecoration(
                   labelText: 'Condition',
@@ -178,11 +190,12 @@ class _ListingFormPageState extends State<ListingFormPage> {
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<Condition>(
                     value: _selectedCondition,
+                    dropdownColor: Colors.grey[100],
                     isExpanded: true,
                     items: Condition.values.map((c) {
                       return DropdownMenuItem(
                         value: c,
-                        child: Text(conditionValues.reverse[c] ?? c.name),
+                        child: Text(widget.conditionLabel(c)), 
                       );
                     }).toList(),
                     onChanged: (val) {
@@ -194,7 +207,7 @@ class _ListingFormPageState extends State<ListingFormPage> {
                 ),
               ),
               const SizedBox(height: 12),
-              
+
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
@@ -211,7 +224,7 @@ class _ListingFormPageState extends State<ListingFormPage> {
                 },
               ),
               const SizedBox(height: 24),
-              
+
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

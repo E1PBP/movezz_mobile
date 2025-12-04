@@ -265,7 +265,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
                 );
               } else {
                 Condition newCondition;
-                if (value == 'BRAND_NEW') {
+                if (value == 'Brand New') {
                   newCondition = Condition.BRAND_NEW;
                 } else {
                   newCondition = Condition.USED;
@@ -287,11 +287,11 @@ class _MarketplacePageState extends State<MarketplacePage> {
                 child: Text('All'),
               ),
               const PopupMenuItem<String>(
-                value: 'BRAND_NEW',
+                value: 'Brand New',
                 child: Text('Brand New'),
               ),
               const PopupMenuItem<String>(
-                value: 'USED',
+                value: 'Used',
                 child: Text('Used'),
               ),
             ],

@@ -23,6 +23,17 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
   }
 
   @override
+  void dispose() {
+    // Clear selected listing when leaving the page
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<MarketplaceController>().clearSelectedListing();
+      }
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final controller = context.watch<MarketplaceController>();
 

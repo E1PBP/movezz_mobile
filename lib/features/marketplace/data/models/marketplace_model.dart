@@ -82,8 +82,8 @@ enum Condition {
 }
 
 final conditionValues = EnumValues({
-    "BRAND_NEW": Condition.BRAND_NEW,
-    "USED": Condition.USED
+    "Brand New": Condition.BRAND_NEW,
+    "Used": Condition.USED
 });
 
 enum Model {

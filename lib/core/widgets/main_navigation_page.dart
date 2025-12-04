@@ -64,7 +64,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
       case 3:
         return [
           actionIcon(Icons.add_box_outlined, 'New Message', () {
-            Navigator.push(
+            (
               context,
               MaterialPageRoute(builder: (context) => const NewChatPage()),
             );
