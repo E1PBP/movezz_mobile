@@ -50,15 +50,16 @@ class _MarketplacePageState extends State<MarketplacePage> {
           initialImageUrl: fields.imageUrl,
           initialCondition: fields.condition,
           initialDescription: fields.description,
-          onSubmit: ({
-            required String title,
-            required int price,
-            required String location,
-            required String imageUrl,
-            required Condition condition,
-            required String description,
-          }) async {
-            await context.read<MarketplaceController>().updateListing(
+          onSubmit:
+              ({
+                required String title,
+                required int price,
+                required String location,
+                required String imageUrl,
+                required Condition condition,
+                required String description,
+              }) async {
+                await context.read<MarketplaceController>().updateListing(
                   id: listing.pk,
                   title: title,
                   price: price,
@@ -68,21 +69,23 @@ class _MarketplacePageState extends State<MarketplacePage> {
                   description: description,
                 );
 
-            if (!mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Listing successfully updated')),
-            );
-          },
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Listing successfully updated')),
+                );
+              },
         ),
       ),
     );
   }
 
   Future<void> _confirmDeleteListing(MarketplaceModel listing) async {
-    final shouldDelete = await showDialog<bool>(
+    final shouldDelete =
+        await showDialog<bool>(
           context: context,
           builder: (ctx) {
             return AlertDialog(
+              backgroundColor: Colors.grey[100],
               title: const Text('Delete listing'),
               content: Text(
                 'Are you sure you want to delete "${listing.fields.title}"?',
@@ -120,15 +123,16 @@ class _MarketplacePageState extends State<MarketplacePage> {
       context,
       MaterialPageRoute(
         builder: (_) => ListingFormPage(
-          onSubmit: ({
-            required String title,
-            required int price,
-            required String location,
-            required String imageUrl,
-            required Condition condition,
-            required String description,
-          }) async {
-            await context.read<MarketplaceController>().createListing(
+          onSubmit:
+              ({
+                required String title,
+                required int price,
+                required String location,
+                required String imageUrl,
+                required Condition condition,
+                required String description,
+              }) async {
+                await context.read<MarketplaceController>().createListing(
                   title: title,
                   price: price,
                   location: location,
@@ -137,11 +141,11 @@ class _MarketplacePageState extends State<MarketplacePage> {
                   description: description,
                 );
 
-            if (!mounted) return;
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Listing successfully created')),
-            );
-          },
+                if (!mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Listing successfully created')),
+                );
+              },
         ),
       ),
     );
@@ -158,52 +162,42 @@ class _MarketplacePageState extends State<MarketplacePage> {
     return Consumer<MarketplaceController>(
       builder: (context, controller, child) {
         return Scaffold(
-          appBar: AppBar(
-            title: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.storefront_outlined, size: 20),
-                const SizedBox(width: 8),
-                const Text('Marketplace'),
-              ],
-            ),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.favorite_outline),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const WishlistPage(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
+          // appBar: AppBar(
+          //   title: Row(
+          //     mainAxisSize: MainAxisSize.min,
+          //     children: [
+          //       const Icon(Icons.storefront_outlined, size: 20),
+          //       const SizedBox(width: 8),
+          //       const Text('Marketplace'),
+          //     ],
+          //   ),
+          //   centerTitle: true,
+          //   actions: [
+          //     IconButton(
+          //       icon: const Icon(Icons.favorite_outline),
+          //       onPressed: () {
+          //         Navigator.push(
+          //           context,
+          //           MaterialPageRoute(
+          //             builder: (_) => const WishlistPage(),
+          //           ),
+          //         );
+          //       },
+          //     ),
+          //   ],
+          // ),
           body: Column(
             children: [
-              const SizedBox(height: 12),
               _buildSearchAndFilterRow(controller),
               const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text( 
-                      '${controller.listings.length} items',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                    Icon(
-                      Icons.sort,
-                      size: 20,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 16),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //     ],
+              //   ),
+              // ),
               const SizedBox(height: 4),
               Expanded(
                 child: RefreshIndicator(
@@ -224,7 +218,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
 
   Widget _buildSearchAndFilterRow(MarketplaceController controller) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
       child: Row(
         children: [
           Expanded(
@@ -256,44 +250,39 @@ class _MarketplacePageState extends State<MarketplacePage> {
               if (value == 'ALL') {
                 setState(() {
                   _selectedCondition = null;
-                  _searchController.clear();
-                });
-
-                controller.loadListings(
-                  searchQuery: '',
-                  condition: null,
-                );
-              } else {
-                Condition newCondition;
-                if (value == 'Brand New') {
-                  newCondition = Condition.BRAND_NEW;
-                } else {
-                  newCondition = Condition.USED;
-                }
-
-                setState(() {
-                  _selectedCondition = newCondition;
                 });
 
                 controller.loadListings(
                   searchQuery: _searchController.text,
-                  condition: _selectedCondition,
+                  condition: null,
+                );
+              } else if (value == 'BRAND_NEW') {
+                setState(() {
+                  _selectedCondition = Condition.BRAND_NEW;
+                });
+
+                controller.loadListings(
+                  searchQuery: _searchController.text,
+                  condition: Condition.BRAND_NEW,
+                );
+              } else if (value == 'USED') {
+                setState(() {
+                  _selectedCondition = Condition.USED;
+                });
+
+                controller.loadListings(
+                  searchQuery: _searchController.text,
+                  condition: Condition.USED,
                 );
               }
             },
             itemBuilder: (ctx) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(value: 'ALL', child: Text('All')),
               const PopupMenuItem<String>(
-                value: 'ALL',
-                child: Text('All'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Brand New',
+                value: 'BRAND_NEW',
                 child: Text('Brand New'),
               ),
-              const PopupMenuItem<String>(
-                value: 'Used',
-                child: Text('Used'),
-              ),
+              const PopupMenuItem<String>(value: 'USED', child: Text('Used')),
             ],
             child: Container(
               height: 36,
@@ -362,9 +351,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
       onItemTap: (item) {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => ListingDetailPage(listing: item),
-          ),
+          MaterialPageRoute(builder: (_) => ListingDetailPage(listing: item)),
         );
       },
       onEditTap: _openEditListingForm,

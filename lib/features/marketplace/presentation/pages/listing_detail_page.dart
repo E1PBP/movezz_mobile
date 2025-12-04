@@ -229,17 +229,16 @@ class _ConditionChip extends StatelessWidget {
         ? Colors.green.shade700
         : Colors.orange.shade700;
 
-    return Chip(
-      label: Text(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
         label,
         style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: fg),
       ),
-      backgroundColor: bg,
-      side: BorderSide(color: fg.withOpacity(0.6)),
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      visualDensity: VisualDensity.compact,
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
-      labelPadding: const EdgeInsets.symmetric(horizontal: 4),
     );
   }
 }

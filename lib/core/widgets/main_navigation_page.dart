@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movezz_mobile/features/marketplace/presentation/pages/wishlist_page.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -57,9 +58,14 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         ];
       case 2:
         return [
-          actionIcon(Icons.add_box_outlined, 'Sell Item', () {
-            toast('Add Product clicked!');
-          }),
+          actionIcon(Icons.favorite_outline, 'Wishlist', () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                  builder: (_) => const WishlistPage(),
+                  ),
+                );
+                }),
         ];
       case 3:
         return [
