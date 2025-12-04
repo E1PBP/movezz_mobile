@@ -8,7 +8,7 @@ import '../widgets/marketplace_widget.dart';
 import '../widgets/listing_card.dart';
 import 'listing_detail_page.dart';
 import 'marketplace_page.dart';
-import 'my_listings_page.dart';  
+import 'my_listings_page.dart';
 
 class MarketplaceLandingPage extends StatefulWidget {
   const MarketplaceLandingPage({super.key});
@@ -92,11 +92,13 @@ class _MarketplaceLandingPageState extends State<MarketplaceLandingPage> {
 
     final all = controller.listings;
 
-    final List<MarketplaceModel> listingsSection =
-        all.length <= 10 ? all : all.sublist(0, 10);
+    final List<MarketplaceModel> listingsSection = all.length <= 10
+        ? all
+        : all.sublist(0, 10);
 
-    final List<MarketplaceModel> myListingsSection =
-        all.where((listing) => listing.isMine).toList();
+    final List<MarketplaceModel> myListingsSection = all
+        .where((listing) => listing.isMine)
+        .toList();
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
@@ -280,7 +282,9 @@ class _ListingsHorizontalSection extends StatelessWidget {
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (context, index) {
           final listing = listings[index];
-          final isWishlisted = wishlistIds.contains(listing.pk);
+          final isOwner = listing.isMine;
+
+          final isWishlisted = !isOwner && wishlistIds.contains(listing.pk);
 
           return SizedBox(
             width: 200,
@@ -290,7 +294,7 @@ class _ListingsHorizontalSection extends StatelessWidget {
               onEdit: null,
               onDelete: null,
               isWishlisted: isWishlisted,
-              onWishlistTap: onWishlistTap != null
+              onWishlistTap: (!isOwner && onWishlistTap != null)
                   ? () => onWishlistTap!(listing)
                   : null,
             ),
