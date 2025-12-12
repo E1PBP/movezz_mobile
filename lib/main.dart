@@ -14,6 +14,11 @@ import 'features/messages/data/datasources/messages_remote_data_source.dart';
 import 'features/messages/data/repositories/messages_repository.dart';
 import 'features/messages/presentation/controllers/messages_controller.dart';
 
+import 'features/profile/data/datasources/profile_remote_data_source.dart';
+import 'features/profile/data/repositories/profile_repository.dart';
+import 'features/profile/presentation/controllers/profile_controller.dart';
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -58,6 +63,14 @@ void main() async {
             final remote = MessagesRemoteDataSource(cookie);
             final repo = MessagesRepository(remote);
             return MessagesController(repo);
+          },
+        ),
+        ChangeNotifierProvider<ProfileController>(
+          create: (context) {
+            final cookie = context.read<CookieRequest>();
+            final remote = ProfileRemoteDataSource(cookie);
+            final repo = ProfileRepository(remote);
+            return ProfileController(repo);
           },
         ),
       ],

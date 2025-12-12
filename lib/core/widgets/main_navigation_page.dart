@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
@@ -14,7 +15,6 @@ import '../theme/app_theme.dart';
 import '../config/app_config.dart';
 
 import 'package:movezz_mobile/features/profile/presentation/pages/settings_page.dart';
-
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
@@ -102,15 +102,12 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         scrolledUnderElevation: 0,
 
         title: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              AppConfig.appName,
-              style: const TextStyle(
-                fontFamily: 'Montserrat',
-                fontWeight: FontWeight.w900,
-                fontSize: 24,
-                color: AppColors.primary,
-              ),
+            SvgPicture.asset(
+              'assets/icon/logo-navbar.svg',
+              height: 32,
+              fit: BoxFit.contain,
             ),
           ],
         ),
