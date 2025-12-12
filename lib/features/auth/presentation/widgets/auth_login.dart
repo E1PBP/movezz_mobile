@@ -146,7 +146,7 @@ class _AuthLoginState extends State<AuthLogin> {
                         Text(
                           'Don\'t Have An Account?',
                           style: TextStyle(
-                            fontFamily: AppConfig.robotoFont,
+                            fontFamily: AppConfig.defaultFont,
                             fontSize: 14,
                           ),
                         ),

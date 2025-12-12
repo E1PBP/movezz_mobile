@@ -13,9 +13,11 @@ import 'features/auth/presentation/controllers/auth_controller.dart';
 import 'features/messages/data/datasources/messages_remote_data_source.dart';
 import 'features/messages/data/repositories/messages_repository.dart';
 import 'features/messages/presentation/controllers/messages_controller.dart';
+
 import 'features/profile/data/datasources/profile_remote_data_source.dart';
 import 'features/profile/data/repositories/profile_repository.dart';
 import 'features/profile/presentation/controllers/profile_controller.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,19 +28,21 @@ void main() async {
   final cookieRequest = CookieRequest();
   await cookieRequest.init();
 
+  bool hasSeenOnboarding = getBoolAsync(
+    'hasSeenOnboarding',
+    defaultValue: false,
+  );
+
   String initialRoute;
-  if (cookieRequest.loggedIn) {
-    initialRoute = AppRoutes.feeds;
-  } else {
-    bool hasSeenOnboarding = getBoolAsync(
-      'hasSeenOnboarding',
-      defaultValue: false,
-    );
-    if (hasSeenOnboarding) {
-      initialRoute = AppRoutes.login;
+
+  if (hasSeenOnboarding) {
+    if (cookieRequest.loggedIn) {
+      initialRoute = AppRoutes.feeds;
     } else {
-      initialRoute = AppRoutes.splash;
+      initialRoute = AppRoutes.login;
     }
+  } else {
+    initialRoute = AppRoutes.splash;
   }
 
   runApp(

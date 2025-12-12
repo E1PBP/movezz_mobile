@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:nb_utils/nb_utils.dart';
-
+import '../../../../core/constant/polling_constant.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/messages_model.dart';
 import '../controllers/messages_controller.dart';
@@ -15,6 +15,7 @@ class ChatDetailPage extends StatefulWidget {
   final String conversationId;
   final String otherUserName;
   final String? otherUserAvatar;
+  final String? otherUserDisplayName;
 
   const ChatDetailPage({
     super.key,
@@ -22,6 +23,7 @@ class ChatDetailPage extends StatefulWidget {
     required this.conversationId,
     required this.otherUserName,
     this.otherUserAvatar,
+    this.otherUserDisplayName,
   });
 
   @override
@@ -43,16 +45,28 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       context.read<MessagesController>().fetchMessages(widget.conversationId);
       startPolling();
     });
-  }
 
-  void startPolling() {
-    _pollingTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (mounted) {
-        context.read<MessagesController>().pollNewMessages(
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 50) {
+        context.read<MessagesController>().loadMoreMessages(
           widget.conversationId,
         );
       }
     });
+  }
+
+  void startPolling() {
+    _pollingTimer = Timer.periodic(
+      const Duration(seconds: PollingConstant.defaultIntervalSeconds),
+      (timer) {
+        if (mounted) {
+          context.read<MessagesController>().pollNewMessages(
+            widget.conversationId,
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -101,16 +115,25 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.layoutBackground,
       appBar: AppBar(
+        titleSpacing: 0,
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        iconTheme: const IconThemeData(color: Colors.black87),
         title: Row(
           children: [
             CircleAvatar(
-              radius: 16,
+              radius: 18,
               backgroundImage: widget.otherUserAvatar != null
                   ? NetworkImage(widget.otherUserAvatar!)
                   : null,
+              backgroundColor: AppColors.primary.withOpacity(0.1),
               child: widget.otherUserAvatar == null
-                  ? Text(widget.otherUserName[0].toUpperCase())
+                  ? Text(
+                      widget.otherUserName[0].toUpperCase(),
+                      style: boldTextStyle(color: AppColors.primary),
+                    )
                   : null,
             ),
             12.width,
@@ -119,12 +142,12 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.otherUserName,
-                    style: boldTextStyle(color: Colors.white, size: 16),
+                    widget.otherUserDisplayName ?? widget.otherUserName,
+                    style: boldTextStyle(color: Colors.black87, size: 16),
                   ),
                   Text(
-                    "Online",
-                    style: secondaryTextStyle(color: Colors.white70, size: 12),
+                    "@" + widget.otherUserName,
+                    style: secondaryTextStyle(color: Colors.grey, size: 12),
                   ),
                 ],
               ),
@@ -145,16 +168,24 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.chat_bubble_outline,
-                          size: 48,
-                          color: Colors.grey,
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.waving_hand_rounded,
+                            size: 40,
+                            color: AppColors.primary,
+                          ),
                         ),
-                        8.height,
+                        16.height,
                         Text("No messages yet", style: secondaryTextStyle()),
+                        4.height,
                         Text(
                           "Say Hi to ${widget.otherUserName}!",
-                          style: primaryTextStyle(),
+                          style: boldTextStyle(size: 16),
                         ),
                       ],
                     ),
@@ -166,8 +197,24 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 return ListView.builder(
                   controller: _scrollController,
                   reverse: true,
-                  itemCount: messages.length,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+
+                  itemCount:
+                      messages.length + (controller.isLoadingMore ? 1 : 0),
                   itemBuilder: (context, index) {
+                    if (index == messages.length) {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      );
+                    }
+
                     return ChatBubble(message: messages[index]);
                   },
                 );
@@ -177,14 +224,18 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
           if (_selectedImage != null)
             Container(
-              padding: const EdgeInsets.all(8),
-              color: context.cardColor,
-              child: Row(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              width: context.width(),
+              color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text("Selected Image", style: boldTextStyle(size: 12)),
+                  8.height,
                   Stack(
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                         child: Image.file(
                           _selectedImage!,
                           height: 100,
@@ -198,7 +249,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                         child: GestureDetector(
                           onTap: () => setState(() => _selectedImage = null),
                           child: Container(
-                            padding: const EdgeInsets.all(2),
+                            padding: const EdgeInsets.all(4),
                             decoration: const BoxDecoration(
                               color: Colors.black54,
                               shape: BoxShape.circle,
@@ -206,7 +257,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                             child: const Icon(
                               Icons.close,
                               color: Colors.white,
-                              size: 16,
+                              size: 14,
                             ),
                           ),
                         ),
@@ -218,73 +269,102 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             ),
 
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: context.cardColor,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -5),
-                ),
-              ],
+            padding: const EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: 16,
+              top: 8,
             ),
+            decoration: const BoxDecoration(color: Colors.white),
             child: SafeArea(
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.image, color: AppColors.primary),
-                    onPressed: _pickImage,
-                  ),
-
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: InputDecoration(
-                        hintText: "Type a message...",
-                        hintStyle: secondaryTextStyle(),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide.none,
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: InkWell(
+                      onTap: _pickImage,
+                      borderRadius: BorderRadius.circular(25),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          shape: BoxShape.circle,
                         ),
-                        filled: true,
-                        fillColor: AppColors.layoutBackground,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 10,
+                        child: Icon(
+                          Icons.image_outlined,
+                          color: Colors.grey.shade700,
+                          size: 24,
                         ),
                       ),
                     ),
                   ),
-                  12.width,
-                  Consumer<MessagesController>(
-                    builder: (context, controller, _) {
-                      return InkWell(
-                        onTap: controller.isSending ? null : _handleSend,
-                        borderRadius: BorderRadius.circular(50),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: const BoxDecoration(
-                            color: AppColors.primary,
-                            shape: BoxShape.circle,
+                  8.width,
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      child: TextField(
+                        controller: _messageController,
+                        minLines: 1,
+                        maxLines: 5,
+                        keyboardType: TextInputType.multiline,
+                        decoration: InputDecoration(
+                          hintText: "Type a message...",
+                          hintStyle: secondaryTextStyle(),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 0,
+                            vertical: 12,
                           ),
-                          child: controller.isSending
-                              ? const SizedBox(
-                                  width: 24,
-                                  height: 24,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : const Icon(
-                                  Icons.send_rounded,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
+                          isDense: true,
                         ),
-                      );
-                    },
+                      ),
+                    ),
+                  ),
+                  8.width,
+
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Consumer<MessagesController>(
+                      builder: (context, controller, _) {
+                        return InkWell(
+                          onTap: controller.isSending ? null : _handleSend,
+                          borderRadius: BorderRadius.circular(50),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withOpacity(0.3),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: controller.isSending
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.send_rounded,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),

@@ -70,7 +70,7 @@ class SettingsPage extends StatelessWidget {
                       if (!context.mounted) return;
                       context.showSnackBar("Logged out successfully");
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        AppRoutes.login, 
+                        AppRoutes.splash, 
                         (route) => false,
                       );
                     } else {
