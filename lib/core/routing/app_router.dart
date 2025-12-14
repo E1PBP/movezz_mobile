@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movezz_mobile/features/auth/presentation/pages/auth_page.dart';
 import 'package:movezz_mobile/features/auth/presentation/pages/onboarding_concentric.dart';
-import 'package:movezz_mobile/core/widgets/main_navigation_page.dart';
-
+import 'package:movezz_mobile/features/feeds/presentation/pages/feeds_page.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -22,10 +21,7 @@ Route<dynamic> appRouteFactory(RouteSettings settings) {
       return _buildRoute(settings, const AuthPage());
 
     case AppRoutes.feeds:
-      return _buildRoute(
-        settings,
-        const MainNavigationPage(),
-      );
+      return _buildRoute(settings, const FeedsPage());
 
     case AppRoutes.profile:
       return _buildRoute(settings, const _SimpleScaffold(title: 'Profile'));
@@ -54,9 +50,7 @@ class _SimpleScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title), 
-      automaticallyImplyLeading: false
-      ),
+      appBar: AppBar(title: Text(title)),
       body: body ?? Center(child: Text(title)),
     );
   }
