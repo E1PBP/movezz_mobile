@@ -18,7 +18,6 @@ import 'features/profile/data/datasources/profile_remote_data_source.dart';
 import 'features/profile/data/repositories/profile_repository.dart';
 import 'features/profile/presentation/controllers/profile_controller.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
