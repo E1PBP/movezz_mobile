@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:movezz_mobile/core/config/env.dart';
 import '../models/feeds_model.dart';

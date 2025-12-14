@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
 
 import '../../features/feeds/presentation/pages/feeds_page.dart';
+import '../../features/feeds/presentation/widgets/create_post_sheet.dart';
 import '../../features/broadcast/presentation/pages/broadcast_page.dart';
 import '../../features/marketplace/presentation/pages/marketplace_page.dart';
 import '../../features/messages/presentation/pages/messages_page.dart';
@@ -12,7 +12,6 @@ import '../../features/messages/presentation/widgets/new_chat_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/messages/presentation/controllers/messages_controller.dart';
 import '../theme/app_theme.dart';
-import '../config/app_config.dart';
 
 import 'package:movezz_mobile/features/profile/presentation/pages/settings_page.dart';
 
@@ -36,35 +35,55 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
 
   List<Widget>? _getAppBarActions() {
     Widget actionIcon(IconData icon, String tooltip, VoidCallback onTap) {
-      return IconButton(
-        icon: Icon(icon, color: AppColors.primaryBlack),
-        tooltip: tooltip,
-        onPressed: onTap,
+      return Padding(
+        padding: const EdgeInsets.only(right: 8),
+        child: Tooltip(
+          message: tooltip,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: radius(12),
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: radius(12),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Icon(icon, color: AppColors.primaryBlack),
+            ),
+          ),
+        ),
       );
     }
 
     switch (_selectedIndex) {
       case 0:
         return [
-          actionIcon(Icons.add_box_outlined, 'New Post', () {
-            toast('Create New Post clicked!');
+          actionIcon(Icons.add, 'Create Post', () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.transparent,
+              builder: (_) => const CreatePostSheet(),
+            );
           }),
         ];
       case 1:
         return [
-          actionIcon(Icons.add_box_outlined, 'New Event', () {
-            toast('Create New Event clicked!');
+          actionIcon(Icons.add, 'Create Broadcast', () {
+            toast('Add Broadcast clicked!');
           }),
         ];
       case 2:
         return [
-          actionIcon(Icons.add_box_outlined, 'Sell Item', () {
-            toast('Add Product clicked!');
+          actionIcon(Icons.add, 'Create Listing', () {
+            toast('Add Listing clicked!');
           }),
         ];
       case 3:
         return [
-          actionIcon(Icons.add_box_outlined, 'New Message', () {
+          actionIcon(Icons.add, 'New Message', () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const NewChatPage()),
@@ -96,21 +115,19 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        leading: const SizedBox.shrink(),
+        leadingWidth: 0,
 
         backgroundColor: context.scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
 
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SvgPicture.asset(
-              'assets/icon/logo-navbar.svg',
-              height: 32,
-              fit: BoxFit.contain,
-            ),
-          ],
+        title: Text(
+          'Movezz',
+          style: boldTextStyle(size: 22, color: AppColors.primaryBlack),
         ),
+        centerTitle: false,
+        titleSpacing: 16,
 
         actions: _getAppBarActions(),
       ),

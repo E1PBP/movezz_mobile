@@ -1,4 +1,4 @@
-﻿import '../datasources/feeds_remote_data_source.dart';
+import '../datasources/feeds_remote_data_source.dart';
 import '../models/feeds_model.dart';
 
 abstract class FeedsRepository {

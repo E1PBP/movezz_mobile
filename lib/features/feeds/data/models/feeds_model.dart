@@ -1,4 +1,4 @@
-﻿class FeedsPageResponse {
+class FeedsPageResponse {
   final List<FeedPost> posts;
   final bool hasNext;
   final int? nextPageNumber;

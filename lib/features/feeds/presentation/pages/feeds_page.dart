@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
 
@@ -58,43 +58,8 @@ class _FeedsPageState extends State<FeedsPage>
 
   @override
   Widget build(BuildContext context) {
-    final controller = context.watch<FeedsController>();
-
     return Scaffold(
       backgroundColor: AppColors.layoutBackground,
-      appBar: AppBar(
-        elevation: 0,
-        title: Text(
-          'Movezz',
-          style: boldTextStyle(color: Colors.white, size: 18),
-        ),
-        actions: [
-          IconButton(
-            tooltip: 'Create post',
-            onPressed: _openCreatePost,
-            icon: const Icon(Icons.add_circle_outline, color: Colors.white),
-          ),
-          4.width,
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(46),
-          child: Container(
-            color: AppColors.primary,
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: Colors.white,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.white70,
-              labelStyle: boldTextStyle(color: Colors.white, size: 14),
-              tabs: _tabs.map((t) => Tab(text: t.$1)).toList(growable: false),
-              onTap: (index) {
-                final tabKey = _tabs[index].$2;
-                controller.switchTab(tabKey);
-              },
-            ),
-          ),
-        ),
-      ),
       body: Column(
         children: [
           // "What's on your mind?" quick composer (SocialV-like)
@@ -137,6 +102,23 @@ class _FeedsPageState extends State<FeedsPage>
               ],
             ),
           ),
+
+          // Keep filtering tabs: "For You" & "Following"
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: TabBar(
+              controller: _tabController,
+              labelColor: AppColors.primaryBlack,
+              unselectedLabelColor: AppColors.iconSecondaryDark,
+              labelStyle: boldTextStyle(size: 13),
+              unselectedLabelStyle: secondaryTextStyle(size: 13),
+              indicatorColor: AppColors.primary,
+              indicatorWeight: 2.5,
+              tabs: _tabs.map((t) => Tab(text: t.$1)).toList(growable: false),
+            ),
+          ),
+
           Expanded(
             child: TabBarView(
               controller: _tabController,
@@ -150,11 +132,6 @@ class _FeedsPageState extends State<FeedsPage>
             ),
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openCreatePost,
-        backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

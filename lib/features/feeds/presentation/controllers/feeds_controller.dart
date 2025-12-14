@@ -1,4 +1,4 @@
-﻿import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 import '../../data/models/feeds_model.dart';
 import '../../data/repositories/feeds_repository.dart';
 
