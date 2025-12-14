@@ -24,9 +24,26 @@ class FeedPostCard extends StatelessWidget {
     );
   }
 
+  String _createdAtText(FeedPost post) {
+    try {
+      final dynamic p = post;
+      final raw = p.createdAtRaw;
+      if (raw is String && raw.trim().isNotEmpty) return raw.trim();
+    } catch (_) {}
+
+    try {
+      final dynamic p = post;
+      final dt = p.createdAt;
+      if (dt is DateTime) return dt.timeAgo; // nb_utils extension
+    } catch (_) {}
+
+    return '';
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<FeedsController>();
+    final createdAtText = _createdAtText(post);
 
     return Container(
       decoration: boxDecorationDefault(
@@ -74,12 +91,12 @@ class FeedPostCard extends StatelessWidget {
                             '@${post.username}',
                             style: secondaryTextStyle(size: 12),
                           ),
-                          if ((post.createdAtRaw ?? '').isNotEmpty) ...[
+                          if (createdAtText.isNotEmpty) ...[
                             8.width,
                             Text('•', style: secondaryTextStyle(size: 12)),
                             8.width,
                             Text(
-                              post.createdAtRaw!,
+                              createdAtText,
                               style: secondaryTextStyle(size: 12),
                               overflow: TextOverflow.ellipsis,
                             ),

@@ -4,12 +4,9 @@ import 'package:provider/provider.dart';
 import 'core/config/app_config.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
-import 'package:flutter/services.dart';
+
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:nb_utils/nb_utils.dart';
-import 'features/auth/data/datasources/auth_remote_data_source.dart';
-import 'features/auth/data/repositories/auth_repository.dart';
-import 'features/auth/presentation/controllers/auth_controller.dart';
+
 import 'features/messages/data/datasources/messages_remote_data_source.dart';
 import 'features/messages/data/repositories/messages_repository.dart';
 import 'features/messages/presentation/controllers/messages_controller.dart';
@@ -18,31 +15,19 @@ import 'features/profile/data/datasources/profile_remote_data_source.dart';
 import 'features/profile/data/repositories/profile_repository.dart';
 import 'features/profile/presentation/controllers/profile_controller.dart';
 
+import 'features/auth/data/datasources/auth_remote_data_source.dart';
+import 'features/auth/data/repositories/auth_repository.dart';
+import 'features/auth/presentation/controllers/auth_controller.dart';
+
+import 'features/feeds/data/datasources/feeds_remote_data_source.dart';
+import 'features/feeds/data/repositories/feeds_repository.dart';
+import 'features/feeds/presentation/controllers/feeds_controller.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-  await initialize();
 
   final cookieRequest = CookieRequest();
   await cookieRequest.init();
-
-  bool hasSeenOnboarding = getBoolAsync(
-    'hasSeenOnboarding',
-    defaultValue: false,
-  );
-
-  String initialRoute;
-
-  if (hasSeenOnboarding) {
-    if (cookieRequest.loggedIn) {
-      initialRoute = AppRoutes.feeds;
-    } else {
-      initialRoute = AppRoutes.login;
-    }
-  } else {
-    initialRoute = AppRoutes.splash;
-  }
 
   runApp(
     MultiProvider(
@@ -54,6 +39,14 @@ void main() async {
             final remote = AuthRemoteDataSource(cookie);
             final repo = AuthRepositoryImpl(remote);
             return AuthController(repo);
+          },
+        ),
+        ChangeNotifierProvider<FeedsController>(
+          create: (context) {
+            final cookie = context.read<CookieRequest>();
+            final remote = FeedsRemoteDataSource(cookie);
+            final repo = FeedsRepositoryImpl(remote);
+            return FeedsController(repo);
           },
         ),
         ChangeNotifierProvider<MessagesController>(
@@ -73,14 +66,13 @@ void main() async {
           },
         ),
       ],
-      child: MyApp(initialRoute: initialRoute),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  final String initialRoute;
-  const MyApp({super.key, required this.initialRoute});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +81,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       onGenerateRoute: appRouteFactory,
-      initialRoute: initialRoute,
+      initialRoute: AppRoutes.splash,
     );
   }
 }
