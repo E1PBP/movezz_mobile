@@ -38,13 +38,13 @@ class ListingCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(
-              height: 160, 
+              height: 160,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   fields.imageUrl.isNotEmpty
                       ? Image.network(
-                          fields.imageUrl,
+                          "http://10.0.2.2:8000/marketplace/proxy-image/?url=${Uri.encodeComponent(fields.imageUrl)}",
                           fit: BoxFit.cover,
                         )
                       : Container(
@@ -52,9 +52,7 @@ class ListingCard extends StatelessWidget {
                           child: Icon(
                             Icons.image_not_supported_outlined,
                             size: 32,
-                            color: theme.colorScheme.onSurface.withOpacity(
-                              0.4,
-                            ),
+                            color: theme.colorScheme.onSurface.withOpacity(0.4),
                           ),
                         ),
                   if (onWishlistTap != null)
@@ -87,7 +85,7 @@ class ListingCard extends StatelessWidget {
             ),
 
             Container(
-              color: Colors.white, 
+              color: Colors.white,
               padding: const EdgeInsets.fromLTRB(8, 8, 8, 6),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -191,8 +189,9 @@ class _ConditionBadge extends StatelessWidget {
         ? Colors.green.withOpacity(0.12)
         : Colors.orange.withOpacity(0.12);
 
-    final Color fg =
-        isBrandNew ? Colors.green.shade700 : Colors.orange.shade700;
+    final Color fg = isBrandNew
+        ? Colors.green.shade700
+        : Colors.orange.shade700;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -233,11 +232,7 @@ class _TinyIconButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(999),
         child: Padding(
           padding: const EdgeInsets.all(2),
-          child: Icon(
-            icon,
-            size: 18,
-            color: color,
-          ),
+          child: Icon(icon, size: 18, color: color),
         ),
       ),
     );
