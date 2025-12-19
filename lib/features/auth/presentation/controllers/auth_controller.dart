@@ -8,8 +8,24 @@ class AuthController extends ChangeNotifier {
   AuthController(this._repository);
 
   AuthUser? currentUser;
+  bool isRestoring = false;
   bool isLoading = false;
   String? error;
+
+  Future<void> restoreSession() async {
+    if (isRestoring) return;
+    isRestoring = true;
+    notifyListeners();
+
+    try {
+      final me = await _repository.me();
+
+      currentUser = me;
+    } finally {
+      isRestoring = false;
+      notifyListeners();
+    }
+  }
 
   Future<bool> login(String username, String password) async {
     try {
@@ -67,7 +83,7 @@ class AuthController extends ChangeNotifier {
       await _repository.logout();
       currentUser = null;
       error = null;
-      
+
       isLoading = false;
       notifyListeners();
       return true;

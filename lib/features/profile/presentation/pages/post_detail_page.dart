@@ -269,9 +269,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                           text: "${widget.profile.username} ",
                           style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
-                        TextSpan(
-                          text: currentCaption,
-                        ), 
+                        TextSpan(text: currentCaption),
                       ],
                     ),
                   ),
@@ -391,11 +389,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                             .read<ProfileController>()
                             .deletePost(widget.post.id);
                         if (mounted) {
-                          Navigator.pop(ctx); 
+                          Navigator.pop(ctx);
                           if (success) {
-                            Navigator.pop(
-                              context,
-                            );
+                            Navigator.pop(context);
                             context.showSnackBar(
                               "Post deleted successfully",
                               isError: false,

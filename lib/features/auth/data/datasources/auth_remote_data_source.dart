@@ -10,6 +10,16 @@ class AuthRemoteDataSource {
 
   AuthRemoteDataSource(this.cookieRequest);
 
+  Future<AuthUser?> me() async {
+    final res = await cookieRequest.get(Env.api('/auth/api/me/'));
+
+    if (res is Map && res['status'] == true) {
+      return AuthUser(username: res['username'], isLoggedIn: true);
+    }
+
+    return null;
+  }
+
   Future<AuthUser> login({
     required String username,
     required String password,
