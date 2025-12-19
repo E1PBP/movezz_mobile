@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
@@ -9,14 +9,14 @@ import 'listing_detail_page.dart';
 import 'listing_form_page.dart';
 import 'wishlist_page.dart';
 
-class MarketplacePage extends StatefulWidget {
-  const MarketplacePage({super.key});
+class MyListingsPage extends StatefulWidget {
+  const MyListingsPage({super.key});
 
   @override
-  State<MarketplacePage> createState() => _MarketplacePageState();
+  State<MyListingsPage> createState() => _MyListingsPageState();
 }
 
-class _MarketplacePageState extends State<MarketplacePage> {
+class _MyListingsPageState extends State<MyListingsPage> {
   final TextEditingController _searchController = TextEditingController();
   Condition? _selectedCondition;
 
@@ -50,30 +50,29 @@ class _MarketplacePageState extends State<MarketplacePage> {
           initialImageUrl: fields.imageUrl,
           initialCondition: fields.condition,
           initialDescription: fields.description,
-          onSubmit:
-              ({
-                required String title,
-                required int price,
-                required String location,
-                required String imageUrl,
-                required Condition condition,
-                required String description,
-              }) async {
-                await context.read<MarketplaceController>().updateListing(
-                  id: listing.pk,
-                  title: title,
-                  price: price,
-                  location: location,
-                  imageUrl: imageUrl,
-                  condition: condition,
-                  description: description,
-                );
+          onSubmit: ({
+            required String title,
+            required int price,
+            required String location,
+            required String imageUrl,
+            required Condition condition,
+            required String description,
+          }) async {
+            await context.read<MarketplaceController>().updateListing(
+              id: listing.pk,
+              title: title,
+              price: price,
+              location: location,
+              imageUrl: imageUrl,
+              condition: condition,
+              description: description,
+            );
 
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Listing successfully updated')),
-                );
-              },
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Listing successfully updated')),
+            );
+          },
         ),
       ),
     );
@@ -123,29 +122,28 @@ class _MarketplacePageState extends State<MarketplacePage> {
       context,
       MaterialPageRoute(
         builder: (_) => ListingFormPage(
-          onSubmit:
-              ({
-                required String title,
-                required int price,
-                required String location,
-                required String imageUrl,
-                required Condition condition,
-                required String description,
-              }) async {
-                await context.read<MarketplaceController>().createListing(
-                  title: title,
-                  price: price,
-                  location: location,
-                  imageUrl: imageUrl,
-                  condition: condition,
-                  description: description,
-                );
+          onSubmit: ({
+            required String title,
+            required int price,
+            required String location,
+            required String imageUrl,
+            required Condition condition,
+            required String description,
+          }) async {
+            await context.read<MarketplaceController>().createListing(
+              title: title,
+              price: price,
+              location: location,
+              imageUrl: imageUrl,
+              condition: condition,
+              description: description,
+            );
 
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Listing successfully created')),
-                );
-              },
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Listing successfully created')),
+            );
+          },
         ),
       ),
     );
@@ -164,7 +162,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
         return Scaffold(
           appBar: AppBar(
             title: const Text(
-              "Listings",
+              "My Listings",
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -183,7 +181,6 @@ class _MarketplacePageState extends State<MarketplacePage> {
               ),
             ],
           ),
-          
           body: Column(
             children: [
               _buildSearchAndFilterRow(controller),
@@ -216,7 +213,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
               controller: _searchController,
               textInputAction: TextInputAction.search,
               decoration: InputDecoration(
-                hintText: 'Search listings...',
+                hintText: 'Search my listings...',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
@@ -232,7 +229,6 @@ class _MarketplacePageState extends State<MarketplacePage> {
             ),
           ),
           const SizedBox(width: 8),
-
           PopupMenuButton<String>(
             tooltip: 'Filter condition',
             color: Colors.grey.shade100,
@@ -332,12 +328,17 @@ class _MarketplacePageState extends State<MarketplacePage> {
       );
     }
 
-    if (controller.listings.isEmpty) {
-      return const Center(child: Text('No listings available.'));
+    final myListings =
+        controller.listings.where((listing) => listing.isMine).toList();
+
+    if (myListings.isEmpty) {
+      return const Center(
+        child: Text("You don't have any listings yet."),
+      );
     }
 
     return MarketplaceWidget(
-      listings: controller.listings,
+      listings: myListings,
       onItemTap: (item) {
         Navigator.push(
           context,
