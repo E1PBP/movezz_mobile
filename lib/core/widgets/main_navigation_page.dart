@@ -35,7 +35,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   final List<Widget> _pages = [
     const FeedsPage(),
     const BroadcastPage(),
-    const MarketplaceLandingPage(), 
+    const MarketplaceLandingPage(),
     const MessagesPage(),
     const ProfilePage(),
   ];
@@ -65,18 +65,16 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
       case 2:
         return [
           actionIcon(Icons.favorite_outline, 'Wishlist', () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                  builder: (_) => const WishlistPage(),
-                  ),
-                );
-                }),
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const WishlistPage()),
+            );
+          }),
         ];
       case 3:
         return [
           actionIcon(Icons.add_box_outlined, 'New Message', () {
-            (
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const NewChatPage()),
             ).then((_) {
