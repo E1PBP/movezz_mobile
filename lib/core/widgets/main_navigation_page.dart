@@ -7,7 +7,6 @@ import 'package:movezz_mobile/features/marketplace/presentation/pages/wishlist_p
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
-import 'package:nb_utils/nb_utils.dart';
 
 import '../../features/feeds/presentation/pages/feeds_page.dart';
 import '../../features/broadcast/presentation/pages/broadcast_page.dart';
