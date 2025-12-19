@@ -7,12 +7,18 @@ import 'core/theme/app_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:nb_utils/nb_utils.dart';
+
 import 'features/auth/data/datasources/auth_remote_data_source.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/auth/presentation/controllers/auth_controller.dart';
+
 import 'features/messages/data/datasources/messages_remote_data_source.dart';
 import 'features/messages/data/repositories/messages_repository.dart';
 import 'features/messages/presentation/controllers/messages_controller.dart';
+
+import 'features/feeds/data/datasources/feeds_remote_data_source.dart';
+import 'features/feeds/data/repositories/feeds_repository.dart';
+import 'features/feeds/presentation/controllers/feeds_controller.dart';
 
 import 'features/profile/data/datasources/profile_remote_data_source.dart';
 import 'features/profile/data/repositories/profile_repository.dart';
@@ -58,6 +64,15 @@ void main() async {
             final remote = AuthRemoteDataSource(cookie);
             final repo = AuthRepositoryImpl(remote);
             return AuthController(repo);
+          },
+        ),
+
+                ChangeNotifierProvider<FeedsController>(
+          create: (context) {
+            final cookie = context.read<CookieRequest>();
+            final remote = FeedsRemoteDataSource(cookie);
+            final repo = FeedsRepositoryImpl(remote);
+            return FeedsController(repo);
           },
         ),
         ChangeNotifierProvider<MessagesController>(
