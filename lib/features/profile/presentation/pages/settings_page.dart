@@ -7,6 +7,7 @@ import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/routing/app_router.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../profile/presentation/pages/edit_profile_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -14,15 +15,11 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Settings"),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text("Settings"), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-
             Consumer<AuthController>(
               builder: (context, auth, _) {
                 return Container(
@@ -34,7 +31,11 @@ class SettingsPage extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.person, color: AppColors.primary, size: 40),
+                      const Icon(
+                        Icons.person,
+                        color: AppColors.primary,
+                        size: 40,
+                      ),
                       const SizedBox(width: 16),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,10 +44,7 @@ class SettingsPage extends StatelessWidget {
                             auth.currentUser?.username ?? "User",
                             style: boldTextStyle(size: 18),
                           ),
-                          Text(
-                            "Logged in",
-                            style: secondaryTextStyle(),
-                          ),
+                          Text("Logged in", style: secondaryTextStyle()),
                         ],
                       ),
                     ],
@@ -54,12 +52,23 @@ class SettingsPage extends StatelessWidget {
                 );
               },
             ),
-            
+
             const Spacer(),
+
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: const Text("Edit Profile"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const EditProfilePage()),
+                );
+              },
+            ),
 
             Consumer<AuthController>(
               builder: (context, auth, _) {
-                return  AppButton(
+                return AppButton(
                   text: "LOGOUT",
                   color: Colors.redAccent,
                   isLoading: auth.isLoading,
@@ -70,13 +79,13 @@ class SettingsPage extends StatelessWidget {
                       if (!context.mounted) return;
                       context.showSnackBar("Logged out successfully");
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                        AppRoutes.login, 
+                        AppRoutes.login,
                         (route) => false,
                       );
                     } else {
                       if (!context.mounted) return;
                       context.showSnackBar(
-                        auth.error ?? "Failed to logout", 
+                        auth.error ?? "Failed to logout",
                         isError: true,
                       );
                     }
