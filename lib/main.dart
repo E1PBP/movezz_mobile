@@ -6,7 +6,7 @@ import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:nb_utils/nb_utils.dart';
+import 'package:nb_utils/nb_utils.dart' as nb;
 
 import 'features/auth/data/datasources/auth_remote_data_source.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
@@ -28,16 +28,20 @@ import 'features/marketplace/data/datasources/marketplace_remote_data_source.dar
 import 'features/marketplace/data/repositories/marketplace_repository.dart';
 import 'features/marketplace/presentation/controllers/marketplace_controller.dart';
 
+import 'core/config/navigator_key.dart';
+import 'package:movezz_mobile/core/config/navigator_key.dart';
+import 'package:movezz_mobile/core/network/guarded_cookie_request.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  await initialize();
+  await nb.initialize();
 
-  final cookieRequest = CookieRequest();
+  final cookieRequest = GuardedCookieRequest();
   await cookieRequest.init();
 
-  bool hasSeenOnboarding = getBoolAsync(
+  bool hasSeenOnboarding = nb.getBoolAsync(
     'hasSeenOnboarding',
     defaultValue: false,
   );
@@ -67,7 +71,7 @@ void main() async {
           },
         ),
 
-                ChangeNotifierProvider<FeedsController>(
+        ChangeNotifierProvider<FeedsController>(
           create: (context) {
             final cookie = context.read<CookieRequest>();
             final remote = FeedsRemoteDataSource(cookie);
@@ -116,6 +120,8 @@ class MyApp extends StatelessWidget {
       title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      navigatorKey: navigatorKey,
+      navigatorObservers: [RouteObserverService()],
       onGenerateRoute: appRouteFactory,
       initialRoute: initialRoute,
     );

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:movezz_mobile/core/config/env.dart';
 import '../models/marketplace_model.dart';
 import 'package:flutter/foundation.dart';
+import 'package:movezz_mobile/core/utils/session_guard.dart';
 
 class MarketplaceRemoteDataSource {
   final CookieRequest cookieRequest;
@@ -32,7 +33,7 @@ class MarketplaceRemoteDataSource {
     final uri = params.isEmpty
         ? baseUri
         : baseUri.replace(queryParameters: params);
-        debugPrint('GET listings: $uri');
+    debugPrint('GET listings: $uri');
     final response = await cookieRequest.get(uri.toString());
 
     if (response is List) {
@@ -89,7 +90,8 @@ class MarketplaceRemoteDataSource {
         return decoded['id'].toString();
       }
     } else if (response.statusCode == 302) {
-      throw Exception('Session expired. Please log in again.');
+      SessionGuard.handleSessionExpired();
+      throw Exception('Session expired');
     }
 
     throw Exception('Failed to create listing: ${response.body}');
@@ -194,9 +196,7 @@ class MarketplaceRemoteDataSource {
     final headers = Map<String, String>.from(cookieRequest.headers);
     headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
-    final body = {
-      'listing_id': listingId,
-    };
+    final body = {'listing_id': listingId};
 
     final response = await http.post(
       Uri.parse(url),

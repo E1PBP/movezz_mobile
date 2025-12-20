@@ -8,7 +8,9 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:movezz_mobile/core/config/env.dart';
 import '../models/profile_model.dart';
 import '../models/comment_model.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+// import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:movezz_mobile/core/utils/session_guard.dart';
+
 
 class ProfileRemoteDataSource {
   final CookieRequest cookieRequest;
@@ -18,7 +20,7 @@ class ProfileRemoteDataSource {
   Future<ProfileEntry> getProfile(String username) async {
     final url = Env.api('/profile/api/u/$username/');
     final response = await cookieRequest.get(url);
-
+    SessionGuard.validate(response);
     if (response is Map) {
       final map = Map<String, dynamic>.from(response);
       return ProfileEntry.fromJson(map);
