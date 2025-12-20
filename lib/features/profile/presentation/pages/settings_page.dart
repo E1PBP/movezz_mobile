@@ -56,7 +56,7 @@ class SettingsPage extends StatelessWidget {
             const Spacer(),
 
             ListTile(
-              leading: const Icon(Icons.edit),
+              leading: const Icon(Icons.edit, color: Colors.green),
               title: const Text("Edit Profile"),
               onTap: () {
                 Navigator.push(

@@ -5,7 +5,7 @@ import '../../data/models/profile_model.dart';
 import '../../data/models/post_model.dart';
 import '../../data/models/comment_model.dart';
 import 'package:movezz_mobile/core/config/env.dart';
-import 'package:image_picker/image_picker.dart'; 
+import 'package:image_picker/image_picker.dart';
 
 class ProfileController extends ChangeNotifier {
   final ProfileRepository repository;
@@ -61,7 +61,7 @@ class ProfileController extends ChangeNotifier {
     String? hashtags,
     String? hours,
     String? minutes,
-    XFile? imageFile, 
+    XFile? imageFile,
   }) async {
     if (caption.isEmpty && imageFile == null) return false;
 
@@ -73,7 +73,7 @@ class ProfileController extends ChangeNotifier {
         hashtags: hashtags,
         hours: hours,
         minutes: minutes,
-        imageFile: imageFile, 
+        imageFile: imageFile,
       );
 
       if (success) {
@@ -96,7 +96,8 @@ class ProfileController extends ChangeNotifier {
     final success = await repository.deletePost(postId);
     if (success && postsEntry != null) {
       postsEntry!.posts.removeWhere((p) => p.id == postId);
-      if (profile != null) profile!.postCount = (profile!.postCount - 1).clamp(0, 9999);
+      if (profile != null)
+        profile!.postCount = (profile!.postCount - 1).clamp(0, 9999);
       notifyListeners();
     }
     return success;
@@ -150,5 +151,34 @@ class ProfileController extends ChangeNotifier {
     profile!.followersCount += profile!.isFollowing ? 1 : -1;
     notifyListeners();
     await repository.toggleFollow(profile!.username);
+  }
+
+  Future<bool> updateProfile({
+    required String username,
+    required String displayName,
+  }) async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      final updatedProfile = await repository.updateProfile(
+        username: username,
+        displayName: displayName,
+      );
+
+      profile = updatedProfile;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Controller Error updateProfile: $e");
+      }
+      errorMessage = 'Failed to update profile';
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }

@@ -1,9 +1,9 @@
 ﻿import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:http_parser/http_parser.dart'; 
-import 'package:image_picker/image_picker.dart'; 
-import 'package:mime/mime.dart'; 
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:movezz_mobile/core/config/env.dart';
 import '../models/profile_model.dart';
@@ -81,14 +81,14 @@ class ProfileRemoteDataSource {
   }
 
   Future<bool> deletePost(String postId) async {
-      final url = Env.api('/profile/api/posts/$postId/delete/');
-      try {
-        final response = await cookieRequest.post(url, {});
-        return response['ok'] == true || response['status'] == 'success';
-      } catch (e) {
-        print("Remote Error deletePost: $e");
-        return false;
-      }
+    final url = Env.api('/profile/api/posts/$postId/delete/');
+    try {
+      final response = await cookieRequest.post(url, {});
+      return response['ok'] == true || response['status'] == 'success';
+    } catch (e) {
+      print("Remote Error deletePost: $e");
+      return false;
+    }
   }
 
   Future<Map<String, dynamic>?> likePost(String postId) async {
@@ -136,13 +136,36 @@ class ProfileRemoteDataSource {
   }
 
   Future<bool> toggleFollow(String username) async {
-    final url = Env.api('/profile/api/follow/$username/toggle/'); 
+    final url = Env.api('/profile/api/follow/$username/toggle/');
     try {
       final response = await cookieRequest.post(url, {});
       return response['following'] != null;
     } catch (e) {
       print("Error toggle follow: $e");
       return false;
+    }
+  }
+
+  Future<ProfileEntry> updateProfile({
+    required String username,
+    required String displayName,
+  }) async {
+    final url = Env.api('/profile/api/update/');
+
+    try {
+      final response = await cookieRequest.post(url, {
+        'username': username,
+        'display_name': displayName,
+      });
+
+      if (response is Map && response['username'] != null) {
+        return ProfileEntry.fromJson(Map<String, dynamic>.from(response));
+      } else {
+        throw Exception('Format response updateProfile tidak valid');
+      }
+    } catch (e) {
+      debugPrint('Error updateProfile: $e');
+      rethrow;
     }
   }
 }

@@ -12,7 +12,7 @@ class ProfileRepository {
   Future<ProfileEntry> getProfile(String username) {
     return remote.getProfile(username);
   }
-  
+
   Future<bool> createPost({
     required String caption,
     String? sport,
@@ -55,5 +55,12 @@ class ProfileRepository {
 
   Future<bool> toggleFollow(String username) {
     return remote.toggleFollow(username);
+  }
+
+  Future<ProfileEntry> updateProfile({
+    required String username,
+    required String displayName,
+  }) {
+    return remote.updateProfile(username: username, displayName: displayName);
   }
 }
