@@ -10,11 +10,11 @@ String profileEntryToJson(ProfileEntry data) => json.encode(data.toJson());
 
 class ProfileEntry {
     String username;
-    dynamic displayName;
-    dynamic bio;
-    dynamic link;
-    dynamic avatarUrl;
-    dynamic currentSport;
+    String? displayName;
+    String?bio;
+    String? link;
+    String? avatarUrl;
+    String? currentSport;
     int postCount;
     int broadcastCount;
     int followingCount;
@@ -26,11 +26,11 @@ class ProfileEntry {
 
     ProfileEntry({
         required this.username,
-        required this.displayName,
-        required this.bio,
-        required this.link,
-        required this.avatarUrl,
-        required this.currentSport,
+        this.displayName,
+        this.bio,
+        this.link,
+        this.avatarUrl,
+        this.currentSport,
         required this.postCount,
         required this.broadcastCount,
         required this.followingCount,
@@ -42,16 +42,16 @@ class ProfileEntry {
     });
 
     factory ProfileEntry.fromJson(Map<String, dynamic> json) => ProfileEntry(
-        username: json["username"],
+        username: json["username"] ?? '',
         displayName: json["display_name"],
         bio: json["bio"],
         link: json["link"],
         avatarUrl: json["avatar_url"],
         currentSport: json["current_sport"],
-        postCount: json["post_count"],
-        broadcastCount: json["broadcast_count"],
-        followingCount: json["following_count"],
-        followersCount: json["followers_count"],
+        postCount: json['post_count'] ?? 0,
+        broadcastCount: json["broadcast_count"] ?? 0,
+        followersCount: json['followers_count'] ?? 0,
+        followingCount: json['following_count'] ?? 0,
         isVerified: json["is_verified"] ?? false,
         isFollowing: json["is_following"] ?? false,
         createdAt: DateTime.parse(json["created_at"]),

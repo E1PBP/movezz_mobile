@@ -8,7 +8,7 @@ import '../../../../core/config/app_config.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/routing/app_router.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
-// import '../../../profile/presentation/pages/edit_profile_page.dart';
+import '../../../profile/presentation/pages/edit_profile_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -37,19 +37,19 @@ class SettingsPage extends StatelessWidget {
                 ),
 
                 _buildSectionTitle("Account"),
-                // _buildSettingItem(
-                //   context,
-                //   icon: Icons.person_outline,
-                //   title: "Edit Profile",
-                //   onTap: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(
-                //         builder: (_) => const EditProfilePage(),
-                //       ),
-                //     );
-                //   },
-                // ),
+                _buildSettingItem(
+                  context,
+                  icon: Icons.person_outline,
+                  title: "Edit Profile",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => EditProfilePage(),
+                      ),
+                    );
+                  },
+                ),
 
                 const Divider(
                   height: 24,

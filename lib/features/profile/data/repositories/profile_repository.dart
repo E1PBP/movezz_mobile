@@ -60,7 +60,12 @@ class ProfileRepository {
   Future<ProfileEntry> updateProfile({
     required String username,
     required String displayName,
+    XFile? imageFile,
   }) {
-    return remote.updateProfile(username: username, displayName: displayName);
+    return remote.updateProfile(
+      username: username, 
+      displayName: displayName,
+      imageFile: imageFile,
+      );
   }
 }

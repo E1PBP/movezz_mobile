@@ -7,6 +7,7 @@ import 'package:mime/mime.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:movezz_mobile/core/config/env.dart';
 import '../models/profile_model.dart';
+import '../models/post_model.dart';
 import '../models/comment_model.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
@@ -202,23 +203,76 @@ class ProfileRemoteDataSource {
   Future<ProfileEntry> updateProfile({
     required String username,
     required String displayName,
+    XFile? imageFile,
   }) async {
     final url = Env.api('/profile/api/update/');
 
     try {
-      final response = await cookieRequest.post(url, {
-        'username': username,
+      if (kDebugMode) print('Updating display name...');
+
+      final dataResponse = await cookieRequest.post(url, {
         'display_name': displayName,
       });
 
-      if (response is Map && response['username'] != null) {
-        return ProfileEntry.fromJson(Map<String, dynamic>.from(response));
+      if (kDebugMode) {
+        print('Update display name Response: $dataResponse');
+      }
+
+      if (dataResponse is! Map || dataResponse['status'] != 'success') {
+        throw Exception(
+          dataResponse['message'] ?? 'Failed to update display name',
+        );
+      }
+
+      if (imageFile != null) {
+        if (kDebugMode) print('Uploading avatar image...');
+
+        final avatarUrl = Env.api('/profile/api/upload-avatar/');
+        var request = http.MultipartRequest('POST', Uri.parse(avatarUrl));
+
+        request.headers.addAll({'Cookie': _getCookieString()});
+
+        final mimeType = lookupMimeType(imageFile.path) ?? 'image/jpeg';
+        final mimeSplit = mimeType.split('/');
+
+        var imageFileMultipart = await http.MultipartFile.fromPath(
+          'avatar',
+          imageFile.path,
+          contentType: MediaType(mimeSplit[0], mimeSplit[1]),
+        );
+        request.files.add(imageFileMultipart);
+
+        var streamResponse = await request.send();
+        var imageResponse = await http.Response.fromStream(streamResponse);
+
+        if (kDebugMode) {
+          print('Avatar upload status: ${imageResponse.statusCode}');
+          print('Avatar upload response: ${imageResponse.body}');
+        }
+
+        if (imageResponse.statusCode != 200) {
+          if (kDebugMode)
+            print('Warning: Avatar upload failed, continuing anyway');
+        }
+      }
+
+      final profileUrl = Env.api('/profile/api/u/$username/');
+      final profileResponse = await cookieRequest.get(profileUrl);
+
+      if (profileResponse is Map) {
+        return ProfileEntry.fromJson(
+          Map<String, dynamic>.from(profileResponse),
+        );
       } else {
-        throw Exception('Format response updateProfile tidak valid');
+        throw Exception('Failed to fetch updated profile');
       }
     } catch (e) {
-      debugPrint('Error updateProfile: $e');
+      if (kDebugMode) print('Error updateProfile: $e');
       rethrow;
     }
+  }
+
+  String _getCookieString() {
+    return ''; 
   }
 }

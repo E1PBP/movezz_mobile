@@ -156,29 +156,30 @@ class ProfileController extends ChangeNotifier {
   Future<bool> updateProfile({
     required String username,
     required String displayName,
+    XFile? imageFile,
   }) async {
-    isLoading = true;
-    errorMessage = null;
-    notifyListeners();
-
     try {
+      isLoading = true;
+      errorMessage = null;
+      notifyListeners();
+
       final updatedProfile = await repository.updateProfile(
         username: username,
         displayName: displayName,
+        imageFile: imageFile,
       );
 
       profile = updatedProfile;
+      isLoading = false;
       notifyListeners();
       return true;
     } catch (e) {
-      if (kDebugMode) {
-        print("Controller Error updateProfile: $e");
-      }
-      errorMessage = 'Failed to update profile';
-      return false;
-    } finally {
+      if (kDebugMode) print("Error updating profile: $e");
+      errorMessage = e.toString();
       isLoading = false;
       notifyListeners();
+      return false;
     }
   }
+  
 }
