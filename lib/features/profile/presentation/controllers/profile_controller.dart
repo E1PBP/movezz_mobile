@@ -7,6 +7,7 @@ import '../../data/models/comment_model.dart';
 import 'package:movezz_mobile/core/config/env.dart';
 import 'package:image_picker/image_picker.dart'; 
 
+
 class ProfileController extends ChangeNotifier {
   final ProfileRepository repository;
 
