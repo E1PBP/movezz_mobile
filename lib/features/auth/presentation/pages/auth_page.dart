@@ -50,7 +50,7 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: svGetScaffoldColor(),
+
       body: Column(
         children: [
           SizedBox(height: context.statusBarHeight + 50),

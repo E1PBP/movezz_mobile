@@ -54,3 +54,4 @@ generate_features.ps1
 # END Ruler Generated Files
 
 repomix-output.*
+.vscode/

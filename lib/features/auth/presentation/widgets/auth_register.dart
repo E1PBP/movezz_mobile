@@ -185,7 +185,7 @@ class _AuthRegisterState extends State<AuthRegister> {
                         Text(
                           'Already have an account?',
                           style: TextStyle(
-                            fontFamily: AppConfig.robotoFont,
+                            fontFamily: AppConfig.defaultFont,
                             fontSize: 14,
                           ),
                         ),

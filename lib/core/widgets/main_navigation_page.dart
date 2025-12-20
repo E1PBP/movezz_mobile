@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_svg/svg.dart';
+
+import 'package:movezz_mobile/features/marketplace/presentation/pages/wishlist_page.dart';
+
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:provider/provider.dart';
 
 import '../../features/feeds/presentation/pages/feeds_page.dart';
 import '../../features/broadcast/presentation/pages/broadcast_page.dart';
 import '../../features/marketplace/presentation/pages/marketplace_page.dart';
+import '../../features/marketplace/presentation/pages/marketplace_landing_page.dart';
 import '../../features/messages/presentation/pages/messages_page.dart';
 import '../../features/messages/presentation/widgets/new_chat_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
-
+import '../../features/messages/presentation/controllers/messages_controller.dart';
 import '../theme/app_theme.dart';
 import '../config/app_config.dart';
 
@@ -28,7 +34,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   final List<Widget> _pages = [
     const FeedsPage(),
     const BroadcastPage(),
-    const MarketplacePage(),
+    const MarketplaceLandingPage(),
     const MessagesPage(),
     const ProfilePage(),
   ];
@@ -57,8 +63,11 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
         ];
       case 2:
         return [
-          actionIcon(Icons.add_box_outlined, 'Sell Item', () {
-            toast('Add Product clicked!');
+          actionIcon(Icons.favorite_outline, 'Wishlist', () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const WishlistPage()),
+            );
           }),
         ];
       case 3:
@@ -67,7 +76,11 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const NewChatPage()),
-            );
+            ).then((_) {
+              if (mounted) {
+                context.read<MessagesController>().fetchConversations();
+              }
+            });
           }),
         ];
       case 4:

@@ -38,55 +38,108 @@ class ProfileRemoteDataSource {
   }) async {
     final url = Env.api('/feeds/create_post/');
 
-    Map<String, dynamic> data = {
-      'caption': caption,
-      'sport': sport ?? "",
-      'location': location ?? "",
-      'hashtags': hashtags ?? "",
-      'time_h': hours ?? "",
-      'time_m': minutes ?? "",
-    };
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+
+    request.headers.addAll(cookieRequest.headers);
+
+    request.fields['caption'] = caption;
+    request.fields['text'] = caption;
+
+    if (sport != null && sport.isNotEmpty) request.fields['sport'] = sport;
+    if (location != null && location.isNotEmpty)
+      request.fields['location_name'] = location;
+    if (hashtags != null && hashtags.isNotEmpty)
+      request.fields['hashtags'] = hashtags;
+
+    if (hours != null && hours.isNotEmpty) request.fields['time_h'] = hours;
+    if (minutes != null && minutes.isNotEmpty)
+      request.fields['time_m'] = minutes;
 
     if (imageFile != null) {
-      final bytes = await imageFile.readAsBytes();
-      final String base64Image = base64Encode(bytes);
-      data['image'] = base64Image; // Kirim sebagai string, bukan file
+      final mimeType = lookupMimeType(imageFile.path) ?? 'image/jpeg';
+      final mimeSplit = mimeType.split('/');
+
+      var pic = await http.MultipartFile.fromPath(
+        "image",
+        imageFile.path,
+        contentType: MediaType(mimeSplit[0], mimeSplit[1]),
+      );
+      request.files.add(pic);
     }
 
     try {
-      final response = await cookieRequest.post(url, data);
+      var streamResponse = await request.send();
+      var response = await http.Response.fromStream(streamResponse);
 
-      if (response['status'] == 'success') {
-        print("Sukses Upload!");
-        return true;
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData['status'] == 'success') {
+          return true;
+        } else {
+          if (kDebugMode) print("Gagal Upload (Logic): ${response.body}");
+          return false;
+        }
       } else {
-        print("Gagal Upload: $response");
+        if (kDebugMode)
+          print(
+            "Gagal Upload (HTTP Error ${response.statusCode}): ${response.body}",
+          );
         return false;
       }
     } catch (e) {
-      print("Error Network: $e");
+      if (kDebugMode) print("Error Network createPost: $e");
       return false;
     }
   }
 
   Future<bool> updatePost(String postId, String newCaption) async {
     final url = Env.api('/profile/api/posts/$postId/update/');
+
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+
+    request.headers.addAll(cookieRequest.headers);
+
+    request.fields['caption'] = newCaption;
+
     try {
-      final response = await cookieRequest.post(url, {'caption': newCaption});
-      return response['ok'] == true || response['status'] == 'success';
+      final streamResponse = await request.send();
+      final response = await http.Response.fromStream(streamResponse);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['ok'] == true || data['status'] == 'success';
+      } else {
+        if (kDebugMode)
+          print("Update failed [${response.statusCode}]: ${response.body}");
+        return false;
+      }
     } catch (e) {
-      print("Remote Error updatePost: $e");
+      if (kDebugMode) print("Remote Error updatePost: $e");
       return false;
     }
   }
 
   Future<bool> deletePost(String postId) async {
     final url = Env.api('/profile/api/posts/$postId/delete/');
+
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+
+    request.headers.addAll(cookieRequest.headers);
+
     try {
-      final response = await cookieRequest.post(url, {});
-      return response['ok'] == true || response['status'] == 'success';
+      final streamResponse = await request.send();
+      final response = await http.Response.fromStream(streamResponse);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['ok'] == true || data['status'] == 'success';
+      } else {
+        if (kDebugMode)
+          print("Delete failed [${response.statusCode}]: ${response.body}");
+        return false;
+      }
     } catch (e) {
-      print("Remote Error deletePost: $e");
+      if (kDebugMode) print("Remote Error deletePost: $e");
       return false;
     }
   }
@@ -97,7 +150,7 @@ class ProfileRemoteDataSource {
       final response = await cookieRequest.post(url, {'post_id': postId});
       return response;
     } catch (e) {
-      print("Error liking post: $e");
+      if (kDebugMode) print("Error liking post: $e");
       return null;
     }
   }
@@ -112,7 +165,7 @@ class ProfileRemoteDataSource {
       }
       return [];
     } catch (e) {
-      print("Error fetch comments: $e");
+      if (kDebugMode) print("Error fetch comments: $e");
       return [];
     }
   }
@@ -130,7 +183,7 @@ class ProfileRemoteDataSource {
       }
       return null;
     } catch (e) {
-      print("Error add comment: $e");
+      if (kDebugMode) print("Error add comment: $e");
       return null;
     }
   }
@@ -141,7 +194,7 @@ class ProfileRemoteDataSource {
       final response = await cookieRequest.post(url, {});
       return response['following'] != null;
     } catch (e) {
-      print("Error toggle follow: $e");
+      if (kDebugMode) print("Error toggle follow: $e");
       return false;
     }
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../config/app_config.dart';
-
+import 'package:google_fonts/google_fonts.dart';
 class AppColors {
   AppColors._();
 
@@ -43,6 +43,7 @@ class AppTheme {
     );
 
     return base.copyWith(
+      textTheme: GoogleFonts.latoTextTheme(base.textTheme),
       scaffoldBackgroundColor: AppColors.layoutBackground,
       cardColor: AppColors.sectionBackground,
       primaryColor: AppColors.primary,

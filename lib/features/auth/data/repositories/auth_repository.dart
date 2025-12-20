@@ -2,6 +2,7 @@
 import '../models/auth_model.dart';
 
 abstract class AuthRepository {
+  Future<AuthUser?> me();
   Future<AuthUser> login(String username, String password);
   Future<AuthUser> register(
     String username,
@@ -40,5 +41,10 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> logout() {
     return remote.logout();
+  }
+
+  @override
+  Future<AuthUser?> me() {
+    return remote.me();
   }
 }

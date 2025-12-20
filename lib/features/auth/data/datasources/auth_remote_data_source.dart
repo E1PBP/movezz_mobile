@@ -1,7 +1,7 @@
 ﻿import 'dart:convert';
 
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-
+import 'package:nb_utils/nb_utils.dart';
 import 'package:movezz_mobile/core/config/env.dart';
 import '../models/auth_model.dart';
 
@@ -9,6 +9,16 @@ class AuthRemoteDataSource {
   final CookieRequest cookieRequest;
 
   AuthRemoteDataSource(this.cookieRequest);
+
+  Future<AuthUser?> me() async {
+    final res = await cookieRequest.get(Env.api('/auth/api/me/'));
+
+    if (res is Map && res['status'] == true) {
+      return AuthUser(username: res['username'], isLoggedIn: true);
+    }
+
+    return null;
+  }
 
   Future<AuthUser> login({
     required String username,
@@ -54,7 +64,7 @@ class AuthRemoteDataSource {
   }
 
   Future<bool> logout() async {
-
+    await setValue('hasSeenOnboarding', false);
     final response = await cookieRequest.logout(Env.api('/auth/api/logout/'));
 
     if (response['status'] == true || response['status'] == 'success') {

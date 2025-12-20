@@ -22,7 +22,9 @@ class AppConfig {
   static const double commonRadius = 12;
 
   /// Font family
-  static String get robotoFont => GoogleFonts.roboto().fontFamily!;
+  // static String get robotoFont => GoogleFonts.roboto().fontFamily!;
+
+  static String get defaultFont => GoogleFonts.lato().fontFamily!;
 }
 
 

@@ -58,3 +58,25 @@ class MessageModel {
     );
   }
 }
+
+
+class ChatUserModel {
+  final String username;
+  final String displayName;
+  final String? avatarUrl;
+
+  ChatUserModel({
+    required this.username,
+    required this.displayName,
+    this.avatarUrl,
+  });
+
+  factory ChatUserModel.fromJson(Map<String, dynamic> json) {
+    return ChatUserModel(
+      username: json['username'] ?? '',
+      // Fallback ke username jika display_name kosong/null
+      displayName: json['display_name'] ?? json['username'] ?? '',
+      avatarUrl: json['avatar_url'],
+    );
+  }
+}

@@ -8,55 +8,77 @@ permissions:
   contents: write
 
 jobs:
-  releases:
-    name: Build and Release APK
+  build-and-release:
+    name: Build Signed APK
     runs-on: ubuntu-latest
 
-    env:
-      BACKEND_BASE_URL: ${{ secrets.BACKEND_BASE_URL_PROD }}
-
     steps:
-      - name: Checkout the code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get version from pubspec.yaml
-        id: version
-        run: echo "version=$(grep 'version:' pubspec.yaml | cut -c10-)" >> $GITHUB_OUTPUT
-
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
-          distribution: "zulu"
-          java-version: "17"
+          distribution: 'zulu'
+          java-version: '17'
+          cache: 'gradle' # Cache Gradle dependencies
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
+          channel: 'stable'
+          cache: true # Cache Flutter dependencies
+
+      - name: Get version from pubspec.yaml
+        id: version
+        run: |
+          version=$(grep '^version:' pubspec.yaml | sed 's/version: //')
+          echo "Current version: $version"
+          echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Get packages
         run: flutter pub get
 
-      - name: Build APK
+      - name: Decode Keystore
         run: |
-          echo "Using BACKEND_BASE_URL=$BACKEND_BASE_URL"
-          flutter build apk --split-per-abi \
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+
+      - name: Create key.properties
+        run: |
+          echo "storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=upload-keystore.jks" >> android/key.properties
+
+      - name: Build APK (Release)
+        env:
+          BACKEND_BASE_URL: ${{ secrets.BACKEND_BASE_URL_PROD }}
+        run: |
+          flutter build apk --release --split-per-abi \
             --dart-define=BACKEND_BASE_URL=$BACKEND_BASE_URL
 
-      - name: Get current date
-        id: date
-        run: echo "date=$(TZ='Asia/Jakarta' date +'%A %d-%m-%Y %T WIB')" >> $GITHUB_OUTPUT
+      - name: Generate Release Info
+        id: release_info
+        run: |
+          echo "date=$(TZ='Asia/Jakarta' date +'%A, %d %b %Y %H:%M WIB')" >> $GITHUB_OUTPUT
+          # Tag menggunakan versi + short commit hash agar unik
+          echo "tag=v${{ steps.version.outputs.version }}-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-      - name: Generate unique tag
-        id: tag
-        run: echo "tag=v${{ steps.version.outputs.version }}-$(date +'%Y%m%d%H%M%S')" >> $GITHUB_OUTPUT
-
-      - name: Release APK
+      - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          allowUpdates: false
-          artifacts: "build/app/outputs/flutter-apk/*.apk"
-          body: "Published at ${{ steps.date.outputs.date }}"
-          name: "v${{ steps.version.outputs.version }} - ${{ steps.date.outputs.date }}"
+          allowUpdates: true
+          artifacts: "build/app/outputs/flutter-apk/app-*-release.apk"
           token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.tag.outputs.tag }}
+          tag: ${{ steps.release_info.outputs.tag }}
+          name: "Release ${{ steps.version.outputs.version }}"
+          body: |
+            ## New Build
+            **Version**: `${{ steps.version.outputs.version }}`
+            **Built at**: ${{ steps.release_info.outputs.date }}
+            **Commit**: ${{ github.sha }}
+            
+            ### Downloads
+            - `armeabi-v7a`: HP Android lama/biasa
+            - `arm64-v8a`: HP Android modern
+            - `x86_64`: Emulator

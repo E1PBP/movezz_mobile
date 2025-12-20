@@ -7,15 +7,26 @@ import 'core/theme/app_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:nb_utils/nb_utils.dart';
+
 import 'features/auth/data/datasources/auth_remote_data_source.dart';
 import 'features/auth/data/repositories/auth_repository.dart';
 import 'features/auth/presentation/controllers/auth_controller.dart';
+
 import 'features/messages/data/datasources/messages_remote_data_source.dart';
 import 'features/messages/data/repositories/messages_repository.dart';
 import 'features/messages/presentation/controllers/messages_controller.dart';
+
+import 'features/feeds/data/datasources/feeds_remote_data_source.dart';
+import 'features/feeds/data/repositories/feeds_repository.dart';
+import 'features/feeds/presentation/controllers/feeds_controller.dart';
+
 import 'features/profile/data/datasources/profile_remote_data_source.dart';
 import 'features/profile/data/repositories/profile_repository.dart';
 import 'features/profile/presentation/controllers/profile_controller.dart';
+
+import 'features/marketplace/data/datasources/marketplace_remote_data_source.dart';
+import 'features/marketplace/data/repositories/marketplace_repository.dart';
+import 'features/marketplace/presentation/controllers/marketplace_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,19 +37,21 @@ void main() async {
   final cookieRequest = CookieRequest();
   await cookieRequest.init();
 
+  bool hasSeenOnboarding = getBoolAsync(
+    'hasSeenOnboarding',
+    defaultValue: false,
+  );
+
   String initialRoute;
-  if (cookieRequest.loggedIn) {
-    initialRoute = AppRoutes.feeds;
-  } else {
-    bool hasSeenOnboarding = getBoolAsync(
-      'hasSeenOnboarding',
-      defaultValue: false,
-    );
-    if (hasSeenOnboarding) {
-      initialRoute = AppRoutes.login;
+
+  if (hasSeenOnboarding) {
+    if (cookieRequest.loggedIn) {
+      initialRoute = AppRoutes.feeds;
     } else {
-      initialRoute = AppRoutes.splash;
+      initialRoute = AppRoutes.login;
     }
+  } else {
+    initialRoute = AppRoutes.splash;
   }
 
   runApp(
@@ -53,6 +66,15 @@ void main() async {
             return AuthController(repo);
           },
         ),
+
+                ChangeNotifierProvider<FeedsController>(
+          create: (context) {
+            final cookie = context.read<CookieRequest>();
+            final remote = FeedsRemoteDataSource(cookie);
+            final repo = FeedsRepositoryImpl(remote);
+            return FeedsController(repo);
+          },
+        ),
         ChangeNotifierProvider<MessagesController>(
           create: (context) {
             final cookie = context.read<CookieRequest>();
@@ -61,12 +83,21 @@ void main() async {
             return MessagesController(repo);
           },
         ),
+
         ChangeNotifierProvider<ProfileController>(
           create: (context) {
             final cookie = context.read<CookieRequest>();
             final remote = ProfileRemoteDataSource(cookie);
             final repo = ProfileRepository(remote);
             return ProfileController(repo);
+          },
+        ),
+        ChangeNotifierProvider<MarketplaceController>(
+          create: (context) {
+            final cookie = context.read<CookieRequest>();
+            final remote = MarketplaceRemoteDataSource(cookie);
+            final repo = MarketplaceRepository(remote);
+            return MarketplaceController(repo);
           },
         ),
       ],

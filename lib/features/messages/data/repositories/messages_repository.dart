@@ -11,8 +11,11 @@ class MessagesRepository {
     return remote.getConversations();
   }
 
-  Future<List<MessageModel>> getMessages(String conversationId) {
-    return remote.getMessages(conversationId);
+  Future<List<MessageModel>> getMessages(
+    String conversationId, {
+    String? beforeId,
+  }) {
+    return remote.getMessages(conversationId, beforeId: beforeId);
   }
 
   Future<MessageModel?> sendMessage(
@@ -23,7 +26,7 @@ class MessagesRepository {
     return remote.sendMessage(conversationId, message, image: image);
   }
 
-  Future<List<Map<String, dynamic>>> searchUsers(String query) {
+  Future<List<ChatUserModel>> searchUsers(String query) {
     return remote.searchUsers(query);
   }
 
