@@ -4,7 +4,7 @@ import 'package:nb_utils/nb_utils.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/app_header_container.dart';
 import '../../../../core/config/app_config.dart';
-
+import 'package:flutter_svg/svg.dart';
 import '../widgets/auth_login.dart';
 import '../widgets/auth_register.dart';
 
@@ -21,13 +21,11 @@ class _AuthPageState extends State<AuthPage> {
   @override
   void initState() {
     super.initState();
-    afterBuildCreated(() {
-    });
+    afterBuildCreated(() {});
   }
 
   @override
   void dispose() {
-
     super.dispose();
   }
 
@@ -50,14 +48,18 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Column(
         children: [
           SizedBox(height: context.statusBarHeight + 50),
-          Row(
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              8.width,
+              SvgPicture.asset(
+                'assets/icon/logo-navbar.svg',
+                height: 70,
+                width: 70,
+              ),
+              2.height,
               Text(
                 AppConfig.appName,
                 style: primaryTextStyle(
