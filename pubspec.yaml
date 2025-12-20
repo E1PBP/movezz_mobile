@@ -57,14 +57,14 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/icon/logo-text.png"
+  image_path: "assets/icon/main-icon.png"
 
 flutter_native_splash:
-  color: "#67C538"
-  image: "assets/icon/logo-text.png"
+  color: "#FFFFFF"
+  image: "assets/icon/main-icon.png"
   android_12:
-    image: "assets/icon/logo-text.png"
-    color: "#67C538"
+    image: "assets/icon/main-icon.png"
+    color: "#FFFFFF"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -85,6 +85,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon/
+    - assets/onboarding/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
