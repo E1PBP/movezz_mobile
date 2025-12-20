@@ -1,5 +1,5 @@
 ﻿import 'package:flutter/material.dart';
-import 'dart:html' as html; 
+import 'package:url_launcher/url_launcher.dart';
 import 'package:provider/provider.dart';
 import '../../data/models/broadcast_model.dart';
 import '../controllers/broadcast_controller.dart';
@@ -232,11 +232,12 @@ class EventCard extends StatelessWidget {
 
   bool _isUrl(String s) => s.startsWith('http://') || s.startsWith('https://');
 
-  void _openUrl(String url) {
-    try {
-      html.window.open(url, '_blank');
-    } catch (_) {
-      // no-op if not supported
+  Future<void> _openUrl(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri != null) {
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        debugPrint('Could not launch $url');
+      }
     }
   }
 
