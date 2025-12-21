@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
 
+import 'package:movezz_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:movezz_mobile/features/profile/presentation/widgets/create_post.dart';
+
 import '../../../../core/theme/app_theme.dart';
 import '../controllers/feeds_controller.dart';
 import '../widgets/feed_posts_list.dart';
-import '../widgets/create_post_sheet.dart';
 
 class FeedsPage extends StatefulWidget {
   const FeedsPage({super.key});
@@ -43,16 +45,13 @@ class _FeedsPageState extends State<FeedsPage>
     super.dispose();
   }
 
-  void _openCreatePost() {
-    showModalBottomSheet(
+  void _openCreatePostDialog() {
+    final auth = context.read<AuthController>();
+    final username = auth.currentUser?.username ?? 'user';
+
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: context.cardColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => const CreatePostSheet(),
+      builder: (context) => CreatePostDialog(username: username),
     );
   }
 
@@ -65,7 +64,7 @@ class _FeedsPageState extends State<FeedsPage>
           // "What's on your mind?" quick composer (SocialV-like)
           Container(
             color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
             child: Row(
               children: [
                 const CircleAvatar(
@@ -76,7 +75,7 @@ class _FeedsPageState extends State<FeedsPage>
                 12.width,
                 Expanded(
                   child: InkWell(
-                    onTap: _openCreatePost,
+                    onTap: _openCreatePostDialog,
                     borderRadius: radius(16),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -94,10 +93,12 @@ class _FeedsPageState extends State<FeedsPage>
                     ),
                   ),
                 ),
-                12.width,
                 IconButton(
-                  onPressed: _openCreatePost,
-                  icon: const Icon(Icons.edit, color: AppColors.primary),
+                  onPressed: _openCreatePostDialog,
+                  icon: const Icon(Icons.add, color: AppColors.primary),
+                  iconSize: 28,
+                  padding: const EdgeInsets.all(12),
+                  tooltip: 'Create Post',
                 ),
               ],
             ),
