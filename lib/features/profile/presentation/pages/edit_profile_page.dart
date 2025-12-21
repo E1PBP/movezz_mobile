@@ -133,10 +133,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     if (success) {
       context.showSnackBar('Profile updated successfully');
-      if (mounted) {
-        await context.read<ProfileController>().loadProfile(profile.username);
-      }
-      if (mounted) Navigator.pop(context);
+      Navigator.pop(context);
     } else {
       context.showSnackBar(
         controller.errorMessage ?? 'Failed to update profile',
