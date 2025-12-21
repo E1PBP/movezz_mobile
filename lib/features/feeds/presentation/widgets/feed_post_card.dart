@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +7,138 @@ import '../../../../core/theme/app_theme.dart';
 import '../../data/models/feeds_model.dart';
 import '../controllers/feeds_controller.dart';
 import 'feed_comments_sheet.dart';
+
+class _HashtagChip extends StatelessWidget {
+  final String tag;
+  const _HashtagChip({required this.tag});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => toast('Hashtag: #$tag'),
+      borderRadius: radius(100),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: AppColors.primary.withOpacity(0.1),
+          borderRadius: radius(100),
+        ),
+        child: Text(
+          '#$tag',
+          style: primaryTextStyle(color: AppColors.primary, size: 12),
+        ),
+      ),
+    );
+  }
+}
+
+class _CaptionWithInlineHashtags extends StatelessWidget {
+  final String text;
+  final List<String> hashtags;
+  final TextStyle? style;
+
+  const _CaptionWithInlineHashtags({
+    required this.text,
+    this.hashtags = const [],
+    this.style,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (hashtags.isEmpty) {
+      return Text(text, style: style);
+    }
+
+    final spans = <TextSpan>[];
+    final pattern = RegExp(r'(#\w+)');
+    text.splitMapJoin(
+      pattern,
+      onMatch: (Match match) {
+        final tag = match.group(0);
+        if (tag != null) {
+          spans.add(
+            TextSpan(
+              text: tag,
+              style: (style ?? const TextStyle()).copyWith(
+                color: AppColors.primary,
+              ),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  toast('Hashtag: $tag');
+                },
+            ),
+          );
+        }
+        return '';
+      },
+      onNonMatch: (String nonMatch) {
+        spans.add(TextSpan(text: nonMatch, style: style));
+        return '';
+      },
+    );
+
+    return RichText(
+      text: TextSpan(
+        style: style ?? primaryTextStyle(size: 14),
+        children: spans,
+      ),
+    );
+  }
+}
+
+class _ImageSection extends StatefulWidget {
+  final List<String> imageUrls;
+  const _ImageSection({required this.imageUrls});
+
+  @override
+  State<_ImageSection> createState() => _ImageSectionState();
+}
+
+class _ImageSectionState extends State<_ImageSection> {
+  int index = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 1,
+      child: Stack(
+        children: [
+          PageView.builder(
+            itemCount: widget.imageUrls.length,
+            onPageChanged: (i) => setState(() => index = i),
+            itemBuilder: (context, index) {
+              return Image.network(
+                widget.imageUrls[index],
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              );
+            },
+          ),
+          if (widget.imageUrls.length > 1)
+            Positioned(
+              top: 10,
+              right: 10,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Text(
+                  '${index + 1}/${widget.imageUrls.length}',
+                  style: secondaryTextStyle(color: Colors.white, size: 12),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
 
 class FeedPostCard extends StatelessWidget {
   final FeedPost post;
@@ -118,8 +251,29 @@ class FeedPostCard extends StatelessWidget {
           if (post.text.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Text(post.text, style: primaryTextStyle(size: 14)),
+              child: _CaptionWithInlineHashtags(
+                text: post.text,
+                hashtags: post.hashtags,
+                style: primaryTextStyle(size: 14),
+              ),
             ),
+
+          if (post.hashtags.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: post.hashtags
+                    .map((t) => _HashtagChip(tag: t))
+                    .toList(),
+              ),
+            ),
+
+          if (post.imageUrls.isNotEmpty) ...[
+            10.height,
+            _ImageSection(imageUrls: post.imageUrls),
+          ],
 
           if ((post.sport != null && post.sport!.trim().isNotEmpty) ||
               (post.locationName != null &&

@@ -4,6 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import '../../../../features/profile/data/datasources/profile_remote_data_source.dart';
+import '../../../../features/profile/data/repositories/profile_repository.dart';
+import '../../../../features/profile/presentation/controllers/profile_controller.dart';
+import '../../../../features/profile/presentation/pages/profile_page.dart';
+
 import '../../../../core/constant/polling_constant.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/messages_model.dart';
@@ -121,38 +127,66 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
         backgroundColor: Colors.white,
         elevation: 0.5,
         iconTheme: const IconThemeData(color: Colors.black87),
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundImage: widget.otherUserAvatar != null
-                  ? NetworkImage(widget.otherUserAvatar!)
-                  : null,
-              backgroundColor: AppColors.primary.withOpacity(0.1),
-              child: widget.otherUserAvatar == null
-                  ? Text(
-                      widget.otherUserName[0].toUpperCase(),
-                      style: boldTextStyle(color: AppColors.primary),
-                    )
-                  : null,
-            ),
-            12.width,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.otherUserDisplayName ?? widget.otherUserName,
-                    style: boldTextStyle(color: Colors.black87, size: 16),
+        title: InkWell(
+          onTap: () {
+            final request = context.read<CookieRequest>();
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ChangeNotifierProvider(
+                  create: (_) {
+                    final remoteDataSource = ProfileRemoteDataSource(request);
+                    final repository = ProfileRepository(remoteDataSource);
+                    return ProfileController(repository);
+                  },
+                  child: ProfilePage(
+                    username: widget.otherUserName,
+                    showBackButton: true,
                   ),
-                  Text(
-                    "@" + widget.otherUserName,
-                    style: secondaryTextStyle(color: Colors.grey, size: 12),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ).then((_) {
+              if (mounted) {
+                context.read<MessagesController>().fetchMessages(
+                  widget.conversationId,
+                );
+              }
+            });
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundImage: widget.otherUserAvatar != null
+                    ? NetworkImage(widget.otherUserAvatar!)
+                    : null,
+                backgroundColor: AppColors.primary.withOpacity(0.1),
+                child: widget.otherUserAvatar == null
+                    ? Text(
+                        widget.otherUserName[0].toUpperCase(),
+                        style: boldTextStyle(color: AppColors.primary),
+                      )
+                    : null,
+              ),
+              12.width,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.otherUserDisplayName ?? widget.otherUserName,
+                      style: boldTextStyle(color: Colors.black87, size: 16),
+                    ),
+                    Text(
+                      "@" + widget.otherUserName,
+                      style: secondaryTextStyle(color: Colors.grey, size: 12),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       body: Column(
@@ -198,7 +232,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   controller: _scrollController,
                   reverse: true,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-
                   itemCount:
                       messages.length + (controller.isLoadingMore ? 1 : 0),
                   itemBuilder: (context, index) {
@@ -214,14 +247,12 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                         ),
                       );
                     }
-
                     return ChatBubble(message: messages[index]);
                   },
                 );
               },
             ),
           ),
-
           if (_selectedImage != null)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -267,7 +298,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 ],
               ),
             ),
-
           Container(
             padding: const EdgeInsets.only(
               left: 16,
@@ -326,7 +356,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     ),
                   ),
                   8.width,
-
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4),
                     child: Consumer<MessagesController>(

@@ -3,10 +3,8 @@ import 'package:concentric_transition/concentric_transition.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nb_utils/nb_utils.dart';
 
-// Import AppRoutes agar bisa navigasi
 import 'package:movezz_mobile/core/routing/app_router.dart'; 
 
-// 1. Model Data
 class PageData {
   final String? title;
   final String? caption;
@@ -30,7 +28,6 @@ class PageData {
   });
 }
 
-// 2. Daftar Halaman
 final List<PageData> onboardingPages = [
   const PageData(
     svgAsset: "assets/onboarding/page-1.svg",
@@ -113,17 +110,13 @@ class _ConcentricAnimationOnboardingState
         scaleFactor: 2,
         itemCount: onboardingPages.length,
         
-        // --- BAGIAN INI YANG DIPERBAIKI ---
         onFinish: () {
-          // 1. Simpan status bahwa user sudah melihat onboarding
           setValue('hasSeenOnboarding', true);
           
           print("Selesai Onboarding - Navigasi ke Login");
 
-          // 2. Lakukan Navigasi (Uncommented)
           Navigator.of(context).pushReplacementNamed(AppRoutes.login);
         },
-        // ----------------------------------
 
         itemBuilder: (index) {
           final page = onboardingPages[index];

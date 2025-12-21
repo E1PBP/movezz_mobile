@@ -45,6 +45,7 @@ class MarketplaceModel {
 
 class Fields {
   int owner;
+  String ownerUsername;
   String title;
   int price;
   Condition condition;
@@ -54,6 +55,7 @@ class Fields {
 
   Fields({
     required this.owner,
+    required this.ownerUsername,
     required this.title,
     required this.price,
     required this.condition,
@@ -70,6 +72,7 @@ class Fields {
 
     return Fields(
       owner: (json['owner'] as int?) ?? 0, 
+      ownerUsername: json['owner_username']?.toString() ?? '',
       title: json['title']?.toString() ?? '',
       price: (json['price'] as num?)?.toInt() ?? 0,
       condition: conditionEnum ?? Condition.USED, 
@@ -81,6 +84,7 @@ class Fields {
 
   Map<String, dynamic> toJson() => {
     "owner": owner,
+    "owner_username": ownerUsername,
     "title": title,
     "price": price,
     "condition": conditionValues.reverse[condition],
