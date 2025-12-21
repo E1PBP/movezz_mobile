@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
 
+import 'package:movezz_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:movezz_mobile/features/profile/presentation/widgets/create_post.dart';
+
 import '../../../../core/theme/app_theme.dart';
 import '../controllers/feeds_controller.dart';
 import '../widgets/feed_posts_list.dart';
@@ -43,16 +46,13 @@ class _FeedsPageState extends State<FeedsPage>
     super.dispose();
   }
 
-  void _openCreatePost() {
-    showModalBottomSheet(
+  void _openCreatePostDialog() {
+    final auth = context.read<AuthController>();
+    final username = auth.currentUser?.username ?? 'user';
+
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: context.cardColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (_) => const CreatePostSheet(),
+      builder: (context) => CreatePostDialog(username: username),
     );
   }
 
@@ -76,7 +76,7 @@ class _FeedsPageState extends State<FeedsPage>
                 12.width,
                 Expanded(
                   child: InkWell(
-                    onTap: _openCreatePost,
+                    onTap: _openCreatePostDialog,
                     borderRadius: radius(16),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -95,7 +95,7 @@ class _FeedsPageState extends State<FeedsPage>
                   ),
                 ),
                 IconButton(
-                  onPressed: _openCreatePost,
+                  onPressed: _openCreatePostDialog,
                   icon: const Icon(Icons.add, color: AppColors.primary),
                   iconSize: 28,
                   padding: const EdgeInsets.all(12),

@@ -63,8 +63,7 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     switch (_selectedIndex) {
       case 0:
         return [
-          actionIcon(
-              Icons.add_box_outlined, 'New Post', _openCreatePostDialog),
+          actionIcon(Icons.add_box_outlined, 'New Post', _openCreatePostDialog),
         ];
       case 1:
         return [
