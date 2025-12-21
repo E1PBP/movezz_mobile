@@ -334,7 +334,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // TODO: tambah logo movezz
+              SvgPicture.asset(
+                'assets/icon/profile_avatar.svg',
+                width: 56,
+                height: 56,
+              ),
               const SizedBox(height: 12),
               const Text(
                 'Delete Post?',

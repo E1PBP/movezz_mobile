@@ -46,7 +46,7 @@ class ProfileActivityCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Movezz Motivation",
+                  "Quotes by Movezz",
                   style: TextStyle(
                     color: Color(0xFF365314), 
                     fontSize: 16,
