@@ -72,12 +72,10 @@ class ProfileNameRow extends StatelessWidget {
     );
   }
 
-  // Tombol untuk Diri Sendiri
   Widget _buildSelfButton(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // EDIT PROFILE
         SizedBox(
           width: 80,
           height: 40,
@@ -111,7 +109,7 @@ class ProfileNameRow extends StatelessWidget {
 
         const SizedBox(width: 8),
 
-        // CREATE POST
+
         SizedBox(
           width: 100,
           height: 40,
@@ -124,7 +122,7 @@ class ProfileNameRow extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               padding: EdgeInsets.zero,
-              minimumSize: const Size(0, 0), // Reset theme constraints
+              minimumSize: const Size(0, 0),
             ),
             onPressed: () {
               showDialog(
@@ -144,7 +142,6 @@ class ProfileNameRow extends StatelessWidget {
     );
   }
 
-  // Tombol Follow / Following untuk Orang Lain
   Widget _buildFollowButton(BuildContext context, bool isFollowing) {
     return SizedBox(
       width: 100,
@@ -163,7 +160,7 @@ class ProfileNameRow extends StatelessWidget {
               : BorderSide.none,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: EdgeInsets.zero,
-          minimumSize: const Size(0, 0), // Reset theme constraints (infinite width)
+          minimumSize: const Size(0, 0),
         ),
         onPressed: () {
           context.read<ProfileController>().toggleFollowUser();

@@ -26,7 +26,6 @@ class _ProfileTabsState extends State<ProfileTabs> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // HEADER
         Row(
           children: [
             _buildTab(
@@ -52,7 +51,9 @@ class _ProfileTabsState extends State<ProfileTabs> {
           child: Stack(
             children: [
               Container(color: const Color(0xFFE5E7EB)),
-              Align(
+              AnimatedAlign(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeInOut,
                 alignment: isPosts
                     ? Alignment.centerLeft
                     : Alignment.centerRight,
@@ -70,62 +71,82 @@ class _ProfileTabsState extends State<ProfileTabs> {
         Consumer<ProfileController>(
           builder: (context, controller, _) {
             if (isPosts) {
-              if (controller.isLoadingPosts) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              final posts = controller.postsEntry?.posts ?? [];
-
-              if (posts.isEmpty) {
-                return _buildEmptyState('No posts yet');
-              }
-
-              return _buildPostsGrid(context, posts, controller.profile);
+              return _buildPostsContent(context, controller);
             } else {
-              return _buildEmptyState('No broadcasts yet');
+              return _buildBroadcastsContent(context, controller);
             }
-          },
-        ),
-
-        Consumer<ProfileController>(
-          builder: (context, controller, _) {
-            if (controller.isLoadingBroadcasts) {
-              return const Padding(
-                padding: EdgeInsets.all(24),
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-
-            if (controller.broadcasts.isEmpty) {
-              return const Padding(
-                padding: EdgeInsets.all(24),
-                child: Center(child: Text("No broadcasts yet")),
-              );
-            }
-
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: controller.broadcasts.length,
-              itemBuilder: (context, index) {
-                final event = controller.broadcasts[index];
-                return EventCard(event: event);
-              },
-            );
           },
         ),
       ],
     );
   }
 
+  Widget _buildPostsContent(
+    BuildContext context,
+    ProfileController controller,
+  ) {
+    if (controller.isLoadingPosts) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 32),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final posts = controller.postsEntry?.posts ?? [];
+
+    if (posts.isEmpty) {
+      return _buildEmptyState('No posts yet');
+    }
+
+    return _buildPostsGrid(context, posts, controller.profile);
+  }
+
+  Widget _buildBroadcastsContent(
+    BuildContext context,
+    ProfileController controller,
+  ) {
+    if (controller.isLoadingBroadcasts) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 32),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final broadcasts = controller.broadcasts;
+
+    if (broadcasts.isEmpty) {
+      return _buildEmptyState('No broadcasts yet');
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      itemCount: broadcasts.length,
+      itemBuilder: (context, index) {
+        final event = broadcasts[index];
+        return EventCard(event: event);
+      },
+    );
+  }
+
   Widget _buildEmptyState(String message) {
-    return SizedBox(
-      height: 120,
-      child: Center(
-        child: Text(
-          message,
-          style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
-        ),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 48),
+      child: Column(
+        children: [
+          Icon(Icons.inbox_outlined, size: 48, color: Colors.grey.shade300),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: const TextStyle(
+              color: Color(0xFF9CA3AF),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -159,12 +180,10 @@ class _ProfileTabsState extends State<ProfileTabs> {
                       PostDetailPage(post: post, profile: profile),
                 ),
               );
-            } else {
-              print("Profile data is null, cannot navigate");
             }
           },
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(12),
             child: imageUrl != null && imageUrl.isNotEmpty
                 ? Image.network(
                     imageUrl,
@@ -196,12 +215,12 @@ class _ProfileTabsState extends State<ProfileTabs> {
         borderRadius: BorderRadius.circular(8),
         onTap: () => setState(() => _selectedIndex = index),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 18, color: color),
-              const SizedBox(width: 6),
+              Icon(icon, size: 20, color: color),
+              const SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyle(

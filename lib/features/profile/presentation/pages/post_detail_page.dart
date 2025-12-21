@@ -54,7 +54,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
         elevation: 0,
         leading: const BackButton(color: Colors.black),
         actions: [
-          // BUTTON TITIK TIGA
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert, color: Colors.black),
             color: Colors.white,
@@ -100,7 +99,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // HEADER
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
@@ -176,7 +174,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
               ),
             ),
 
-            // IMAGE
             if (widget.post.imageUrl != null)
               Container(
                 width: double.infinity,
@@ -191,12 +188,10 @@ class _PostDetailPageState extends State<PostDetailPage> {
                 ),
               ),
 
-            // ACTIONS
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               child: Row(
                 children: [
-                  // Tombol LIKE
                   InkWell(
                     onTap: _handleLike,
                     child: Row(
@@ -223,7 +218,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
                   const SizedBox(width: 16),
 
-                  // Comment Button
                   _ActionButton(
                     icon: Icons.chat_bubble_outline_rounded,
                     label: widget.post.commentsCount.toString(),
@@ -231,7 +225,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled:
-                            true, // Supaya bisa full height / custom height
+                            true, 
                         backgroundColor: Colors.transparent,
                         builder: (context) =>
                             CommentBottomSheet(postId: widget.post.id),
@@ -241,7 +235,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
 
                   const SizedBox(width: 16),
 
-                  // Share Button
                   _ActionButton(
                     icon: Icons.share_outlined,
                     label: "Share",
@@ -251,7 +244,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
               ),
             ),
 
-            // CAPTION
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
@@ -301,7 +293,6 @@ class _PostDetailPageState extends State<PostDetailPage> {
     );
   }
 
-  // Delete Modal
   void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
