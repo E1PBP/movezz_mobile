@@ -124,6 +124,7 @@ class ProfileNameRow extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
               ),
               padding: EdgeInsets.zero,
+              minimumSize: const Size(0, 0), // Reset theme constraints
             ),
             onPressed: () {
               showDialog(
@@ -145,26 +146,32 @@ class ProfileNameRow extends StatelessWidget {
 
   // Tombol Follow / Following untuk Orang Lain
   Widget _buildFollowButton(BuildContext context, bool isFollowing) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isFollowing
-            ? Colors.transparent
-            : const Color(0xFFA3E635),
-        foregroundColor: isFollowing
-            ? const Color(0xFFA3E635)
-            : const Color(0xFF365314),
-        elevation: 0,
-        side: isFollowing
-            ? const BorderSide(color: Color(0xFFA3E635), width: 1.5)
-            : BorderSide.none,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
-      onPressed: () {
-        context.read<ProfileController>().toggleFollowUser();
-      },
-      child: Text(
-        isFollowing ? "Following" : "Follow",
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+    return SizedBox(
+      width: 100,
+      height: 40,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isFollowing
+              ? Colors.transparent
+              : const Color(0xFFA3E635),
+          foregroundColor: isFollowing
+              ? const Color(0xFFA3E635)
+              : const Color(0xFF365314),
+          elevation: 0,
+          side: isFollowing
+              ? const BorderSide(color: Color(0xFFA3E635), width: 1.5)
+              : BorderSide.none,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: EdgeInsets.zero,
+          minimumSize: const Size(0, 0), // Reset theme constraints (infinite width)
+        ),
+        onPressed: () {
+          context.read<ProfileController>().toggleFollowUser();
+        },
+        child: Text(
+          isFollowing ? "Following" : "Follow",
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+        ),
       ),
     );
   }

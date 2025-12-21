@@ -194,30 +194,138 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Future<void> _handleLogout(BuildContext context, AuthController auth) async {
-    await showConfirmDialogCustom(
-      context,
-      title: "Logout?",
-      subTitle: "Are you sure you want to log out of your account?",
-      positiveText: "Logout",
-      negativeText: "Cancel",
-      dialogType: DialogType.CONFIRMATION,
-      primaryColor: Colors.red,
-      onAccept: (context) async {
-        final success = await auth.logout();
-        if (success) {
-          if (!context.mounted) return;
-          context.showSnackBar("Logged out successfully");
-          Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil(AppRoutes.splash, (route) => false);
-        } else {
-          if (!context.mounted) return;
-          context.showSnackBar(auth.error ?? "Failed to logout", isError: true);
-        }
-      },
-    );
-  }
+Future<void> _handleLogout(BuildContext context, AuthController auth) async {
+  showDialog(
+    context: context,
+    builder: (ctx) => Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Container(
+        width: 308,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          shadows: const [
+            BoxShadow(
+              color: Color(0x19000000),
+              blurRadius: 4,
+              offset: Offset(0, 2),
+              spreadRadius: -2,
+            ),
+            BoxShadow(
+              color: Color(0x19000000),
+              blurRadius: 6,
+              offset: Offset(0, 4),
+              spreadRadius: -1,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.logout,
+              color: Color(0xFFDC2626),
+              size: 56,
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Logout?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Color(0xFF171717),
+                fontSize: 14,
+                fontFamily: 'Plus Jakarta Sans',
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Are you sure you want to log out of your account?',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Color(0xFF525252),
+                fontSize: 12,
+                fontFamily: 'Plus Jakarta Sans',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () => Navigator.pop(ctx),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFFDC2626)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Color(0xFFDC2626),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: InkWell(
+                    onTap: () async {
+                      final success = await auth.logout();
+                      if (ctx.mounted) {
+                        Navigator.pop(ctx);
+                        if (success) {
+                          if (!context.mounted) return;
+                          context.showSnackBar("Logged out successfully");
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                            AppRoutes.splash, 
+                            (route) => false,
+                          );
+                        } else {
+                          if (!context.mounted) return;
+                          context.showSnackBar(
+                            auth.error ?? "Failed to logout", 
+                            isError: true,
+                          );
+                        }
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFDC2626),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Logout',
+                        style: TextStyle(
+                          color: Color(0xFFFFF7ED),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
 
   void _showAboutDialog(BuildContext context) {
     showDialog(
