@@ -365,7 +365,7 @@ flutter run -d chrome \
   [https://dbdiagram.io/d/movezz-2-68e696cad2b621e422e8abc6](https://dbdiagram.io/d/movezz-2-68e696cad2b621e422e8abc6)
 
 - **Tautan APK:**  
-  [https://app.bitrise.io/app/9316a6d8-cdaa-4e14-a516-a8bef99bd3a1/installable-artifacts/ca5994c5ff915f6d/public-install-page/3d8275766b4e8c66bcef6d5fba7dc589](https://app.bitrise.io/app/9316a6d8-cdaa-4e14-a516-a8bef99bd3a1/installable-artifacts/ca5994c5ff915f6d/public-install-page/3d8275766b4e8c66bcef6d5fba7dc589)
+  [https://app.bitrise.io/app/9316a6d8-cdaa-4e14-a516-a8bef99bd3a1/installable-artifacts/1e745be503eefd1a/public-install-page/fb077fe6a01e060a4cff23da102cb5dc](https://app.bitrise.io/app/9316a6d8-cdaa-4e14-a516-a8bef99bd3a1/installable-artifacts/1e745be503eefd1a/public-install-page/fb077fe6a01e060a4cff23da102cb5dc)
 
 - **Tautan SlidesDeck:**  
   [https://www.canva.com/design/DAG8IEoBBuU/nSQTk7X6RqDyRcZvv83GVQ/edit?utm_content=DAG8IEoBBuU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton](https://www.canva.com/design/DAG8IEoBBuU/nSQTk7X6RqDyRcZvv83GVQ/edit?utm_content=DAG8IEoBBuU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
