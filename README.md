@@ -366,7 +366,7 @@ flutter run -d chrome \
   `https://dbdiagram.io/d/movezz-2-68e696cad2b621e422e8abc6`
 
 - **Tautan APK:**
-  ``
+  `https://app.bitrise.io/app/9316a6d8-cdaa-4e14-a516-a8bef99bd3a1/installable-artifacts/ca5994c5ff915f6d/public-install-page/3d8275766b4e8c66bcef6d5fba7dc589`
 
 - **Tautan Video:**
   ``
