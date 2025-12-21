@@ -70,13 +70,15 @@ class FeedPost {
         .where((s) => s.isNotEmpty)
         .toList(growable: false);
 
-    final rawImageUrls = (json['image_urls'] as List?)
+    final rawImageUrls =
+        (json['image_urls'] as List?)
             ?.map((e) => e.toString())
             .where((e) => e.isNotEmpty)
             .toList() ??
         [];
 
-    final rawHashtags = (json['hashtags'] as List?)
+    final rawHashtags =
+        (json['hashtags'] as List?)
             ?.map((e) => e.toString())
             .where((e) => e.isNotEmpty)
             .toList() ??

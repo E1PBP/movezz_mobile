@@ -35,7 +35,9 @@ class _CaptionWithInlineHashtags extends StatelessWidget {
           spans.add(
             TextSpan(
               text: tag,
-              style: (style ?? const TextStyle()).copyWith(color: AppColors.primary),
+              style: (style ?? const TextStyle()).copyWith(
+                color: AppColors.primary,
+              ),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
                   toast('Hashtag: $tag');
@@ -94,8 +96,10 @@ class _ImageSectionState extends State<_ImageSection> {
               top: 10,
               right: 10,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.6),
                   borderRadius: BorderRadius.circular(100),
