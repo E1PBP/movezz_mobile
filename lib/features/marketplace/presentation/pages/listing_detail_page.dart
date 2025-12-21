@@ -204,43 +204,6 @@ Future<void> _openEditListingForm(
 ) async {
   final fields = listing.fields;
 
-<<<<<<< HEAD
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ListingFormPage(
-          initialTitle: fields.title,
-          initialPrice: fields.price,
-          initialLocation: fields.location,
-          initialImageUrl: fields.imageUrl,
-          initialCondition: fields.condition,
-          initialDescription: fields.description,
-          onSubmit:
-              ({
-                required String title,
-                required int price,
-                required String location,
-                required String imageUrl,
-                required Condition condition,
-                required String description,
-              }) async {
-                await context.read<MarketplaceController>().updateListing(
-                  id: listing.pk,
-                  title: title,
-                  price: price,
-                  location: location,
-                  imageUrl: imageUrl,
-                  condition: condition,
-                  description: description,
-                );
-
-                if (!mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Listing successfully updated')),
-                );
-              },
-        ),
-=======
   final didUpdate = await Navigator.push<bool>(
     context,
     MaterialPageRoute(
@@ -274,7 +237,6 @@ Future<void> _openEditListingForm(
             const SnackBar(content: Text('Listing successfully updated')),
           );
         },
->>>>>>> 515383e2a43753a9a7e8b6c49452a9b4dca588f5
       ),
     ),
   );
