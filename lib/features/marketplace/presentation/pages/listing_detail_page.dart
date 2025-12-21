@@ -198,12 +198,13 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
     );
   }
 
-  Future<void> _openEditListingForm(
-    BuildContext context,
-    MarketplaceModel listing,
-  ) async {
-    final fields = listing.fields;
+Future<void> _openEditListingForm(
+  BuildContext context,
+  MarketplaceModel listing,
+) async {
+  final fields = listing.fields;
 
+<<<<<<< HEAD
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -239,9 +240,50 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
                 );
               },
         ),
+=======
+  final didUpdate = await Navigator.push<bool>(
+    context,
+    MaterialPageRoute(
+      builder: (_) => ListingFormPage(
+        initialTitle: fields.title,
+        initialPrice: fields.price,
+        initialLocation: fields.location,
+        initialImageUrl: fields.imageUrl,
+        initialCondition: fields.condition,
+        initialDescription: fields.description,
+        onSubmit: ({
+          required String title,
+          required int price,
+          required String location,
+          required String imageUrl,
+          required Condition condition,
+          required String description,
+        }) async {
+          await context.read<MarketplaceController>().updateListing(
+                id: listing.pk,
+                title: title,
+                price: price,
+                location: location,
+                imageUrl: imageUrl,
+                condition: condition,
+                description: description,
+              );
+
+          if (!mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Listing successfully updated')),
+          );
+        },
+>>>>>>> 515383e2a43753a9a7e8b6c49452a9b4dca588f5
       ),
-    );
+    ),
+  );
+
+  if (!mounted) return;
+  if (didUpdate == true) {
+    await context.read<MarketplaceController>().loadListingDetail(listing.pk);
   }
+}
 
   Future<void> _confirmDeleteListing(
     BuildContext context,
@@ -296,7 +338,7 @@ class _ListingDetailPageState extends State<ListingDetailPage> {
           borderRadius: BorderRadius.circular(16),
           child: imageUrl.isNotEmpty
               ? Image.network(
-                  imageUrl,
+                  "http://10.0.2.2:8000/marketplace/proxy-image/?url=${Uri.encodeComponent(imageUrl)}",
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => Container(
                     color: Colors.grey.shade200,
