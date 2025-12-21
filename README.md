@@ -367,6 +367,9 @@ flutter run -d chrome \
 - **Tautan APK:**  
   [https://app.bitrise.io/app/9316a6d8-cdaa-4e14-a516-a8bef99bd3a1/installable-artifacts/ca5994c5ff915f6d/public-install-page/3d8275766b4e8c66bcef6d5fba7dc589](https://app.bitrise.io/app/9316a6d8-cdaa-4e14-a516-a8bef99bd3a1/installable-artifacts/ca5994c5ff915f6d/public-install-page/3d8275766b4e8c66bcef6d5fba7dc589)
 
+- **Tautan SlidesDeck:**  
+  [https://www.canva.com/design/DAG8IEoBBuU/nSQTk7X6RqDyRcZvv83GVQ/edit?utm_content=DAG8IEoBBuU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton](https://www.canva.com/design/DAG8IEoBBuU/nSQTk7X6RqDyRcZvv83GVQ/edit?utm_content=DAG8IEoBBuU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
 - **Tautan Video:**  
   `TBD`
 
