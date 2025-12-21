@@ -63,7 +63,9 @@ class ProfileRepository {
     XFile? imageFile,
   }) {
     return remote.updateProfile(
-      username: username, 
-      displayName: displayName);
+      username: username,
+      displayName: displayName,
+      imageFile: imageFile,
+    );
   }
 }

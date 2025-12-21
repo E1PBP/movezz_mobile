@@ -32,25 +32,38 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final auth = context.read<AuthController>();
-
-      final profileController = context.read<ProfileController>();
-
-      String targetUsername = widget.username ?? '';
-
-      if (targetUsername.isEmpty) {
-        if (auth.currentUser == null) {
-          await auth.restoreSession();
-        }
-        targetUsername = auth.currentUser?.username ?? '';
-      }
-
-      if (targetUsername.isNotEmpty) {
-        profileController.loadProfile(targetUsername);
-        profileController.loadUserPosts(targetUsername);
-
-      }
+      _loadData();
     });
+  }
+
+  Future<void> _loadData() async {
+    if (!mounted) return;
+    final auth = context.read<AuthController>();
+    final profileController = context.read<ProfileController>();
+
+    String targetUsername = widget.username ?? '';
+
+    if (targetUsername.isEmpty) {
+      if (auth.currentUser == null) {
+        await auth.restoreSession();
+      }
+      targetUsername = auth.currentUser?.username ?? '';
+    }
+
+    if (targetUsername.isNotEmpty) {
+      profileController.loadProfile(targetUsername);
+      profileController.loadUserPosts(targetUsername);
+      profileController.loadUserBroadcasts(targetUsername);
+    }
+  }
+
+  Future<void> _handleRefresh(String username) async {
+    final controller = context.read<ProfileController>();
+    await Future.wait([
+      controller.loadProfile(username),
+      controller.loadUserPosts(username),
+      controller.loadUserBroadcasts(username),
+    ]);
   }
 
   @override
@@ -123,30 +136,38 @@ class _ProfilePageState extends State<ProfilePage> {
               });
             }
 
-            return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: ProfileHeader(
-                      username: profile.username,
-                      isVerified: profile.isVerified,
+            return RefreshIndicator(
+              onRefresh: () => _handleRefresh(targetUsername),
+              color: const Color(0xFFA3E635),
+              child: SingleChildScrollView(
+
+                physics: const AlwaysScrollableScrollPhysics(), 
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: ProfileHeader(
+                        username: profile.username,
+                        isVerified: profile.isVerified,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Center(child: ProfileAvatarStats(profile: profile)),
-                  const SizedBox(height: 24),
-                  ProfileActivityCard(
-                    profile: profile,
-                    mascotAsset: 'assets/icon/profile_activity.svg',
-                  ),
-                  const SizedBox(height: 24),
-                  ProfileNameRow(profile: profile),
-                  const SizedBox(height: 24),
-                  ProfileTabs(username: profile.username),
-                  const SizedBox(height: 12),
-                ],
+                    const SizedBox(height: 24),
+                    Center(child: ProfileAvatarStats(profile: profile)),
+                    const SizedBox(height: 24),
+                    ProfileActivityCard(
+                      profile: profile,
+                      mascotAsset: 'assets/icon/profile_activity.svg',
+                    ),
+                    const SizedBox(height: 24),
+                    ProfileNameRow(profile: profile),
+                    const SizedBox(height: 24),
+                    ProfileTabs(username: profile.username),
+                    const SizedBox(height: 12),
+
+                    const SizedBox(height: 80), 
+                  ],
+                ),
               ),
             );
           },

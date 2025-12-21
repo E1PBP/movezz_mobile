@@ -124,9 +124,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
 
     final success = await controller.updateProfile(
-      username:  controller.profile!.username,
+      username: controller.profile!.username,
       displayName: _displayNameController.text,
-      imageFile: _pickedImage,
+      imageFile:
+          _pickedImage,
     );
 
     if (!mounted) return;
