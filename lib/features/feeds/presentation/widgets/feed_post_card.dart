@@ -6,6 +6,13 @@ import 'package:movezz_mobile/core/utils/extensions.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
 
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../profile/data/datasources/profile_remote_data_source.dart';
+import '../../../profile/data/repositories/profile_repository.dart';
+import '../../../profile/presentation/controllers/profile_controller.dart';
+import '../../../profile/presentation/pages/profile_page.dart';
+
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/feeds_model.dart';
 import '../controllers/feeds_controller.dart';
@@ -168,6 +175,30 @@ class FeedPostCard extends StatelessWidget {
     context.showSnackBar("Link copied to clipboard!", isError: false);
   }
 
+  void _onProfileTap(BuildContext context) {
+    final authController = context.read<AuthController>();
+    final currentUser = authController.currentUser;
+
+    if (currentUser == null || currentUser.username == post.username) {
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          final request = context.read<CookieRequest>();
+          return ChangeNotifierProvider(
+            create: (_) => ProfileController(
+              ProfileRepository(ProfileRemoteDataSource(request)),
+            ),
+            child: ProfilePage(username: post.username, showBackButton: true),
+          );
+        },
+      ),
+    );
+  }
+
   String _createdAtText(FeedPost post) {
     try {
       final dynamic p = post;
@@ -178,7 +209,7 @@ class FeedPostCard extends StatelessWidget {
     try {
       final dynamic p = post;
       final dt = p.createdAt;
-      if (dt is DateTime) return dt.timeAgo; // nb_utils extension
+      if (dt is DateTime) return dt.timeAgo;
     } catch (_) {}
 
     return '';
@@ -197,59 +228,77 @@ class FeedPostCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // HEADER: avatar + name + badges + time
           Padding(
             padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Avatar(url: post.avatarUrl),
-                12.width,
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              post.displayName.isNotEmpty
-                                  ? post.displayName
-                                  : post.username,
-                              style: boldTextStyle(size: 14),
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                  child: InkWell(
+                    onTap: () => _onProfileTap(context),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _Avatar(url: post.avatarUrl),
+                        12.width,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      post.displayName.isNotEmpty
+                                          ? post.displayName
+                                          : post.username,
+                                      style: boldTextStyle(size: 14),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  if (post.badgeIconUrls.isNotEmpty) ...[
+                                    6.width,
+                                    ...post.badgeIconUrls
+                                        .take(3)
+                                        .map((u) => _BadgeIcon(url: u)),
+                                  ],
+                                ],
+                              ),
+                              2.height,
+                              Row(
+                                children: [
+                                  Text(
+                                    '@${post.username}',
+                                    style: secondaryTextStyle(size: 12),
+                                  ),
+                                  if (createdAtText.isNotEmpty) ...[
+                                    8.width,
+                                    Text(
+                                      '•',
+                                      style: secondaryTextStyle(size: 12),
+                                    ),
+                                    8.width,
+                                    Text(
+                                      createdAtText,
+                                      style: secondaryTextStyle(size: 12),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ],
                           ),
-                          if (post.badgeIconUrls.isNotEmpty) ...[
-                            6.width,
-                            ...post.badgeIconUrls
-                                .take(3)
-                                .map((u) => _BadgeIcon(url: u)),
-                          ],
-                        ],
-                      ),
-                      2.height,
-                      Row(
-                        children: [
-                          Text(
-                            '@${post.username}',
-                            style: secondaryTextStyle(size: 12),
-                          ),
-                          if (createdAtText.isNotEmpty) ...[
-                            8.width,
-                            Text('•', style: secondaryTextStyle(size: 12)),
-                            8.width,
-                            Text(
-                              createdAtText,
-                              style: secondaryTextStyle(size: 12),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+
+                // IconButton(
+                //   onPressed: () {},
+                //   icon: const Icon(Icons.more_horiz),
+                // ),
               ],
             ),
           ),
