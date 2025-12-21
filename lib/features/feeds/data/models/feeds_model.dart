@@ -28,6 +28,8 @@ class FeedPost {
   final String displayName;
   final String? avatarUrl;
   final List<String> badgeIconUrls;
+  final List<String> imageUrls;
+  final List<String> hashtags;
 
   final String text;
   final String? sport;
@@ -51,6 +53,8 @@ class FeedPost {
     this.sport,
     this.locationName,
     this.createdAt,
+    this.imageUrls = const [],
+    this.hashtags = const [],
   });
 
   factory FeedPost.fromJson(Map<String, dynamic> json) {
@@ -65,6 +69,18 @@ class FeedPost {
         .map((s) => s.trim())
         .where((s) => s.isNotEmpty)
         .toList(growable: false);
+
+    final rawImageUrls = (json['image_urls'] as List?)
+            ?.map((e) => e.toString())
+            .where((e) => e.isNotEmpty)
+            .toList() ??
+        [];
+
+    final rawHashtags = (json['hashtags'] as List?)
+            ?.map((e) => e.toString())
+            .where((e) => e.isNotEmpty)
+            .toList() ??
+        [];
 
     // tolerant key
     final text = (json['text'] ?? json['content'] ?? '').toString();
@@ -85,6 +101,8 @@ class FeedPost {
           ? null
           : json['author_avatar_url']?.toString(),
       badgeIconUrls: badgeUrls,
+      imageUrls: rawImageUrls,
+      hashtags: rawHashtags,
       text: text,
       sport: (sport != null && sport.trim().isEmpty) ? null : sport,
       locationName: json['location_name']?.toString(),
