@@ -1,5 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:movezz_mobile/core/config/env.dart';
+import 'package:movezz_mobile/core/utils/extensions.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:provider/provider.dart';
 
@@ -157,6 +160,14 @@ class FeedPostCard extends StatelessWidget {
     );
   }
 
+  void _handleShare(BuildContext context, FeedPost post) {
+    final String shareUrl =
+        "${Env.backendBaseUrl}/profile/u/${post.username}/p/${post.id}/";
+
+    Clipboard.setData(ClipboardData(text: shareUrl));
+    context.showSnackBar("Link copied to clipboard!", isError: false);
+  }
+
   String _createdAtText(FeedPost post) {
     try {
       final dynamic p = post;
@@ -239,10 +250,6 @@ class FeedPostCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.more_horiz),
-                ),
               ],
             ),
           ),
@@ -322,9 +329,7 @@ class FeedPostCard extends StatelessWidget {
                 _ActionButton(
                   icon: Icons.share_outlined,
                   label: 'Share',
-                  onTap: () {
-                    toast('Share is not implemented yet');
-                  },
+                  onTap: () => _handleShare(context, post),
                 ),
               ],
             ),

@@ -93,13 +93,6 @@ class _FeedsPageState extends State<FeedsPage>
                     ),
                   ),
                 ),
-                IconButton(
-                  onPressed: _openCreatePostDialog,
-                  icon: const Icon(Icons.add, color: AppColors.primary),
-                  iconSize: 28,
-                  padding: const EdgeInsets.all(12),
-                  tooltip: 'Create Post',
-                ),
               ],
             ),
           ),

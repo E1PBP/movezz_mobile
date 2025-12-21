@@ -62,10 +62,7 @@ class _FeedPostsListState extends State<FeedPostsList> {
                 children: [
                   Icon(Icons.wifi_off, size: 42, color: Colors.grey.shade500),
                   12.height,
-                  Text(
-                    'Failed to load feeds',
-                    style: boldTextStyle(size: 16),
-                  ),
+                  Text('Failed to load feeds', style: boldTextStyle(size: 16)),
                   8.height,
                   Text(
                     controller.errorMessage!,
@@ -78,7 +75,46 @@ class _FeedPostsListState extends State<FeedPostsList> {
                     color: AppColors.primary,
                     textColor: Colors.white,
                     onTap: () => controller.refresh(),
-                  )
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+
+        if (posts.isEmpty) {
+          final isForYou = widget.tab == 'foryou';
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.feed_outlined,
+                    size: 48,
+                    color: AppColors.iconSecondaryDark,
+                  ),
+                  16.height,
+                  Text(
+                    'Nothing to see here yet',
+                    style: boldTextStyle(size: 18),
+                  ),
+                  8.height,
+                  Text(
+                    isForYou
+                        ? 'Follow other users or create your first post to get started!'
+                        : 'Posts from people you follow will appear here.',
+                    style: secondaryTextStyle(size: 14),
+                    textAlign: TextAlign.center,
+                  ),
+                  32.height,
+                  AppButton(
+                    text: 'Refresh',
+                    color: AppColors.primary,
+                    textColor: Colors.white,
+                    onTap: () => controller.refresh(),
+                  ),
                 ],
               ),
             ),
