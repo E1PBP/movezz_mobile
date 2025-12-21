@@ -2,11 +2,12 @@ class Env {
   /// Base URL backend Django.
   ///
   /// Default: http://10.0.2.2:8000 (akses localhost dari Android emulator).
+  /// Web default: http://localhost:8000
   /// Bisa dioverride pakai:
   /// flutter run --dart-define=BACKEND_BASE_URL=https://api.domainmu.com
   static const String backendBaseUrl = String.fromEnvironment(
     'BACKEND_BASE_URL',
-    defaultValue: 'http://localhost:8000',
+    defaultValue: 'http://10.0.2.2:8000',
   );
 
   /// Helper untuk gabung baseUrl + path endpoint.
