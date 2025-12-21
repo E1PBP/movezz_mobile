@@ -11,6 +11,8 @@ import 'package:flutter/foundation.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../data/models/profile_model.dart';
 import '../controllers/profile_controller.dart';
+import './profile_page.dart';
+import '../../../../core/routing/app_router.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -63,15 +65,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
           height: 112,
           child: _pickedImage != null
               ? (kIsWeb && _webImageBytes != null
-                  ? Image.memory(_webImageBytes!, fit: BoxFit.cover)
-                  : Image.file(File(_pickedImage!.path), fit: BoxFit.cover))
+                    ? Image.memory(_webImageBytes!, fit: BoxFit.cover)
+                    : Image.file(File(_pickedImage!.path), fit: BoxFit.cover))
               : (profile?.avatarUrl != null &&
-                      (profile!.avatarUrl ?? '').isNotEmpty)
-                  ? Image.network(profile.avatarUrl!, fit: BoxFit.cover)
-                  : SvgPicture.asset(
-                      'assets/icon/logo-navbar.svg',
-                      fit: BoxFit.contain,
-                    ),
+                    (profile!.avatarUrl ?? '').isNotEmpty)
+              ? Image.network(profile.avatarUrl!, fit: BoxFit.cover)
+              : SvgPicture.asset(
+                  'assets/icon/logo-navbar.svg',
+                  fit: BoxFit.contain,
+                ),
         ),
       ),
     );
@@ -103,7 +105,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final controller = context.read<ProfileController>();
     final profile = controller.profile;
 
-    // Validasi profile exists
     if (profile == null || profile.username.isEmpty) {
       if (mounted) {
         context.showSnackBar(
@@ -114,14 +115,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
       return;
     }
 
-    // Validasi display name
     final displayName = _displayNameController.text.trim();
     if (displayName.isEmpty) {
       if (mounted) {
-        context.showSnackBar(
-          'Display name cannot be empty',
-          isError: true,
-        );
+        context.showSnackBar('Display name cannot be empty', isError: true);
       }
       return;
     }
@@ -136,7 +133,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     if (success) {
       context.showSnackBar('Profile updated successfully');
-      Navigator.pop(context);
+      if (mounted) {
+        await context.read<ProfileController>().loadProfile(profile.username);
+      }
+      if (mounted) Navigator.pop(context);
     } else {
       context.showSnackBar(
         controller.errorMessage ?? 'Failed to update profile',
@@ -220,9 +220,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             TextField(
               controller: _displayNameController,
-              decoration: const InputDecoration(
-                hintText: 'Enter display name',
-              ),
+              decoration: const InputDecoration(hintText: 'Enter display name'),
             ),
 
             const SizedBox(height: 40),
