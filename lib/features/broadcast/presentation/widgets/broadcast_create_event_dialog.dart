@@ -8,10 +8,12 @@ class BroadcastCreateEventDialog extends StatefulWidget {
   const BroadcastCreateEventDialog({super.key});
 
   @override
-  State<BroadcastCreateEventDialog> createState() => _BroadcastCreateEventDialogState();
+  State<BroadcastCreateEventDialog> createState() =>
+      _BroadcastCreateEventDialogState();
 }
 
-class _BroadcastCreateEventDialogState extends State<BroadcastCreateEventDialog> {
+class _BroadcastCreateEventDialogState
+    extends State<BroadcastCreateEventDialog> {
   final _descriptionController = TextEditingController();
   final _locationController = TextEditingController();
   final _locationLatController = TextEditingController();
@@ -39,125 +41,165 @@ class _BroadcastCreateEventDialogState extends State<BroadcastCreateEventDialog>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
     return ScaffoldMessenger(
       child: Builder(
         builder: (messengerContext) => Scaffold(
           backgroundColor: Colors.black.withOpacity(0.07),
-          body: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.75,
-                maxWidth: 500,
-              ),
-              child: MediaQuery(
-                data: MediaQuery.of(context).copyWith(textScaleFactor: 0.85),
-                child: AlertDialog(
-                  backgroundColor: Colors.white,
-                  titleTextStyle: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                  contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-                  insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
-                  title: const Text('Create Event'),
-                  content: ClipRect(
-                    clipBehavior: Clip.hardEdge,
-                    child: SizedBox(
-                      width: 400,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                _buildTextField(
-                  _descriptionController,
-                  'Description',
-                  maxLines: 4,
-                  labelIcon: Icons.notes,
-                ),
-                const SizedBox(height: 14),
-                _buildImageSection(),
-                const SizedBox(height: 16),
-                _buildTextField(
-                  _locationController,
-                  'Location name',
-                  labelIcon: Icons.location_on,
-                ),
-                const SizedBox(height: 10),
-                _buildCoordinatesRow(),
-                const SizedBox(height: 16),
-                _buildDateTimeTile('Start time', _startTime, (dt) {
-                  setState(() => _startTime = dt);
-                }),
-                _buildDateTimeTile('End time', _endTime, (dt) {
-                  setState(() => _endTime = dt);
-                }),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  _feeController,
-                  'Fee',
-                  keyboardType: TextInputType.number,
-                  labelIcon: Icons.attach_money,
-                ),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  _rsvpController,
-                  'RSVP link',
-                  labelIcon: Icons.event_available,
-                ),
-              ],
-            ),
-          ),
-                    ),
+          resizeToAvoidBottomInset: false,
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Container(
+              width: size.width,
+              height: size.height,
+              color: Colors.transparent,
+              child: Center(
+
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(
+                    bottom: bottomInset > 0 ? bottomInset + 20 : 20,
+                    top: 20,
+                    left: 20,
+                    right: 20,
                   ),
-                  actionsPadding: EdgeInsets.zero,
-                  actionsAlignment: MainAxisAlignment.end,
-                  actions: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(28),
-                          bottomRight: Radius.circular(28),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: size.height * 0.85,
+                      maxWidth: 500,
+                    ),
+                    child: MediaQuery(
+                      data: MediaQuery.of(
+                        context,
+                      ).copyWith(textScaleFactor: 0.85),
+                      child: AlertDialog(
+                        backgroundColor: Colors.white,
+                        titleTextStyle: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                        contentPadding: const EdgeInsets.fromLTRB(
+                          24,
+                          20,
+                          24,
+                          0,
                         ),
-                      ),
-                      padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          SizedBox(
-                            width: 60,
-                            height: 36,
-                            child: TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              style: TextButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
+                        insetPadding: EdgeInsets.zero,
+                        title: const Text('Create Event'),
+                        content: ClipRect(
+                          clipBehavior: Clip.hardEdge,
+                          child: SizedBox(
+                            width: 400,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  _buildTextField(
+                                    _descriptionController,
+                                    'Description',
+                                    maxLines: 4,
+                                    labelIcon: Icons.notes,
+                                  ),
+                                  const SizedBox(height: 14),
+                                  _buildImageSection(),
+                                  const SizedBox(height: 16),
+                                  _buildTextField(
+                                    _locationController,
+                                    'Location name',
+                                    labelIcon: Icons.location_on,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  _buildCoordinatesRow(),
+                                  const SizedBox(height: 16),
+                                  _buildDateTimeTile('Start time', _startTime, (
+                                    dt,
+                                  ) {
+                                    setState(() => _startTime = dt);
+                                  }),
+                                  _buildDateTimeTile('End time', _endTime, (
+                                    dt,
+                                  ) {
+                                    setState(() => _endTime = dt);
+                                  }),
+                                  const SizedBox(height: 12),
+                                  _buildTextField(
+                                    _feeController,
+                                    'Fee',
+                                    keyboardType: TextInputType.number,
+                                    labelIcon: Icons.attach_money,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  _buildTextField(
+                                    _rsvpController,
+                                    'RSVP link',
+                                    labelIcon: Icons.event_available,
+                                  ),
+                                ],
                               ),
-                              child: const Text('Cancel', style: TextStyle(fontSize: 13)),
                             ),
                           ),
-                          const SizedBox(width: 4),
-                          SizedBox(
-                            width: 60,
-                            height: 36,
-                            child: ElevatedButton(
-                              onPressed: () => _handleCreateEvent(messengerContext),
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
+                        ),
+                        actionsPadding: EdgeInsets.zero,
+                        actionsAlignment: MainAxisAlignment.end,
+                        actions: [
+                          Container(
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(28),
+                                bottomRight: Radius.circular(28),
                               ),
-                              child: const Text('Create', style: TextStyle(fontSize: 13)),
+                            ),
+                            padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  width: 60,
+                                  height: 36,
+                                  child: TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    style: TextButton.styleFrom(
+                                      padding: EdgeInsets.zero,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'Cancel',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                SizedBox(
+                                  width: 60,
+                                  height: 36,
+                                  child: ElevatedButton(
+                                    onPressed: () =>
+                                        _handleCreateEvent(messengerContext),
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.zero,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      'Create',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -294,7 +336,10 @@ class _BroadcastCreateEventDialogState extends State<BroadcastCreateEventDialog>
       decoration: InputDecoration(
         labelText: label,
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 10,
+        ),
         prefixIcon: labelIcon != null ? Icon(labelIcon) : null,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
@@ -323,10 +368,7 @@ class _BroadcastCreateEventDialogState extends State<BroadcastCreateEventDialog>
         borderRadius: BorderRadius.circular(8),
         side: const BorderSide(color: Color(0xFFCCCCCC), width: 1.3),
       ),
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.bodyMedium,
-      ),
+      title: Text(title, style: Theme.of(context).textTheme.bodyMedium),
       subtitle: Text(
         value != null ? _formatDateTimeShort(value) : 'Not set',
         style: Theme.of(context).textTheme.bodySmall,
@@ -376,7 +418,9 @@ class _BroadcastCreateEventDialogState extends State<BroadcastCreateEventDialog>
       );
 
       if (time != null) {
-        onSelected(DateTime(date.year, date.month, date.day, time.hour, time.minute));
+        onSelected(
+          DateTime(date.year, date.month, date.day, time.hour, time.minute),
+        );
       }
     }
   }
@@ -428,7 +472,10 @@ class _BroadcastCreateEventDialogState extends State<BroadcastCreateEventDialog>
         _endTime == null ||
         feeRaw.isEmpty ||
         rsvpRaw.isEmpty) {
-      _showSnackBar(messengerContext, 'Please fill all required fields (description, start/end time, fee, RSVP).');
+      _showSnackBar(
+        messengerContext,
+        'Please fill all required fields (description, start/end time, fee, RSVP).',
+      );
       return;
     }
 
@@ -440,9 +487,13 @@ class _BroadcastCreateEventDialogState extends State<BroadcastCreateEventDialog>
 
     final lat = latRaw.isEmpty ? null : double.tryParse(latRaw);
     final lng = lngRaw.isEmpty ? null : double.tryParse(lngRaw);
-    final onlyOneCoord = (lat != null && lng == null) || (lat == null && lng != null);
+    final onlyOneCoord =
+        (lat != null && lng == null) || (lat == null && lng != null);
     if (onlyOneCoord) {
-      _showSnackBar(messengerContext, 'Provide both latitude and longitude, or leave both empty.');
+      _showSnackBar(
+        messengerContext,
+        'Provide both latitude and longitude, or leave both empty.',
+      );
       return;
     }
 
@@ -453,7 +504,9 @@ class _BroadcastCreateEventDialogState extends State<BroadcastCreateEventDialog>
         description: _descriptionController.text,
         startTime: _startTime!,
         endTime: _endTime!,
-        locationName: _locationController.text.isEmpty ? null : _locationController.text,
+        locationName: _locationController.text.isEmpty
+            ? null
+            : _locationController.text,
         locationLat: lat,
         locationLng: lng,
         fee: fee,
@@ -478,8 +531,8 @@ class _BroadcastCreateEventDialogState extends State<BroadcastCreateEventDialog>
   }
 
   void _showSnackBar(BuildContext messengerContext, String message) {
-    ScaffoldMessenger.of(messengerContext).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      messengerContext,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 }
