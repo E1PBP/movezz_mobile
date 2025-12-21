@@ -44,7 +44,7 @@ class ProfileController extends ChangeNotifier {
       if (response.statusCode == 200) {
         postsEntry = postEntryFromJson(response.body);
         if (profile != null && postsEntry != null) {
-          profile!.postCount = postsEntry!.postCount;
+          profile!.postCount = postsEntry!.posts.length;
         }
       }
     } catch (e) {
@@ -163,23 +163,23 @@ class ProfileController extends ChangeNotifier {
       errorMessage = null;
       notifyListeners();
 
-      final updatedProfile = await repository.updateProfile(
+      await repository.updateProfile(
         username: username,
         displayName: displayName,
         imageFile: imageFile,
       );
 
-      profile = updatedProfile;
-      isLoading = false;
+      profile = await repository.getProfile(username);
+      await loadUserPosts(username);
+
       notifyListeners();
       return true;
     } catch (e) {
       if (kDebugMode) print("Error updating profile: $e");
       errorMessage = e.toString();
       isLoading = false;
-      notifyListeners();
-      return false;
-    }
+    notifyListeners();
+    return false;
+    } 
   }
-  
 }

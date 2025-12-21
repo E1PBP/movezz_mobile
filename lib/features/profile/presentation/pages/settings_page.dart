@@ -8,6 +8,7 @@ import '../../../../core/config/app_config.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/routing/app_router.dart';
 import '../../../auth/presentation/controllers/auth_controller.dart';
+import '../../../profile/presentation/controllers/profile_controller.dart';
 import '../../../profile/presentation/pages/edit_profile_page.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -42,10 +43,21 @@ class SettingsPage extends StatelessWidget {
                   icon: Icons.person_outline,
                   title: "Edit Profile",
                   onTap: () {
+                    final profileController = context.read<ProfileController>();
+                    final profile = profileController.profile;
+
+                    if (profile == null) {
+                      context.showSnackBar(
+                        "Profile not loaded yet",
+                        isError: true,
+                      );
+                      return;
+                    }
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => EditProfilePage(),
+                        builder: (_) => EditProfilePage(profile: profile),
                       ),
                     );
                   },
@@ -133,16 +145,17 @@ class SettingsPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     "Active",
-                    style:
-                        secondaryTextStyle(size: 10, color: Colors.green),
+                    style: secondaryTextStyle(size: 10, color: Colors.green),
                   ),
                 ),
               ],
@@ -156,10 +169,7 @@ class SettingsPage extends StatelessWidget {
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
-      child: Text(
-        title,
-        style: boldTextStyle(size: 14, color: Colors.grey),
-      ),
+      child: Text(title, style: boldTextStyle(size: 14, color: Colors.grey)),
     );
   }
 
@@ -183,10 +193,7 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  Future<void> _handleLogout(
-    BuildContext context,
-    AuthController auth,
-  ) async {
+  Future<void> _handleLogout(BuildContext context, AuthController auth) async {
     await showConfirmDialogCustom(
       context,
       title: "Logout?",
@@ -200,16 +207,12 @@ class SettingsPage extends StatelessWidget {
         if (success) {
           if (!context.mounted) return;
           context.showSnackBar("Logged out successfully");
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            AppRoutes.splash,
-            (route) => false,
-          );
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil(AppRoutes.splash, (route) => false);
         } else {
           if (!context.mounted) return;
-          context.showSnackBar(
-            auth.error ?? "Failed to logout",
-            isError: true,
-          );
+          context.showSnackBar(auth.error ?? "Failed to logout", isError: true);
         }
       },
     );
@@ -223,11 +226,9 @@ class SettingsPage extends StatelessWidget {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.sports_soccer,
-                size: 48, color: AppColors.primary),
+            const Icon(Icons.sports_soccer, size: 48, color: AppColors.primary),
             const SizedBox(height: 16),
-            Text("${AppConfig.appName} Mobile",
-                style: boldTextStyle(size: 18)),
+            Text("${AppConfig.appName} Mobile", style: boldTextStyle(size: 18)),
             const SizedBox(height: 8),
             Text(
               "Version ${AppConfig.appVersion}",

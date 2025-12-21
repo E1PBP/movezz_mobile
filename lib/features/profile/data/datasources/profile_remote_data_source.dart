@@ -10,6 +10,7 @@ import '../models/profile_model.dart';
 import '../models/post_model.dart';
 import '../models/comment_model.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:io' show File;
 
 class ProfileRemoteDataSource {
   final CookieRequest cookieRequest;
@@ -208,25 +209,14 @@ class ProfileRemoteDataSource {
     final url = Env.api('/profile/api/update/');
 
     try {
-      final dataResponse = await cookieRequest.post(url, {
-        'display_name': displayName,
-      });
+      if (imageFile != null && !kIsWeb) {
+        var request = http.MultipartRequest('POST', Uri.parse(url));
+        request.headers.addAll(cookieRequest.headers);
 
-      if (dataResponse is! Map || dataResponse['status'] != 'success') {
-        throw Exception(
-          dataResponse['message'] ?? 'Failed to update display name',
-        );
-      }
-
-      if (imageFile != null) {
-        final avatarUrl = Env.api('/profile/api/upload-avatar/');
-        var request = http.MultipartRequest('POST', Uri.parse(avatarUrl));
-
-        request.headers.addAll({'Cookie': _getCookieString()});
+        request.fields['display_name'] = displayName;
 
         final mimeType = lookupMimeType(imageFile.path) ?? 'image/jpeg';
         final mimeSplit = mimeType.split('/');
-
         var imageFileMultipart = await http.MultipartFile.fromPath(
           'avatar',
           imageFile.path,
@@ -235,31 +225,63 @@ class ProfileRemoteDataSource {
         request.files.add(imageFileMultipart);
 
         var streamResponse = await request.send();
-        var imageResponse = await http.Response.fromStream(streamResponse);
+        var response = await http.Response.fromStream(streamResponse);
 
-        if (imageResponse.statusCode != 200) {
-          if (kDebugMode)
-            print('Warning: Avatar upload failed, continuing anyway');
+        if (kDebugMode) {
+          print('MultipartRequest Status: ${response.statusCode}');
+          print('MultipartRequest Response: ${response.body}');
+        }
+
+        if (response.statusCode != 200) {
+          final errorData = json.decode(response.body);
+          throw Exception(errorData['message'] ?? 'Failed to update profile');
+        }
+
+        final updateResponse = json.decode(response.body);
+
+        if (updateResponse['status'] != 'success') {
+          throw Exception(updateResponse['message'] ?? 'Update failed');
+        }
+
+        final profileUrl = Env.api('/profile/api/u/$username/');
+        final profileResponse = await cookieRequest.get(profileUrl);
+
+        if (profileResponse is Map) {
+          return ProfileEntry.fromJson(
+            Map<String, dynamic>.from(profileResponse),
+          );
+        } else {
+          throw Exception('Failed to fetch updated profile');
+        }
+      } else {
+        final updateResponse = await cookieRequest.post(url, {
+          'display_name': displayName,
+        });
+
+        if (updateResponse is! Map || updateResponse['status'] != 'success') {
+          throw Exception(
+            updateResponse['message'] ?? 'Failed to update profile',
+          );
+        }
+
+        final profileUrl = Env.api('/profile/api/u/$username/');
+        final profileResponse = await cookieRequest.get(profileUrl);
+
+        if (profileResponse is Map) {
+          return ProfileEntry.fromJson(
+            Map<String, dynamic>.from(profileResponse),
+          );
+        } else {
+          throw Exception('Failed to fetch updated profile');
         }
       }
-
-      final profileUrl = Env.api('/profile/api/u/$username/');
-      final profileResponse = await cookieRequest.get(profileUrl);
-
-      if (profileResponse is Map) {
-        return ProfileEntry.fromJson(
-          Map<String, dynamic>.from(profileResponse),
-        );
-      } else {
-        throw Exception('Failed to fetch updated profile');
-      }
     } catch (e) {
-      if (kDebugMode) print('Error updateProfile: $e');
+      if (kDebugMode) print('Error in updateProfile: $e');
       rethrow;
     }
   }
 
   String _getCookieString() {
-    return ''; 
+    return '';
   }
 }

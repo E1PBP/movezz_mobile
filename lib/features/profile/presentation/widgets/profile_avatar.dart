@@ -6,10 +6,7 @@ import '../../data/models/profile_model.dart';
 class ProfileAvatarStats extends StatelessWidget {
   final ProfileEntry profile;
 
-  const ProfileAvatarStats({
-    super.key,
-    required this.profile,
-  });
+  const ProfileAvatarStats({super.key, required this.profile});
 
   @override
   Widget build(BuildContext context) {
@@ -22,24 +19,14 @@ class ProfileAvatarStats extends StatelessWidget {
           padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(35),
-            border: Border.all(
-              width: 2,
-              color: const Color(0xFFA3E635), 
-            ),
+            border: Border.all(width: 2, color: const Color(0xFFA3E635)),
           ),
-          child: ClipOval(
-            child: _buildAvatarContent(),
-          ),
+          child: ClipOval(child: _buildAvatarContent()),
         ),
-
         const SizedBox(width: 32),
-
         Row(
           children: [
-            _StatColumn(
-              value: profile.postCount.toString(),
-              label: 'posts',
-            ),
+            _StatColumn(value: profile.postCount.toString(), label: 'posts'),
             const SizedBox(width: 24),
             _StatColumn(
               value: profile.followersCount.toString(),
@@ -57,16 +44,30 @@ class ProfileAvatarStats extends StatelessWidget {
   }
 
   Widget _buildAvatarContent() {
-    final initial = (profile.displayName?.trim().isNotEmpty ?? false)
-        ? profile.displayName!.trim()[0].toUpperCase()
-        : profile.username.isNotEmpty
-            ? profile.username[0].toUpperCase()
-            : 'U';
+    if (profile.avatarUrl != null && profile.avatarUrl!.trim().isNotEmpty) {
+      final cacheKey =
+          profile.updatedAt?.millisecondsSinceEpoch ??
+          DateTime.now().millisecondsSinceEpoch;
 
-    if (profile.avatarUrl != null && profile.avatarUrl!.isNotEmpty) {
+      final avatarUrlWithCache = '${profile.avatarUrl}?v=$cacheKey';
+
       return Image.network(
-        profile.avatarUrl!,
+        '${profile.avatarUrl}?v=${profile.updatedAt}',
+
         fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            color: Colors.grey[300],
+            child: const Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          );
+        },
         errorBuilder: (context, error, stackTrace) {
           return SvgPicture.asset(
             'assets/icon/profile_avatar.svg',
@@ -77,7 +78,7 @@ class ProfileAvatarStats extends StatelessWidget {
     }
 
     return SvgPicture.asset(
-      'assets/icon/profile_avatar.svg', 
+      'assets/icon/profile_avatar.svg',
       fit: BoxFit.contain,
     );
   }
@@ -87,10 +88,7 @@ class _StatColumn extends StatelessWidget {
   final String value;
   final String label;
 
-  const _StatColumn({
-    required this.value,
-    required this.label,
-  });
+  const _StatColumn({required this.value, required this.label});
 
   @override
   Widget build(BuildContext context) {

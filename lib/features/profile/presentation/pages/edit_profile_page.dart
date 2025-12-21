@@ -15,7 +15,7 @@ import './profile_page.dart';
 import '../../../../core/routing/app_router.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+  const EditProfilePage({super.key, required ProfileEntry profile});
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
@@ -124,14 +124,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
 
     final success = await controller.updateProfile(
-      username: profile.username,
-      displayName: displayName,
+      username:  controller.profile!.username,
+      displayName: _displayNameController.text,
       imageFile: _pickedImage,
     );
 
     if (!mounted) return;
 
-    if (success) {
+    if (success && context.mounted) {
       context.showSnackBar('Profile updated successfully');
       Navigator.pop(context);
     } else {

@@ -25,13 +25,8 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final auth = context.read<AuthController>();
-
-      if (auth.currentUser == null) {
-        await auth.restoreSession();
-      }
-
       final username = auth.currentUser?.username ?? '';
       if (username.isNotEmpty) {
         final profileController = context.read<ProfileController>();
