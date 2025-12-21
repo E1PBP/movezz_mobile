@@ -8,6 +8,30 @@ import '../../data/models/feeds_model.dart';
 import '../controllers/feeds_controller.dart';
 import 'feed_comments_sheet.dart';
 
+class _HashtagChip extends StatelessWidget {
+  final String tag;
+  const _HashtagChip({required this.tag});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => toast('Hashtag: #$tag'),
+      borderRadius: radius(100),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: BoxDecoration(
+          color: AppColors.primary.withOpacity(0.1),
+          borderRadius: radius(100),
+        ),
+        child: Text(
+          '#$tag',
+          style: primaryTextStyle(color: AppColors.primary, size: 12),
+        ),
+      ),
+    );
+  }
+}
+
 class _CaptionWithInlineHashtags extends StatelessWidget {
   final String text;
   final List<String> hashtags;
@@ -231,6 +255,18 @@ class FeedPostCard extends StatelessWidget {
                 text: post.text,
                 hashtags: post.hashtags,
                 style: primaryTextStyle(size: 14),
+              ),
+            ),
+
+          if (post.hashtags.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 4,
+                children: post.hashtags
+                    .map((t) => _HashtagChip(tag: t))
+                    .toList(),
               ),
             ),
 
