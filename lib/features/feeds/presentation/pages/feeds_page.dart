@@ -8,7 +8,6 @@ import 'package:movezz_mobile/features/profile/presentation/widgets/create_post.
 import '../../../../core/theme/app_theme.dart';
 import '../controllers/feeds_controller.dart';
 import '../widgets/feed_posts_list.dart';
-import '../widgets/create_post_sheet.dart';
 
 class FeedsPage extends StatefulWidget {
   const FeedsPage({super.key});
