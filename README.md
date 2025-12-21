@@ -371,6 +371,6 @@ flutter run -d chrome \
   [https://www.canva.com/design/DAG8IEoBBuU/nSQTk7X6RqDyRcZvv83GVQ/edit?utm_content=DAG8IEoBBuU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton](https://www.canva.com/design/DAG8IEoBBuU/nSQTk7X6RqDyRcZvv83GVQ/edit?utm_content=DAG8IEoBBuU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
 - **Tautan Video:**  
-  `TBD`
+  [https://youtu.be/X3Xf6GiEsYc?si=2cubzyjOpC_gYUsa](https://youtu.be/X3Xf6GiEsYc?si=2cubzyjOpC_gYUsa)
 
 ---
