@@ -111,6 +111,12 @@ Fitur:
 
 Aplikasi Flutter ini berinteraksi penuh dengan aplikasi web (backend Django) yang telah dikembangkan pada Proyek Tengah Semester (PTS) melalui **Pacil Web Service**. Seluruh data yang ditampilkan di aplikasi mobile bersumber dari backend yang sama dengan yang digunakan oleh aplikasi web, sehingga memastikan konsistensi data di kedua platform.
 
+
+Diagram berikut menunjukkan alur integrasi data secara visual:
+
+![Sequence Diagram](image/sequence-diagram.png)
+
+
 Alur integrasi datanya adalah sebagai berikut:
 
 1.  **Aksi Pengguna di Aplikasi Flutter**: Pengguna melakukan aksi seperti login, melihat _feeds_, atau memposting konten baru melalui antarmuka aplikasi Flutter.
