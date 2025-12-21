@@ -208,15 +208,9 @@ class ProfileRemoteDataSource {
     final url = Env.api('/profile/api/update/');
 
     try {
-      if (kDebugMode) print('Updating display name...');
-
       final dataResponse = await cookieRequest.post(url, {
         'display_name': displayName,
       });
-
-      if (kDebugMode) {
-        print('Update display name Response: $dataResponse');
-      }
 
       if (dataResponse is! Map || dataResponse['status'] != 'success') {
         throw Exception(
@@ -225,8 +219,6 @@ class ProfileRemoteDataSource {
       }
 
       if (imageFile != null) {
-        if (kDebugMode) print('Uploading avatar image...');
-
         final avatarUrl = Env.api('/profile/api/upload-avatar/');
         var request = http.MultipartRequest('POST', Uri.parse(avatarUrl));
 
@@ -244,11 +236,6 @@ class ProfileRemoteDataSource {
 
         var streamResponse = await request.send();
         var imageResponse = await http.Response.fromStream(streamResponse);
-
-        if (kDebugMode) {
-          print('Avatar upload status: ${imageResponse.statusCode}');
-          print('Avatar upload response: ${imageResponse.body}');
-        }
 
         if (imageResponse.statusCode != 200) {
           if (kDebugMode)
