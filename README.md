@@ -349,26 +349,25 @@ flutter run -d chrome \
 
 ---
 
-## Link Terkait (Backend & Desain)
+## Link Terkait
 
-> Link di bawah ini merujuk ke proyek backend & desain Movezz.
 
-- **Repository Backend Django:**
-  `https://github.com/E1PBP/movezz`
+- **Repository Backend Django:**  
+  [https://github.com/E1PBP/movezz](https://github.com/E1PBP/movezz)
 
-- **PWS (Deployment Backend):**
-  `https://muhamad-hakim41-movezz.pbp.cs.ui.ac.id/`
+- **PWS (Deployment Backend):**  
+  [https://muhamad-hakim41-movezz.pbp.cs.ui.ac.id/](https://muhamad-hakim41-movezz.pbp.cs.ui.ac.id/)
 
-- **Figma Design:**
-  `https://www.figma.com/design/x4q0GDfJB0dQ2ZXl8uuXDZ/Design-Movezz`
+- **Figma Design:**  
+  [https://www.figma.com/design/x4q0GDfJB0dQ2ZXl8uuXDZ/Design-Movezz](https://www.figma.com/design/x4q0GDfJB0dQ2ZXl8uuXDZ/Design-Movezz)
 
-- **DB Diagram:**
-  `https://dbdiagram.io/d/movezz-2-68e696cad2b621e422e8abc6`
+- **DB Diagram:**  
+  [https://dbdiagram.io/d/movezz-2-68e696cad2b621e422e8abc6](https://dbdiagram.io/d/movezz-2-68e696cad2b621e422e8abc6)
 
-- **Tautan APK:**
-  `https://app.bitrise.io/app/9316a6d8-cdaa-4e14-a516-a8bef99bd3a1/installable-artifacts/ca5994c5ff915f6d/public-install-page/3d8275766b4e8c66bcef6d5fba7dc589`
+- **Tautan APK:**  
+  [https://app.bitrise.io/app/9316a6d8-cdaa-4e14-a516-a8bef99bd3a1/installable-artifacts/ca5994c5ff915f6d/public-install-page/3d8275766b4e8c66bcef6d5fba7dc589](https://app.bitrise.io/app/9316a6d8-cdaa-4e14-a516-a8bef99bd3a1/installable-artifacts/ca5994c5ff915f6d/public-install-page/3d8275766b4e8c66bcef6d5fba7dc589)
 
-- **Tautan Video:**
-  ``
+- **Tautan Video:**  
+  `TBD`
 
 ---
