@@ -5,7 +5,7 @@ class AppColors {
   AppColors._();
 
   // Primary colors
-  static const Color primary = Color.fromARGB(255, 103, 197, 56);
+  static const Color primary = Color(0xFFA3E635);
   static const Color primaryLight = Color(0xFFF9FAFF);
 
   // Background colors

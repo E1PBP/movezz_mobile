@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:nb_utils/nb_utils.dart' hide AppButton;
 
@@ -112,9 +113,8 @@ class SettingsPage extends StatelessWidget {
   }
 
   Widget _buildUserHeader(BuildContext context, AuthController auth) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      color: context.cardColor,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Row(
         children: [
           Container(
@@ -122,15 +122,16 @@ class SettingsPage extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.primary.withOpacity(0.1),
+              color: AppColors.primary.withOpacity(0.08),
               border: Border.all(color: AppColors.primary.withOpacity(0.2)),
             ),
-            child: Center(
-              child: Text(
-                (auth.currentUser?.username.isNotEmpty ?? false)
-                    ? auth.currentUser!.username[0].toUpperCase()
-                    : "U",
-                style: boldTextStyle(size: 24, color: AppColors.primary),
+            child: ClipOval(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: SvgPicture.asset(
+                  'assets/icon/profile_avatar.svg',
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
