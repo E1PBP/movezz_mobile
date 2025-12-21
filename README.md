@@ -42,7 +42,7 @@ Struktur fitur di Flutter dibuat agar mirip dengan modularisasi di backend Djang
 
 ### 1. Feeds
 
-PIC: Muhamad Hakim Nizami     
+PIC: Muhamad Hakim Nizami  
 Folder: `lib/features/feeds`
 
 Fitur:
@@ -54,7 +54,7 @@ Fitur:
 
 ### 2. Profile
 
-PIC: Nadin Ananda     
+PIC: Nadin Ananda  
 Folder: `lib/features/profile`
 
 Fitur:
@@ -65,7 +65,7 @@ Fitur:
 
 ### 3. Messaging
 
-PIC: Heraldo Arman    
+PIC: Heraldo Arman  
 Folder: `lib/features/messages`
 
 Fitur:
@@ -76,7 +76,7 @@ Fitur:
 
 ### 4. Marketplace
 
-PIC: Amberley Vidya Putri   
+PIC: Amberley Vidya Putri  
 Folder: `lib/features/marketplace`
 
 Fitur:
@@ -87,7 +87,7 @@ Fitur:
 
 ### 5. Broadcast
 
-PIC: Roberto Eugenio Sugiarto   
+PIC: Roberto Eugenio Sugiarto  
 Folder: `lib/features/broadcast`
 
 Fitur:
@@ -98,12 +98,44 @@ Fitur:
 
 ### 6. Authentication
 
-PIC: all    
+PIC: all  
 Folder: `lib/features/auth`
 
 Fitur:
 
 - Autentikasi menggunakan **session cookie** dari backend Django melalui `CookieRequest`.
+
+---
+
+## Alur Integrasi Data dengan Aplikasi Web PTS
+
+Aplikasi Flutter ini berinteraksi penuh dengan aplikasi web (backend Django) yang telah dikembangkan pada Proyek Tengah Semester (PTS) melalui **Pacil Web Service**. Seluruh data yang ditampilkan di aplikasi mobile bersumber dari backend yang sama dengan yang digunakan oleh aplikasi web, sehingga memastikan konsistensi data di kedua platform.
+
+
+Diagram berikut menunjukkan alur integrasi data secara visual:
+
+![Sequence Diagram](image/sequence-diagram.png)
+
+
+Alur integrasi datanya adalah sebagai berikut:
+
+1.  **Aksi Pengguna di Aplikasi Flutter**: Pengguna melakukan aksi seperti login, melihat _feeds_, atau memposting konten baru melalui antarmuka aplikasi Flutter.
+
+2.  **Pemanggilan _Controller_ dan _Repository_**: Aksi pengguna memicu pemanggilan fungsi di dalam _Controller_ (misalnya, `FeedsController`). _Controller_ kemudian memanggil _Repository_ yang bertugas sebagai perantara antara layer data dan layer presentasi.
+
+3.  **Permintaan HTTP oleh _DataSource_**: _Repository_ memanggil _Remote DataSource_, yang bertanggung jawab untuk membuat permintaan HTTP ke backend Django. Permintaan ini menggunakan library `pbp_django_auth` (`CookieRequest`) untuk berkomunikasi dengan API.
+
+4.  **Akses Endpoint API di Backend Django**: Backend Django menerima permintaan pada _endpoint_ yang sesuai (misalnya, `GET /feeds/api/posts/`). _View_ di Django akan memproses permintaan tersebut, berinteraksi dengan _model_ dan database jika diperlukan.
+
+5.  **Serialisasi Data ke JSON**: Setelah data didapatkan dari database, Django (menggunakan Django REST Framework) akan melakukan serialisasi data dari objek Python (QuerySet) menjadi format **JSON**.
+
+6.  **Pengiriman Respons JSON**: Backend mengirimkan respons HTTP yang berisi data dalam format JSON kembali ke aplikasi Flutter.
+
+7.  **Deserialisasi dan Pembaruan State**: Aplikasi Flutter menerima respons JSON. _DataSource_ atau _Repository_ akan melakukan deserialisasi (parsing) dari JSON menjadi objek Dart (_model_). Data ini kemudian digunakan oleh _Controller_ untuk memperbarui _state_ aplikasi (misalnya, daftar postingan di _feeds_).
+
+8.  **Pembaruan Antarmuka (UI)**: Berkat _state management_ (Provider), perubahan pada _state_ akan secara otomatis memperbarui antarmuka pengguna, sehingga data terbaru dari backend akan ditampilkan kepada pengguna.
+
+Dengan alur ini, aplikasi Flutter berfungsi sebagai _client_ yang menampilkan dan mengelola data, sementara semua logika bisnis, validasi, dan interaksi dengan database ditangani oleh backend Django yang sama dengan yang digunakan oleh PWS.
 
 ---
 
@@ -195,7 +227,6 @@ Developer bisa menyalin:
 cp .env.example .env
 # lalu edit BACKEND_BASE_URL sesuai environment masing-masing
 ```
-
 
 ---
 
@@ -299,10 +330,12 @@ flutter run -d chrome \
 ## Tech Stack
 
 - **Frontend:**
+
   - [Flutter](https://flutter.dev/)
   - [Dart](https://dart.dev/)
 
 - **Backend (terpisah):**
+
   - [Django 5](https://www.djangoproject.com/)
   - PostgreSQL
   - Cloudinary (media storage)
@@ -310,8 +343,8 @@ flutter run -d chrome \
 - **Tools:**
   - Provider (state management dasar)
   - SharedPreferences (persistent storage sederhana)
-  - http 
-  - goRoutes 
+  - http
+  - goRoutes
   - pbp_django_auth
 
 ---
@@ -331,5 +364,11 @@ flutter run -d chrome \
 
 - **DB Diagram:**
   `https://dbdiagram.io/d/movezz-2-68e696cad2b621e422e8abc6`
+
+- **Tautan APK:**
+  ``
+
+- **Tautan Video:**
+  ``
 
 ---
