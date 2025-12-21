@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/svg.dart';
 
+import 'package:movezz_mobile/features/auth/presentation/controllers/auth_controller.dart';
+import 'package:movezz_mobile/features/profile/presentation/widgets/create_post.dart';
 import 'package:movezz_mobile/features/marketplace/presentation/pages/wishlist_page.dart';
 
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -39,6 +41,16 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     const ProfilePage(),
   ];
 
+  void _openCreatePostDialog() {
+    final auth = context.read<AuthController>();
+    final username = auth.currentUser?.username ?? 'user';
+
+    showDialog(
+      context: context,
+      builder: (context) => CreatePostDialog(username: username),
+    );
+  }
+
   List<Widget>? _getAppBarActions() {
     Widget actionIcon(IconData icon, String tooltip, VoidCallback onTap) {
       return IconButton(
@@ -51,9 +63,8 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
     switch (_selectedIndex) {
       case 0:
         return [
-          actionIcon(Icons.add_box_outlined, 'New Post', () {
-            toast('Create New Post clicked!');
-          }),
+          actionIcon(
+              Icons.add_box_outlined, 'New Post', _openCreatePostDialog),
         ];
       case 1:
         return [

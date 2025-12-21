@@ -65,7 +65,7 @@ class _FeedsPageState extends State<FeedsPage>
           // "What's on your mind?" quick composer (SocialV-like)
           Container(
             color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
             child: Row(
               children: [
                 const CircleAvatar(
@@ -94,10 +94,12 @@ class _FeedsPageState extends State<FeedsPage>
                     ),
                   ),
                 ),
-                12.width,
                 IconButton(
                   onPressed: _openCreatePost,
-                  icon: const Icon(Icons.edit, color: AppColors.primary),
+                  icon: const Icon(Icons.add, color: AppColors.primary),
+                  iconSize: 28,
+                  padding: const EdgeInsets.all(12),
+                  tooltip: 'Create Post',
                 ),
               ],
             ),
