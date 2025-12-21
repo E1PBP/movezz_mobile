@@ -6,18 +6,20 @@ import '../../data/models/post_model.dart';
 import '../../data/models/comment_model.dart';
 import 'package:movezz_mobile/core/config/env.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:movezz_mobile/features/broadcast/data/models/broadcast_model.dart';
+import 'dart:convert';
 
 class ProfileController extends ChangeNotifier {
   final ProfileRepository repository;
 
   ProfileController(this.repository);
-
   ProfileEntry? profile;
   bool isLoading = false;
   String? errorMessage;
   bool isLoadingPosts = false;
   PostEntry? postsEntry;
+  List<EventModel> broadcasts = [];
+  bool isLoadingBroadcasts = false;
 
   Future<void> loadProfile(String username) async {
     if (username.isEmpty) return;
@@ -52,6 +54,28 @@ class ProfileController extends ChangeNotifier {
       if (kDebugMode) print("Error loading posts: $e");
     }
     isLoadingPosts = false;
+    notifyListeners();
+  }
+
+  Future<void> loadUserBroadcasts(String username) async {
+    isLoadingBroadcasts = true;
+    notifyListeners();
+
+    try {
+      final url = Env.api('/broadcast/api/u/$username/broadcasts/');
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        broadcasts = (data['broadcasts'] as List)
+            .map((e) => EventModel.fromJson(e))
+            .toList();
+      }
+    } catch (e) {
+      if (kDebugMode) print("Error loading broadcasts: $e");
+    }
+
+    isLoadingBroadcasts = false;
     notifyListeners();
   }
 
@@ -179,8 +203,8 @@ class ProfileController extends ChangeNotifier {
       if (kDebugMode) print("Error updating profile: $e");
       errorMessage = e.toString();
       isLoading = false;
-    notifyListeners();
-    return false;
-    } 
+      notifyListeners();
+      return false;
+    }
   }
 }

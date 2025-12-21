@@ -48,7 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (targetUsername.isNotEmpty) {
         profileController.loadProfile(targetUsername);
         profileController.loadUserPosts(targetUsername);
-
+        profileController.loadUserBroadcasts(targetUsername);
       }
     });
   }

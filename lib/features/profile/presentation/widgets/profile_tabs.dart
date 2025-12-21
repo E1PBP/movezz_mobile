@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movezz_mobile/features/broadcast/presentation/widgets/broadcast_widget.dart';
 import 'package:provider/provider.dart';
 import '../controllers/profile_controller.dart';
 import '../../../../core/theme/app_theme.dart';
@@ -81,9 +82,36 @@ class _ProfileTabsState extends State<ProfileTabs> {
 
               return _buildPostsGrid(context, posts, controller.profile);
             } else {
-              
               return _buildEmptyState('No broadcasts yet');
             }
+          },
+        ),
+
+        Consumer<ProfileController>(
+          builder: (context, controller, _) {
+            if (controller.isLoadingBroadcasts) {
+              return const Padding(
+                padding: EdgeInsets.all(24),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (controller.broadcasts.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.all(24),
+                child: Center(child: Text("No broadcasts yet")),
+              );
+            }
+
+            return ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: controller.broadcasts.length,
+              itemBuilder: (context, index) {
+                final event = controller.broadcasts[index];
+                return EventCard(event: event);
+              },
+            );
           },
         ),
       ],
