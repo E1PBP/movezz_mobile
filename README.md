@@ -20,6 +20,20 @@ Repositori ini berisi **aplikasi mobile (Flutter)** untuk proyek **Movezz**, seb
 - Roberto Eugenio Sugiarto (2406355640)
 - Amberley Vidya Putri (2406495533)
 
+
+---
+
+## Video 
+
+Tonton trailer resmi aplikasi **Movezz Mobile** yang menampilkan fitur-fitur utama dan pengalaman pengguna yang menarik:
+
+### Trailer Aplikasi
+
+[![Movezz Mobile Trailer](https://img.youtube.com/vi/X3Xf6GiEsYc/maxresdefault.jpg)](https://youtu.be/X3Xf6GiEsYc?si=2cubzyjOpC_gYUsa)
+
+**[▶️ Tonton di YouTube](https://youtu.be/X3Xf6GiEsYc?si=2cubzyjOpC_gYUsa)**
+
+
 ---
 
 ## Deskripsi Proyek
@@ -59,9 +73,13 @@ Folder: `lib/features/profile`
 
 Fitur:
 
-- Halaman profil pengguna (`profile_page.dart`),
-- Widget profil (`profile_widget.dart`),
-- Integrasi untuk menampilkan postingan dan informasi pengguna (bio, olahraga favorit, dsb).
+- halaman profil pengguna (`profile_page.dart`)
+- tabs untuk melihat post dan broadcast
+- integrasi untuk menampilkan postingan dan informasi pengguna 
+- edit profile (display name dan upload profile picture) 
+- create posts pengguna 
+- tampilan followers, post, following
+
 
 ### 3. Messaging
 
